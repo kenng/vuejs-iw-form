@@ -1,10 +1,12 @@
 <script setup lang='ts'>
 // @unocss-include
+import { ref } from 'vue'
 import IwFormConfig, { IwFormType } from './utils/IwFormConfig';
 import IwFormCalendar from './utils/IwFormCalendar';
 import IwFormInputSelectConfig from './utils/IwFormInputSelectConfig';
 import dayjs from 'dayjs'
 import IwFormRule from './utils/IwFormRule';
+import IwForm from './components/IwForm.vue';
 
 const submit = (
     theFormData: any,
@@ -95,12 +97,14 @@ const formTextName: IwFormConfig = new IwFormConfig({
             label: 'any valid date',
             type: IwFormType.DATE,
             rules: [IwFormRule.isDate({})],
+            dateOptions: new IwFormCalendar(),
         },
         {
             name: 'mydateValidAfterToday',
             label: 'valid date after today',
             type: IwFormType.DATE,
             rules: [IwFormRule.dateIsAfterIncludeToday({})],
+            dateOptions: new IwFormCalendar(),
         },
         {
             name: 'mydateValidAfterTwoDays',
@@ -111,12 +115,14 @@ const formTextName: IwFormConfig = new IwFormConfig({
                     afterDate: dayjs(dayjs()).add(2, 'day').endOf('day').format('YYYY-MM-DD')
                 }),
             ],
+            dateOptions: new IwFormCalendar(),
         },
         {
             name: 'mydateValidBeforeToday',
             label: 'valid date before today',
             type: IwFormType.DATE,
             rules: [IwFormRule.dateIsBeforeIncludeToday({})],
+            dateOptions: new IwFormCalendar(),
         },
         {
             name: 'mydateRange',
@@ -278,6 +284,7 @@ const formDateAfter: IwFormConfig = new IwFormConfig({
             label: 'min date, available after tomorrow',
             allowedDate: [getTomorrowDate()],
             allowedDateFn: 'min',
+            dateOptions: new IwFormCalendar(),
         },
     ],
 });
@@ -290,6 +297,7 @@ const formDateMax: IwFormConfig = new IwFormConfig({
             label: 'max date, not available after today',
             allowedDate: [getTodayDate()],
             allowedDateFn: 'max',
+            dateOptions: new IwFormCalendar(),
         },
     ],
 });
@@ -302,6 +310,7 @@ const formDateBetween: IwFormConfig = new IwFormConfig({
             label: 'allowed date between date1 and date2',
             allowedDate: [getTodayDate(), getTomorrowDate()],
             allowedDateFn: 'between',
+            dateOptions: new IwFormCalendar(),
         },
     ],
 });
@@ -317,6 +326,7 @@ const formDateCustomFunction: IwFormConfig = new IwFormConfig({
                 // this example we want to get date larger than today
                 return mydate >= item.allowedDate[0];
             },
+            dateOptions: new IwFormCalendar(),
         },
     ],
 });

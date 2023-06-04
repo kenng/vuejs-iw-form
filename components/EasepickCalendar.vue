@@ -1,4 +1,5 @@
-<script setup lang='ts'>
+<script setup lang="ts">
+import { ref, PropType, onMounted } from 'vue'
 import { easepick, Core } from '@easepick/core'
 import { RangePlugin } from "@easepick/range-plugin"
 import { AmpPlugin } from "@easepick/amp-plugin"
@@ -10,7 +11,8 @@ import { IPickerConfig } from "@easepick/core/dist/types"
 import { ILockConfig } from "@easepick/lock-plugin/dist/interface"
 import { IAmpPlugin } from "@easepick/amp-plugin/dist/interface"
 import dayjs from 'dayjs'
-import IwFormCalendar from './IwFormCalendar'
+import IwFormCalendar from '../utils/IwFormCalendar'
+import { Icon } from '@iconify/vue';
 
 export type IwCalendarInputType = 'date' | 'dateTime';
 
@@ -51,7 +53,7 @@ function createCalendar(options: IPickerConfig) {
 // . Lifecycle
 //////////////////////////////////////////////////////////////////////
 
-useSafeOnMounted(easepickRef, () => {
+onMounted(() => {
     const plugins: any = [
         AmpPlugin,
         LockPlugin,
@@ -60,8 +62,8 @@ useSafeOnMounted(easepickRef, () => {
 
     const css: any = [
         // 'https://cdn.jsdelivr.net/npm/@easepick/core@1.2.1/dist/index.css',
-        // "https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.css"
-        "/vendor/easepick-bundle-1.2.1.min.css"
+        "https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.css"
+        // "/vendor/easepick-bundle-1.2.1.min.css"
     ];
 
     if (props.options.enableTimePicker) {
@@ -142,7 +144,7 @@ defineExpose({ onReset })
 <template>
     <div class="relative">
         <div class="iwFormInputCalendarIcon">
-            <Icon name="heroicons:calendar-20-solid"></Icon>
+            <Icon icon="heroicons:calendar-20-solid"></Icon>
         </div>
         <input ref="easepickRef"
                type="text"
