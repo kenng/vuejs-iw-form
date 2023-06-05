@@ -1,3 +1,7 @@
+/// <reference types="@easepick/core/dist/types" />
+/// <reference types="@easepick/lock-plugin/dist/interface" />
+/// <reference types="@easepick/amp-plugin/dist/interface" />
+
 type NonFunctionPropertyNames<T> = {
     [K in keyof T]: T[K] extends Function ? never : K
 }[keyof T];

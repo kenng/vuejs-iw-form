@@ -446,53 +446,53 @@ initFormData();
         </template>
         <template v-else-if='getType(item.type) === IwFormType.CHECKBOX'>
           <input :id="`${formId}-${item.name}`"
-               type="checkbox"
-               v-model="myFormData[item.name]"
-               :name="item.name"
-               :disable="item.disabled"
-               class="iwFormCheckbox">
-        <label :for="`${formId}-${item.name}`"
-               class="iwFormInputLabelInline">{{ setLabel(item) }}</label>
-      </template>
-      <template v-else-if='IwFormType.DATE === getType(item.type)'>
-        <label :for="`${formId}-${item.name}`"
-               class="iwFormInputLabel">{{ setLabel(item) }}</label>
-        <EasepickCalendar :id="`${formId}-${item.name}`"
-                          ref="inputRefs"
-                          :disabled="item.disabled"
-                          @change="(val) => dateOnChange(item, val)"
-                          @reset="inputOnReset(item)"
-                          :options="item.dateOptions!"></EasepickCalendar>
-        <p class="iwFormInputHelperText">
-          <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name] }}</span></template>
-          <template v-else> {{ item.helperText }} </template>
-        </p>
-      </template>
+                 type="checkbox"
+                 v-model="myFormData[item.name]"
+                 :name="item.name"
+                 :disable="item.disabled"
+                 class="iwFormCheckbox">
+          <label :for="`${formId}-${item.name}`"
+                 class="iwFormInputLabelInline">{{ setLabel(item) }}</label>
+        </template>
+        <template v-else-if='IwFormType.DATE === getType(item.type)'>
+          <label :for="`${formId}-${item.name}`"
+                 class="iwFormInputLabel">{{ setLabel(item) }}</label>
+          <EasepickCalendar :id="`${formId}-${item.name}`"
+                            ref="inputRefs"
+                            :disabled="item.disabled"
+                            @change="(val) => dateOnChange(item, val)"
+                            @reset="inputOnReset(item)"
+                            :options="item.dateOptions!"></EasepickCalendar>
+          <p class="iwFormInputHelperText">
+            <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name] }}</span></template>
+            <template v-else> {{ item.helperText }} </template>
+          </p>
+        </template>
+      </div>
+      <div class="iwFormInputContainer">
+        <template v-if="showSubmitBtn">
+          <label :for="`${formId}-submit-btn`"
+                 class="iwFormInputLabel"></label>
+          <button :id="`${formId}-submit-btn`"
+                  class="iwFormBtn iwFormSubmitBtn"
+                  type="submit"> {{ totalSubmission > 0 ? submitAgainText : submitText }} </button>
+          <p class="iwFormInputHelperText"></p>
+        </template>
+      </div>
+      <div class="iwFormResetBtnContainer">
+        <template v-if="showResetBtn">
+          <button class="iwFormResetBtn"
+                  @click="formOnReset"
+                  type="button">{{ resetText }}</button>
+        </template>
+      </div>
+    </form>
+    <div v-if="formErrorMsg"
+         class="iwFormAlertError"
+         role="alert">
+      <span>{{ formErrorMsg }}</span>
     </div>
-    <div class="iwFormInputContainer">
-      <template v-if="showSubmitBtn">
-        <label :for="`${formId}-submit-btn`"
-               class="iwFormInputLabel"></label>
-        <button :id="`${formId}-submit-btn`"
-                class="iwFormBtn iwFormSubmitBtn"
-                type="submit"> {{ totalSubmission > 0 ? submitAgainText : submitText }} </button>
-        <p class="iwFormInputHelperText"></p>
-      </template>
-    </div>
-    <div class="iwFormResetBtnContainer">
-      <template v-if="showResetBtn">
-        <button class="iwFormResetBtn"
-                @click="formOnReset"
-                type="button">{{ resetText }}</button>
-      </template>
-    </div>
-  </form>
-  <div v-if="formErrorMsg"
-       class="iwFormAlertError"
-       role="alert">
-    <span>{{ formErrorMsg }}</span>
   </div>
-</div>
 </template>
 
 <style scoped>
