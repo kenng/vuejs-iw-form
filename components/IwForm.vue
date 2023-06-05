@@ -353,7 +353,7 @@ function setCanSubmitAgain(canSubmitAgainParam: boolean) {
 }
 
 function initFormData() {
-  if (Object.keys(props.myForm.formData).length > 1) {
+  if (props.myForm.formData && Object.keys(props.myForm.formData).length > 1) {
     myFormData.value = JSON.parse(JSON.stringify(props.myForm.formData))
   }
 
