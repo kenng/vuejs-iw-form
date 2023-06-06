@@ -21,6 +21,7 @@ export enum IwFormType {
 
 export default class IwFormConfig {
     name?: string;
+    cssForm: string;
     formData: object = {};
     formInputs: Array<IwFormInput>;
     onError: IwFormOnError | undefined;
@@ -34,6 +35,7 @@ export default class IwFormConfig {
 
     constructor({
         name,
+        cssForm = '',
         formData = {},
         formInputs,
         skipFormData,
@@ -42,6 +44,7 @@ export default class IwFormConfig {
         onSuccess,
     }: {
         name?: string;
+        cssForm?: string;
         formData?: object;
         formInputs: Array<IwFormInput>;
         skipFormData?: Array<IwFormType>;
@@ -50,6 +53,7 @@ export default class IwFormConfig {
         rethrowErrorOnSubmit?: boolean;
     }) {
         this.name = name;
+        this.cssForm = cssForm;
         this.formData = formData;
         this.formInputs = formInputs;
         if (skipFormData) this.mySkipFormData = skipFormData;

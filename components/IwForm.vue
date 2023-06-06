@@ -31,10 +31,6 @@ const props = defineProps({
     type: String,
     default: 'Cancel',
   },
-  cssForm: {
-    type: String,
-    default: '',
-  },
   isReadOnly: {
     type: Boolean,
     default: false,
@@ -375,7 +371,7 @@ initFormData();
 
 <template>
   <div class="iwFormContainer">
-    <form :class="cssForm"
+    <form :class="myForm.cssForm"
           @submit.prevent.stop='formOnSubmit'
           @reset.prevent.stop='formOnReset'>
       <slot name='buttonsTop' />

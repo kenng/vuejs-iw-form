@@ -492,6 +492,7 @@ const formSwitchWithPropData: FormSample = {
 const gridForm: FormSample = {
     title: 'Simple Grid Form',
     form: new IwFormConfig({
+        cssForm: 'grid grid-cols-3 gap-1',
         formInputs: [
             {
                 type: IwFormType.TEXTGROUP_TEXT,
@@ -600,8 +601,7 @@ function getAllFormDate() {
         id="grid-style">Styling with Grid</h1>
 
     <section class="border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl mt-6 p-6">
-        <IwForm cssForm="grid grid-cols-3 gap-1"
-                :myForm="gridForm.form"></IwForm>
+        <IwForm :myForm="gridForm.form"></IwForm>
     </section>
 </template>
 
