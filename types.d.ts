@@ -144,7 +144,7 @@ interface IRuleData {
     myFormData?: any | undefined;
 }
 
-interface IwFormRule {
+interface IIwFormRule {
     errMsg?: string;
     minLength?: number;
     required?: boolean;

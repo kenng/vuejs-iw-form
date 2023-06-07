@@ -1,13 +1,13 @@
 export class IwFormRule {
     /* NOTE: 0 is accepted and not regarded as no input */
-    static required({ errMsg = 'Required' }: IwFormRule = {}): IwFormRuleResponse {
+    static required({ errMsg = 'Required' }: IIwFormRule = {}): IwFormRuleResponse {
         return function (data: IRuleData) {
             return data.value === 0 || !!data.value || errMsg
         };
     }
 
     /* Accepts A-Z only */
-    static userName({ errMsg = 'Requires more than two characters' }: IwFormRule): IwFormRuleResponse {
+    static userName({ errMsg = 'Requires more than two characters' }: IIwFormRule): IwFormRuleResponse {
         return function (data: IRuleData) {
             const pattern = /^([A-Za-z0-9. /\s]){3,80} *$/;
             if (data.value) data.value = data.value.toString().trim();
@@ -18,7 +18,7 @@ export class IwFormRule {
     static password({ errMsg = 'Password should contain one letter, one number, and a symbol(!@#$%^&*()_+)',
         requireLetter = true,
         requireNumber = true,
-        requireSymbol = true }: IwFormRule = {}): IwFormRuleResponse {
+        requireSymbol = true }: IIwFormRule = {}): IwFormRuleResponse {
         return function (data: IRuleData) {
             const pattern = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+]).*$/;
             if (data.value) data.value = data.value.toString().trim();
@@ -26,7 +26,7 @@ export class IwFormRule {
         };
     }
 
-    static gender({ errMsg = 'Invalid gender value' }: IwFormRule): IwFormRuleResponse {
+    static gender({ errMsg = 'Invalid gender value' }: IIwFormRule): IwFormRuleResponse {
         return function (data: IRuleData) {
             const pattern = /^([M,F,O]){1}$/;
             return pattern.test(data.value) || errMsg;
@@ -36,7 +36,7 @@ export class IwFormRule {
     static phone({
         errMsg = 'Invalid phone number',
         required = false,
-    }: IwFormRule): IwFormRuleResponse {
+    }: IIwFormRule): IwFormRuleResponse {
         return function (data: IRuleData) {
             const USpattern = /^[\\(]{0,1}([0-9]){3}[\\)]{0,1}[ ]?([^0-1]){1}([0-9]){2}[ ]?[-]?[ ]?([0-9]){4}[ ]*((x){0,1}([0-9]){1,5}){0,1}$/;
             const MYpattern = /^[+]?[0-9]+$/;
@@ -53,7 +53,7 @@ export class IwFormRule {
         };
     }
 
-    static email({ errMsg = 'Invalid e-mail', required = false }: IwFormRule = {}): IwFormRuleResponse {
+    static email({ errMsg = 'Invalid e-mail', required = false }: IIwFormRule = {}): IwFormRuleResponse {
         return function (data: IRuleData) {
             const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             if (data.value) {
@@ -66,7 +66,7 @@ export class IwFormRule {
         };
     }
 
-    static url({ errMsg = 'Invalid URL', required = false }: IwFormRule): IwFormRuleResponse {
+    static url({ errMsg = 'Invalid URL', required = false }: IIwFormRule): IwFormRuleResponse {
         return function (data: IRuleData) {
             const pattern = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/;
             if (data.value) {
@@ -83,7 +83,7 @@ export class IwFormRule {
         minLength = 2,
         required = false,
         errMsg,
-    }: IwFormRule = {}): IwFormRuleResponse {
+    }: IIwFormRule = {}): IwFormRuleResponse {
         return function (data: IRuleData) {
             const msg = errMsg || `needs ${minLength} characters`;
             if (data.value) {
