@@ -114,31 +114,9 @@ interface IwFormInput {
     uploadFactoryFn?: Function;
 }
 
-interface IwFormProps {
-    btnActionOutline: boolean;
-    btnCancelColor: string;
-    btnCSS: string;
-    btnResetColor: string;
-    cancelText: string;
-    formType: IwFormInput;
-    hasSubmitAgain: boolean;
-    hideBottomSpace: boolean;
-    isDense: boolean;
-    isGridTable: boolean;
-    isReadOnly: boolean;
-    myForm: IwFormConfig;
-    reset: (_: Event) => {};
-    resetOnSubmit: boolean;
-    showCancelBtn: boolean;
-    showCloseBtn: boolean;
-    showResetBtn: boolean;
-    showSubmitBtn: boolean;
-    submit: (_: Event) => {};
-    submitAgainText: string;
-    submitText: string;
-    title: string;
-    titleFinal: string;
-    watchChange: boolean;
+interface IwFormStyle {
+    cssSubmitBtnWrapper: string,
+    cssResetBtnWrapper: string,
 }
 
 interface IRuleData {

@@ -18,6 +18,10 @@ const IwFormTypeTextGroup: Array<IwFormType> = [
 ];
 
 const emit = defineEmits(['change', 'reset-input'])
+const formStyle: IwFormStyle = {
+  cssSubmitBtnWrapper: 'iwFormInputWrapper',
+  cssResetBtnWrapper: 'iwFormResetBtnWrapper',
+}
 
 const props = defineProps({
   // required
@@ -30,6 +34,10 @@ const props = defineProps({
   cancelText: {
     type: String,
     default: 'Cancel',
+  },
+  css: {
+    type: Object as PropType<IwFormStyle>,
+    default: formStyle,
   },
   isReadOnly: {
     type: Boolean,
@@ -240,11 +248,11 @@ function isDisabled(disabled: boolean | undefined, isReadOnly: boolean) {
   return disabled || isReadOnly
 }
 
-function getCssWrapper(cssParam: Function | string | undefined, isReadOnly: boolean) {
+function getCssWrapper(cssParam: Function | string | undefined, isReadOnly: boolean = false) {
   let readOnlyCSS = isReadOnly ? ' iwFormReadOnly ' : '';
   if (typeof cssParam === 'function') return readOnlyCSS + cssParam();
   else if (typeof cssParam === 'string') return readOnlyCSS + cssParam;
-  else return readOnlyCSS + 'iwFormInputContainer ';
+  else return readOnlyCSS + 'iwFormInputWrapper ';
 }
 
 function getFormData() {
@@ -370,7 +378,7 @@ initFormData();
 </script>
 
 <template>
-  <div class="iwFormContainer">
+  <div class="iwFormWrapper">
     <form :class="myForm.cssForm"
           @submit.prevent.stop='formOnSubmit'
           @reset.prevent.stop='formOnReset'>
@@ -465,7 +473,7 @@ initFormData();
           </p>
         </template>
       </div>
-      <div class="iwFormInputContainer">
+      <div :class="css.cssSubmitBtnWrapper ?? 'iwFormInputWrapper'">
         <template v-if="showSubmitBtn">
           <label :for="`${formId}-submit-btn`"
                  class="iwFormInputLabel"></label>
@@ -475,7 +483,7 @@ initFormData();
           <p class="iwFormInputHelperText"></p>
         </template>
       </div>
-      <div class="iwFormResetBtnContainer">
+      <div :class="css.cssResetBtnWrapper ?? 'iwFormResetBtnWrapper'">
         <template v-if="showResetBtn">
           <button class="iwFormResetBtn"
                   @click="formOnReset"

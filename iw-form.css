@@ -2,11 +2,11 @@
     @apply border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl mt-6;
 }
 
-.iwFormContainer {
+.iwFormWrapper {
     @apply grid;
 }
 
-.iwFormInputContainer {
+.iwFormInputWrapper {
     @apply m-2;
 }
 
@@ -70,7 +70,7 @@
     @apply text-primary-600 dark:text-gray-300 bg-transparent font-bold uppercase px-3 py-1 text-xs outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150;
 }
 
-.iwFormResetBtnContainer {
+.iwFormResetBtnWrapper {
     @apply col-span-full justify-self-end;
 }
 
