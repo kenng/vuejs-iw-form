@@ -29,6 +29,8 @@ type IwFormInputSelectOption = {
     disabled?: boolean
 }
 
+type IwFormInputSelectedOption = number | string | { value: number | string, [key: string]: any } | undefined
+
 interface IwFormInput {
     // name in type will be the formData variable name as well
     name: string;
