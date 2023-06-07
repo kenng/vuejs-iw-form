@@ -18,10 +18,6 @@ const IwFormTypeTextGroup: Array<IwFormType> = [
 ];
 
 const emit = defineEmits(['change', 'reset-input'])
-const formStyle: IwFormStyle = {
-  cssSubmitBtnWrapper: 'iwFormInputWrapper',
-  cssResetBtnWrapper: 'iwFormResetBtnWrapper',
-}
 
 const props = defineProps({
   // required
@@ -37,7 +33,10 @@ const props = defineProps({
   },
   css: {
     type: Object as PropType<IwFormStyle>,
-    default: formStyle,
+    default: {
+      cssSubmitBtnWrapper: 'iwFormInputWrapper',
+      cssResetBtnWrapper: 'iwFormResetBtnWrapper',
+    },
   },
   isReadOnly: {
     type: Boolean,
