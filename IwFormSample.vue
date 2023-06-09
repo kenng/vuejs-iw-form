@@ -439,7 +439,7 @@ const formTextMoreAttribute: FormSample = {
                 placeholder: 'Additional Attribute',
                 disabled: true,
                 cssWrapper: 'col-xs-6',
-                inputCSS: 'q-my-none q-ml-xs q-mr-none',
+                cssInput: 'q-my-none q-ml-xs q-mr-none',
             },
         ],
     })

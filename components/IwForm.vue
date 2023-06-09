@@ -133,7 +133,7 @@ function getInputCss(item: IwFormInput): string {
 
   if (item.showPrefixIcon) css += ' iwFormPrefixIconPadding'
 
-  return css
+  return css + ' ' + item.cssInput
 }
 
 function validate(item: IwFormInput, data: any) {

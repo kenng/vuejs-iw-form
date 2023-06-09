@@ -48,7 +48,7 @@ interface IwFormInput {
 
     cssTextColor?: string;
     cssWrapper?: string;
-    inputCSS?: string;
+    cssInput?: string;
     styleFilled?: boolean;
     styleDense?: boolean;
     styleDark?: boolean;
@@ -115,8 +115,8 @@ interface IwFormInput {
 }
 
 interface IwFormStyle {
-    cssSubmitBtnWrapper: string,
-    cssResetBtnWrapper: string,
+    cssSubmitBtnWrapper?: string,
+    cssResetBtnWrapper?: string,
 }
 
 interface IRuleData {
