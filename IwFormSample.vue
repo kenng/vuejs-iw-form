@@ -196,7 +196,7 @@ const formSelectGender: FormSample = {
             {
                 name: 'gender',
                 label: 'gender',
-                type: IwFormType.SELECT_MULTI,
+                type: IwFormType.SELECT,
                 // selectIsMapOptionToLabel: true,
                 selectConfig: gender,
                 rules: [IwFormRule.gender({})],
@@ -204,7 +204,7 @@ const formSelectGender: FormSample = {
             {
                 name: 'color',
                 label: 'color (multiple select)',
-                type: IwFormType.SELECT_MULTI,
+                type: IwFormType.SELECT,
                 // selectIsMapOptionToLabel: true,
                 selectConfig: color,
                 rules: [],

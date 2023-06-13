@@ -3,8 +3,8 @@ import { ref, PropType } from 'vue'
 import { Icon } from '@iconify/vue';
 import IwFormConfig, { IwFormType } from '../utils/IwFormConfig';
 import IwObject from '../utils/IwObject'
-import HeadlessUISelect from './HeadlessUISelect.vue';
 import EasepickCalendar from './EasepickCalendar.vue';
+import VueMultiSelect from './VueMultiSelect.vue';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -191,23 +191,28 @@ function onFocus(item: IwFormInput, data: any) {
   // validate(item, data)
 }
 
-function selectInputOnChange(item: IwFormInput, val: any) {
+function selectInputOnChange(item: IwFormInput,
+  newlySelected: IwFormInputSelectOption,
+  selected: IwFormInputSelectOption | Array<IwFormInputSelectOption>) {
+
   let key = 'value'
   key = item.selectConfig!.keyName
   if (!item.selectConfig!.multiple) {
-    myFormData.value[item.name] = val[key]
+    myFormData.value[item.name] = selected[key]
   } else {
     myFormData.value[item.name] = []
-    val?.forEach((selected: IwFormInputSelectOption) => {
-      myFormData.value[item.name].push(selected.value)
-    });
+    if (Array.isArray(selected)) {
+      selected.forEach((selected: IwFormInputSelectOption) => {
+        myFormData.value[item.name].push(selected.value)
+      });
+    }
   }
 
-  if (validate(item, val)) {
+  if (validate(item, selected)) {
     delete errors.value[item.name]
   }
 
-  onChange(item, val)
+  onChange(item, selected)
 }
 
 function dateOnChange(item: IwFormInput, val: any) {
@@ -422,16 +427,14 @@ initFormData();
             </p>
           </div>
         </template>
-        <template name="select-dropdown"
-                  v-else-if='IwFormTypeEnum.SELECT === (item.type)'>
+        <template name="select-multi"
+                  v-else-if="IwFormTypeEnum.SELECT === (item.type)">
           <template v-if='!isReadOnly'>
             <label :for="`${formId}-${item.name}`"
                    class="iwFormInputLabel">{{ setLabel(item) }}</label>
-            <HeadlessUISelect :id="`${formId}-${item.name}`"
-                              ref="inputRefs"
-                              :disabled="item.disabled"
-                              @changed="(val) => selectInputOnChange(item, val)"
-                              :config="item.selectConfig!"></HeadlessUISelect>
+            <VueMultiSelect :config="item.selectConfig"
+                            @changed="(newSelected, selected) => selectInputOnChange(item, newSelected, selected)"
+                            :disabled="item.disabled" />
             <p class="iwFormInputHelperText">
               <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name] }}</span></template>
               <template v-else> {{ item.helperText }} </template>
@@ -443,14 +446,6 @@ initFormData();
                    :label='item.label'
                    disable />
           </template>
-        </template>
-        <template name="select-multi"
-                  v-else-if="IwFormTypeEnum.SELECT_MULTI === (item.type)">
-          <label :for="`${formId}-${item.name}`"
-                 class="iwFormInputLabel">{{ setLabel(item) }}</label>
-          <VueMultiSelect :config="item.selectConfig"
-                          @changed="(val) => selectInputOnChange(item, val)"
-                          :disabled="item.disabled" />
         </template>
         <template v-else-if='IwFormTypeEnum.CHECKBOX === (item.type)'>
           <input :id="`${formId}-${item.name}`"

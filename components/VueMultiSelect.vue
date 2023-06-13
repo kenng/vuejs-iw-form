@@ -27,7 +27,10 @@ if (props.config.selected) selectedOption.value = props.config.selected
 //////////////////////////////////////////////////////////@  Functions
 //////////////////////////////////////////////////////////////////////
 function onSelect(selected: any, id: any) {
-    emit('changed', selected)
+    emit('changed', selected, selectedOption.value)
+}
+
+function onInput(value: any, id: any) {
 }
 
 function getTrackBy(config: IwFormInputSelectConfig) {
@@ -51,6 +54,7 @@ function getLabelBy(config: IwFormInputSelectConfig) {
 <template>
     <VueMultiselect v-model="selectedOption"
                     @select="onSelect"
+                    @input="onInput"
                     :label="getLabelBy(props.config)"
                     :track-by="getTrackBy(props.config)"
                     :allowEmpty="props.config.allowEmptySelect"
