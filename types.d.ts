@@ -60,6 +60,8 @@ interface IwFormInput {
     showSuffixIcon?: boolean;
     suffixIcon?: string;
 
+    component?: VueComponent;
+
     dateOptions?: IwFormCalendar;
 
     optionGroupInline?: boolean;

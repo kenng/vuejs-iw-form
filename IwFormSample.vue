@@ -7,6 +7,7 @@ import IwFormInputSelectConfig from './utils/IwFormInputSelectConfig';
 import dayjs from 'dayjs'
 import IwFormRule from './utils/IwFormRule';
 import IwForm from './components/IwForm.vue';
+import IwFormSampleComponent from './IwFormSampleComponent.vue';
 
 interface FormSample {
     title: string
@@ -520,6 +521,24 @@ const formSwitchWithPropData: FormSample = {
     })
 }
 
+
+const formWithDynamicComponent: FormSample = {
+    title: 'form with dynamic component',
+    form: new IwFormConfig({
+        formInputs: [
+            {
+                name: 'name',
+                type: IwFormType.TEXTGROUP_TEXT,
+            },
+            {
+                name: 'formWithDynamicComponent',
+                type: IwFormType.COMPONENT,
+                component: IwFormSampleComponent,
+            },
+        ],
+    })
+}
+
 const gridForm: FormSample = {
     title: 'Simple Grid Form',
     form: new IwFormConfig({
@@ -582,6 +601,7 @@ const forms: FormSample[] = [
     formTextMoreAttribute,
     formSwitch,
     formSwitchWithPropData,
+    formWithDynamicComponent,
 ]
 
 // will be populated the template refs value after mount

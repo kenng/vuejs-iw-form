@@ -18,6 +18,7 @@ export enum IwFormType {
     DATE = 'date',
     BUTTON = 'button',
     UPLOADER = 'uploader',
+    COMPONENT = 'component',
 }
 
 export default class IwFormConfig {

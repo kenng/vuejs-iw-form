@@ -325,6 +325,7 @@ async function formOnSubmit(ev: Event) {
     submitConfirmed();
   }
 }
+
 function submitConfirmed() {
   // getMyForm()
   //   .validate()
@@ -349,6 +350,7 @@ function submitConfirmed() {
   //     // console.log($refs.myform);
   //   });
 }
+
 function setCanSubmitAgain(canSubmitAgainParam: boolean) {
   if (canSubmitAgainParam) {
     canSubmitAgain = canSubmitAgainParam
@@ -391,10 +393,12 @@ initFormData();
                   v-if='IwFormTypeEnum.LABEL === (item.type)'>
           <div></div>
         </template>
+
         <template name="separator"
                   v-else-if='IwFormTypeEnum.SEPARATOR === (item.type)'>
           <hr>
         </template>
+
         <template name="text-group"
                   v-else-if='IwFormTypeTextGroup.indexOf(item.type) >= 0'>
           <label :for="`${formId}-${item.name}`"
@@ -427,7 +431,8 @@ initFormData();
             </p>
           </div>
         </template>
-        <template name="select-multi"
+
+        <template name="select"
                   v-else-if="IwFormTypeEnum.SELECT === (item.type)">
           <template v-if='!isReadOnly'>
             <label :for="`${formId}-${item.name}`"
@@ -447,7 +452,9 @@ initFormData();
                    disable />
           </template>
         </template>
-        <template v-else-if='IwFormTypeEnum.CHECKBOX === (item.type)'>
+
+        <template name="checkbox"
+                  v-else-if='IwFormTypeEnum.CHECKBOX === (item.type)'>
           <input :id="`${formId}-${item.name}`"
                  type="checkbox"
                  v-model="myFormData[item.name]"
@@ -457,7 +464,9 @@ initFormData();
           <label :for="`${formId}-${item.name}`"
                  class="iwFormInputLabelInline">{{ setLabel(item) }}</label>
         </template>
-        <template v-else-if='IwFormTypeEnum.DATE === (item.type)'>
+
+        <template name="date"
+                  v-else-if='IwFormTypeEnum.DATE === (item.type)'>
           <label :for="`${formId}-${item.name}`"
                  class="iwFormInputLabel">{{ setLabel(item) }}</label>
           <EasepickCalendar :id="`${formId}-${item.name}`"
@@ -471,7 +480,15 @@ initFormData();
             <template v-else> {{ item.helperText }} </template>
           </p>
         </template>
-      </div>
+
+        <template name="component"
+                  v-else-if="IwFormTypeEnum.COMPONENT === (item.type)">
+          <component :is="item.component"
+                     :formInput="item"
+                     :formData="myFormData"></component>
+        </template>
+      </div><!-- end of form inputs -->
+
       <div :class="css.cssSubmitBtnWrapper ?? 'iwFormInputWrapper'">
         <template v-if="showSubmitBtn">
           <label :for="`${formId}-submit-btn`"
@@ -490,6 +507,7 @@ initFormData();
         </template>
       </div>
     </form>
+
     <div v-if="formErrorMsg"
          class="iwFormAlertError"
          role="alert">
