@@ -6,6 +6,7 @@ import IwObject from '../utils/IwObject'
 import HeadlessUISelect from './HeadlessUISelect.vue';
 import EasepickCalendar from './EasepickCalendar.vue';
 
+
 //////////////////////////////////////////////////////////////////////
 //  Emit & Props
 //////////////////////////////////////////////////////////////////////
@@ -99,6 +100,7 @@ const props = defineProps({
 //////////////////////////////////////////////////////////////////////
 //  Variables
 //////////////////////////////////////////////////////////////////////
+const IwFormTypeEnum = IwFormType
 const formId = (new Date()).getTime() + Math.random() * 10000
 let totalSubmission = 0;
 let canSubmitAgain = props.canSubmitAgain;
@@ -113,11 +115,6 @@ const inputRefs = ref([])
 //////////////////////////////////////////////////////////////////////
 //  Functions
 //////////////////////////////////////////////////////////////////////
-function getType(param: Function | string) {
-  if (typeof param === 'function') return param()
-  return param;
-}
-
 function getAriaLabel(item: IwFormInput): string {
   if (item.disabled) return 'Input disabled';
   return 'form input'
@@ -386,15 +383,15 @@ initFormData();
            :key="item.name"
            :class="getCssWrapper(item.cssWrapper, props.isReadOnly)">
         <template name="label"
-                  v-if='IwFormType.LABEL === getType(item.type)'>
+                  v-if='IwFormTypeEnum.LABEL === (item.type)'>
           <div></div>
         </template>
         <template name="separator"
-                  v-else-if='getType(item.type) === IwFormType.SEPARATOR'>
+                  v-else-if='IwFormTypeEnum.SEPARATOR === (item.type)'>
           <hr>
         </template>
         <template name="text-group"
-                  v-else-if='IwFormTypeTextGroup.indexOf(getType(item.type)) >= 0'>
+                  v-else-if='IwFormTypeTextGroup.indexOf(item.type) >= 0'>
           <label :for="`${formId}-${item.name}`"
                  class="iwFormInputLabel">{{ setLabel(item) }}</label>
           <div class="mb-2 relative">
@@ -412,7 +409,7 @@ initFormData();
                    @change="(event) => onChange(item, (event.target as HTMLInputElement).value)"
                    @blur="(_) => onBlur(item, myFormData[item.name])"
                    @focus="(_) => onFocus(item, myFormData[item.name])"
-                   :type="getType(item.type)"
+                   :type="(item.type)"
                    :class="getInputCss(item)"
                    :placeholder="item.placeholder"
                    :rules="item.rules"
@@ -426,7 +423,7 @@ initFormData();
           </div>
         </template>
         <template name="select-dropdown"
-                  v-else-if='getType(item.type) === IwFormType.SELECT'>
+                  v-else-if='IwFormTypeEnum.SELECT === (item.type)'>
           <template v-if='!isReadOnly'>
             <label :for="`${formId}-${item.name}`"
                    class="iwFormInputLabel">{{ setLabel(item) }}</label>
@@ -447,7 +444,15 @@ initFormData();
                    disable />
           </template>
         </template>
-        <template v-else-if='getType(item.type) === IwFormType.CHECKBOX'>
+        <template name="select-multi"
+                  v-else-if="IwFormTypeEnum.SELECT_MULTI === (item.type)">
+          <label :for="`${formId}-${item.name}`"
+                 class="iwFormInputLabel">{{ setLabel(item) }}</label>
+          <VueMultiSelect :config="item.selectConfig"
+                          @changed="(val) => selectInputOnChange(item, val)"
+                          :disabled="item.disabled" />
+        </template>
+        <template v-else-if='IwFormTypeEnum.CHECKBOX === (item.type)'>
           <input :id="`${formId}-${item.name}`"
                  type="checkbox"
                  v-model="myFormData[item.name]"
@@ -457,7 +462,7 @@ initFormData();
           <label :for="`${formId}-${item.name}`"
                  class="iwFormInputLabelInline">{{ setLabel(item) }}</label>
         </template>
-        <template v-else-if='IwFormType.DATE === getType(item.type)'>
+        <template v-else-if='IwFormTypeEnum.DATE === (item.type)'>
           <label :for="`${formId}-${item.name}`"
                  class="iwFormInputLabel">{{ setLabel(item) }}</label>
           <EasepickCalendar :id="`${formId}-${item.name}`"
@@ -498,5 +503,7 @@ initFormData();
   </div>
 </template>
 
+<style src="vue-multiselect/dist/vue-multiselect.css">
+</style>
 <style scoped>
 </style>

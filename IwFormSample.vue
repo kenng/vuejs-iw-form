@@ -149,6 +149,46 @@ const formTextName: FormSample = {
     })
 };
 
+const gender = new IwFormInputSelectConfig([
+    {
+        label: 'Male',
+        value: 'M',
+    },
+    {
+        label: 'Female',
+        value: 'F',
+    },
+    {
+        label: 'Other',
+        value: 'O',
+    },
+    {
+        label: 'Invalid value',
+        value: 'Invalid',
+    },
+])
+
+const color = new IwFormInputSelectConfig([
+    {
+        label: 'Red',
+        value: 'red',
+    },
+    {
+        label: 'Green',
+        value: 'green',
+    },
+    {
+        label: 'Blue',
+        value: 'blue',
+    },
+    {
+        label: 'Invalid value',
+        value: 'Invalid',
+    },
+], {
+    multiple: true,
+})
+
 const formSelectGender: FormSample = {
     title: 'Simple Gender Select Form',
     form: new IwFormConfig({
@@ -156,27 +196,18 @@ const formSelectGender: FormSample = {
             {
                 name: 'gender',
                 label: 'gender',
-                type: IwFormType.SELECT,
+                type: IwFormType.SELECT_MULTI,
                 // selectIsMapOptionToLabel: true,
-                selectConfig: new IwFormInputSelectConfig([
-                    {
-                        label: 'Male',
-                        value: 'M',
-                    },
-                    {
-                        label: 'Female',
-                        value: 'F',
-                    },
-                    {
-                        label: 'Other',
-                        value: 'O',
-                    },
-                    {
-                        label: 'Invalid value',
-                        value: 'Invalid',
-                    },
-                ]),
+                selectConfig: gender,
                 rules: [IwFormRule.gender({})],
+            },
+            {
+                name: 'color',
+                label: 'color (multiple select)',
+                type: IwFormType.SELECT_MULTI,
+                // selectIsMapOptionToLabel: true,
+                selectConfig: color,
+                rules: [],
             },
         ],
     })

@@ -1,0 +1,28 @@
+{
+  "name": "vue-iwform",
+  "version": "1.0.0",
+  "description": "Making forms simple in Vue.js using a schema.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kenng/vuejs-iw-form.git"
+  },
+  "keywords": [
+    "vuejs3",
+    "typescript",
+    "form",
+    "schema"
+  ],
+  "author": "Ken Ng",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kenng/vuejs-iw-form/issues"
+  },
+  "homepage": "https://github.com/kenng/vuejs-iw-form#readme",
+  "dependencies": {
+    "vue-multiselect": "3.0.0-beta.2"
+  }
+}

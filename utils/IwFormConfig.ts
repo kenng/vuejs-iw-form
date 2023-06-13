@@ -9,6 +9,7 @@ export enum IwFormType {
     TEXTGROUP_PASSWORD = 'password',
     TEXTGROUP_TEXTAREA = 'textarea',
     SELECT = 'select',
+    SELECT_MULTI = 'select_multi',
     AUTOCOMPLETE = 'autocomplete',
     OPTION_GROUP = 'option_group',
     CHECKBOX = 'checkbox',
