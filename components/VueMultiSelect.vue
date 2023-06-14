@@ -8,7 +8,7 @@ import VueMultiselect from 'vue-multiselect';
 
 ///////////////////////////////////////////@  Props, Emits & Variables
 //////////////////////////////////////////////////////////////////////
-const emit = defineEmits(['changed'])
+const emit = defineEmits(['changed', 'removed'])
 
 const props = defineProps({
     config: {
@@ -18,16 +18,40 @@ const props = defineProps({
     disabled: { type: Boolean, default: false }
 })
 
-const selectedOption = ref()
-if (props.config.selected) selectedOption.value = props.config.selected
+const keyName = props.config.keyName
+
+const selectedOption = ref<IwFormInputSelectOption | Array<IwFormInputSelectOption>>()
+
 
 /////////////////////////////////////////////////@  Computed & Watches
 //////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////@  Functions
 //////////////////////////////////////////////////////////////////////
-function onSelect(selected: any, id: any) {
-    emit('changed', selected, selectedOption.value)
+function initSelected() {
+    if (props.config.selected) {
+        selectedOption.value = props.config.options.find(
+            option => option[keyName] == props.config.selected
+        )
+    }
+}
+
+function getSelectedKeys() {
+    if (!Array.isArray(selectedOption.value)) {
+        return selectedOption.value![keyName]
+    } else {
+        const keys: any = []
+        selectedOption.value.forEach(item => keys.push[item[keyName]])
+        return selectedOption.value
+    }
+}
+
+function onSelect(selected: IwFormInputSelectOption, id: any) {
+    emit('changed', getSelectedKeys(), selectedOption.value, selected)
+}
+
+function onRemove(removed: IwFormInputSelectOption, id: any) {
+    emit('removed', getSelectedKeys(), selectedOption.value, removed)
 }
 
 function onInput(value: any, id: any) {
@@ -46,6 +70,7 @@ function getLabelBy(config: IwFormInputSelectConfig) {
 
 //////////////////////////////////////////////////////@ Initialization
 //////////////////////////////////////////////////////////////////////
+initSelected();
 
 ////////////////////////////////////////////////////@  Export & Expose
 //////////////////////////////////////////////////////////////////////
@@ -54,6 +79,7 @@ function getLabelBy(config: IwFormInputSelectConfig) {
 <template>
     <VueMultiselect v-model="selectedOption"
                     @select="onSelect"
+                    @remove="onRemove"
                     @input="onInput"
                     :label="getLabelBy(props.config)"
                     :track-by="getTrackBy(props.config)"

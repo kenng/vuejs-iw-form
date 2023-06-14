@@ -192,27 +192,15 @@ function onFocus(item: IwFormInput, data: any) {
 }
 
 function selectInputOnChange(item: IwFormInput,
-  newlySelected: IwFormInputSelectOption,
-  selected: IwFormInputSelectOption | Array<IwFormInputSelectOption>) {
+  selectedKeys: any,
+) {
+  myFormData.value[item.name] = selectedKeys
 
-  let key = 'value'
-  key = item.selectConfig!.keyName
-  if (!item.selectConfig!.multiple) {
-    myFormData.value[item.name] = selected[key]
-  } else {
-    myFormData.value[item.name] = []
-    if (Array.isArray(selected)) {
-      selected.forEach((selected: IwFormInputSelectOption) => {
-        myFormData.value[item.name].push(selected.value)
-      });
-    }
-  }
-
-  if (validate(item, selected)) {
+  if (validate(item, selectedKeys)) {
     delete errors.value[item.name]
   }
 
-  onChange(item, selected)
+  onChange(item, selectedKeys)
 }
 
 function dateOnChange(item: IwFormInput, val: any) {
@@ -438,7 +426,8 @@ initFormData();
             <label :for="`${formId}-${item.name}`"
                    class="iwFormInputLabel">{{ setLabel(item) }}</label>
             <VueMultiSelect :config="item.selectConfig"
-                            @changed="(newSelected, selected) => selectInputOnChange(item, newSelected, selected)"
+                            @changed="(selectedKeys, selectedRaw, justSelected) => selectInputOnChange(item, selectedKeys)"
+                            @removed="(selectedKeys, selectedRaw, justRemoved) => selectInputOnChange(item, selectedKeys)"
                             :disabled="item.disabled" />
             <p class="iwFormInputHelperText">
               <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name] }}</span></template>
