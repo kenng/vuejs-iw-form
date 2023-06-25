@@ -47,7 +47,7 @@ function getSelectedKeys() {
 }
 
 function onSelect(selected: IwFormInputSelectOption, id: any) {
-    emit('changed', getSelectedKeys(), selectedOption.value, selected)
+    emit('changed', { value: getSelectedKeys() }, selectedOption.value, selected)
 }
 
 function onRemove(removed: IwFormInputSelectOption, id: any) {
