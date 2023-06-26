@@ -33,6 +33,8 @@ function initSelected() {
         selectedOption.value = props.config.options.find(
             option => option[keyName] == props.config.selected
         )
+
+        emit('changed', { value: getSelectedKeys() }, selectedOption.value)
     }
 }
 
@@ -70,6 +72,7 @@ function getLabelBy(config: IwFormInputSelectConfig) {
 
 //////////////////////////////////////////////////////@ Initialization
 //////////////////////////////////////////////////////////////////////
+
 initSelected();
 
 ////////////////////////////////////////////////////@  Export & Expose

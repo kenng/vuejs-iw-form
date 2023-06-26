@@ -1,3 +1,9 @@
+/**
+ * Convert data to complete dropdown options (with optional 'All' or 'Null')
+ * @param data
+ * @param param1
+ * @returns
+ */
 export function mapToDropdownOptions(
     data: { [key: string]: string },
     {
@@ -15,6 +21,28 @@ export function mapToDropdownOptions(
     }
 
     // example data: {"salesManagers":{"2":"sales1@vilor.com","3":"sales2@vilor.com"}}
+    for (const [key, val] of Object.entries(data)) {
+        res.push({ value: key, label: val })
+    }
+
+    return res
+}
+
+export function mapToDropdownFromObject(data: { [key: string]: string },
+    {
+        showAll = true,
+        showNull = false,
+    } = {}) {
+    const res: IwFormInputSelectOption[] = []
+
+    if (showNull) {
+        res.push({ value: '', label: '(Empty Value)', operator: 'null' })
+    }
+
+    if (showAll && !data['all']) {
+        res.push({ value: '', label: 'All' })
+    }
+
     for (const [key, val] of Object.entries(data)) {
         res.push({ value: key, label: val })
     }
