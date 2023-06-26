@@ -32,6 +32,12 @@ type IwFormInputSelectOption = {
 
 type IwFormInputSelectedOption = number | string | { value: number | string, [key: string]: any } | undefined
 
+interface IwFormGroup {
+    css?: string;
+    label?: string;
+    formInputs: Array<IwFormInput>;
+}
+
 interface IwFormInput {
     // name in type will be the formData variable name as well
     name: string;

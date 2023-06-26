@@ -33,120 +33,122 @@ const formTextName: FormSample = {
             //password is not defined here, so it will auto defined by IwFormConfig
         },
         // config: { isStyleDark },
-        formInputs: [
-            {
-                name: 'company_name',
-                label: 'Company Name',
-                type: IwFormType.TEXTGROUP_TEXT,
-                rules: [
-                    // IwFormRule.minLength({
-                    //     value: val,
-                    //     min: 4,
-                    //     required: true,
-                    //     errMsg: 'Need a minimum of 4 characters.',
-                    // }),
+        formGroups: [{
+            formInputs: [
+                {
+                    name: 'company_name',
+                    label: 'Company Name',
+                    type: IwFormType.TEXTGROUP_TEXT,
+                    rules: [
+                        // IwFormRule.minLength({
+                        //     value: val,
+                        //     min: 4,
+                        //     required: true,
+                        //     errMsg: 'Need a minimum of 4 characters.',
+                        // }),
 
-                    IwFormRule.required({}),
-                    IwFormRule.userName({
-                        errMsg:
-                            'Invalid name format. It should contain only character',
+                        IwFormRule.required({}),
+                        IwFormRule.userName({
+                            errMsg:
+                                'Invalid name format. It should contain only character',
+                        }),
+                    ],
+                },
+                {
+                    name: 'password',
+                    type: IwFormType.TEXTGROUP_TEXT,
+                },
+                {
+                    name: 'password_confirmed',
+                    ref: 'ref_password_confirmed',
+                    type: IwFormType.TEXTGROUP_TEXT,
+                    rules: [IwFormRule.match({
+                        errMsg: 'value must match to password',
+                        formName: 'password',
+                    })],
+                    // onBlur: (myFormData, ref) => {
+                    //     ref.validate();
+                    // },
+                },
+                {
+                    name: 'phone',
+                    label: 'Phone',
+                    type: IwFormType.TEXTGROUP_TEXT,
+                    rules: [IwFormRule.phone({ required: true })],
+                },
+                {
+                    name: 'email',
+                    label: 'email',
+                    type: IwFormType.TEXTGROUP_TEXT,
+                    rules: [IwFormRule.required, IwFormRule.email({ required: true })],
+                },
+                {
+                    name: 'url',
+                    label: 'url',
+                    type: IwFormType.TEXTGROUP_TEXT,
+                    rules: [
+                        IwFormRule.url({ required: true }),
+                        IwFormRule.maxLength({ max: 20 }),
+                    ],
+                },
+                {
+                    name: 'number',
+                    label: 'number not null',
+                    type: IwFormType.TEXTGROUP_TEXT,
+                    rules: [
+                        IwFormRule.minLength({ minLength: 3 }),
+                        IwFormRule.notNull({}),
+                        IwFormRule.isNumber({}),
+                    ],
+                },
+                {
+                    name: 'mydateAnyValidDate',
+                    label: 'any valid date',
+                    type: IwFormType.DATE,
+                    rules: [IwFormRule.isDate({})],
+                    dateOptions: new IwFormCalendar(),
+                },
+                {
+                    name: 'mydateValidAfterToday',
+                    label: 'valid date after today',
+                    type: IwFormType.DATE,
+                    rules: [IwFormRule.dateIsAfterIncludeToday({})],
+                    dateOptions: new IwFormCalendar(),
+                },
+                {
+                    name: 'mydateValidAfterTwoDays',
+                    label: 'valid date after 2 days',
+                    type: IwFormType.DATE,
+                    rules: [
+                        IwFormRule.dateIsAfter({
+                            afterDate: dayjs(dayjs()).add(2, 'day').endOf('day').format('YYYY-MM-DD')
+                        }),
+                    ],
+                    dateOptions: new IwFormCalendar(),
+                },
+                {
+                    name: 'mydateValidBeforeToday',
+                    label: 'valid date before today',
+                    type: IwFormType.DATE,
+                    rules: [IwFormRule.dateIsBeforeIncludeToday({})],
+                    dateOptions: new IwFormCalendar(),
+                },
+                {
+                    name: 'mydateRange',
+                    label: 'Date Range',
+                    type: IwFormType.DATE,
+                    dateOptions: new IwFormCalendar({
+                        enableRangePicker: true,
                     }),
-                ],
-            },
-            {
-                name: 'password',
-                type: IwFormType.TEXTGROUP_TEXT,
-            },
-            {
-                name: 'password_confirmed',
-                ref: 'ref_password_confirmed',
-                type: IwFormType.TEXTGROUP_TEXT,
-                rules: [IwFormRule.match({
-                    errMsg: 'value must match to password',
-                    formName: 'password',
-                })],
-                // onBlur: (myFormData, ref) => {
-                //     ref.validate();
-                // },
-            },
-            {
-                name: 'phone',
-                label: 'Phone',
-                type: IwFormType.TEXTGROUP_TEXT,
-                rules: [IwFormRule.phone({ required: true })],
-            },
-            {
-                name: 'email',
-                label: 'email',
-                type: IwFormType.TEXTGROUP_TEXT,
-                rules: [IwFormRule.required, IwFormRule.email({ required: true })],
-            },
-            {
-                name: 'url',
-                label: 'url',
-                type: IwFormType.TEXTGROUP_TEXT,
-                rules: [
-                    IwFormRule.url({ required: true }),
-                    IwFormRule.maxLength({ max: 20 }),
-                ],
-            },
-            {
-                name: 'number',
-                label: 'number not null',
-                type: IwFormType.TEXTGROUP_TEXT,
-                rules: [
-                    IwFormRule.minLength({ minLength: 3 }),
-                    IwFormRule.notNull({}),
-                    IwFormRule.isNumber({}),
-                ],
-            },
-            {
-                name: 'mydateAnyValidDate',
-                label: 'any valid date',
-                type: IwFormType.DATE,
-                rules: [IwFormRule.isDate({})],
-                dateOptions: new IwFormCalendar(),
-            },
-            {
-                name: 'mydateValidAfterToday',
-                label: 'valid date after today',
-                type: IwFormType.DATE,
-                rules: [IwFormRule.dateIsAfterIncludeToday({})],
-                dateOptions: new IwFormCalendar(),
-            },
-            {
-                name: 'mydateValidAfterTwoDays',
-                label: 'valid date after 2 days',
-                type: IwFormType.DATE,
-                rules: [
-                    IwFormRule.dateIsAfter({
-                        afterDate: dayjs(dayjs()).add(2, 'day').endOf('day').format('YYYY-MM-DD')
-                    }),
-                ],
-                dateOptions: new IwFormCalendar(),
-            },
-            {
-                name: 'mydateValidBeforeToday',
-                label: 'valid date before today',
-                type: IwFormType.DATE,
-                rules: [IwFormRule.dateIsBeforeIncludeToday({})],
-                dateOptions: new IwFormCalendar(),
-            },
-            {
-                name: 'mydateRange',
-                label: 'Date Range',
-                type: IwFormType.DATE,
-                dateOptions: new IwFormCalendar({
-                    enableRangePicker: true,
-                }),
-            },
-            {
-                name: 'mytime',
-                label: 'valid time',
-                type: IwFormType.TIME,
-                rules: [IwFormRule.isValidTime({})],
-            },
-        ],
+                },
+                {
+                    name: 'mytime',
+                    label: 'valid time',
+                    type: IwFormType.TIME,
+                    rules: [IwFormRule.isValidTime({})],
+                },
+            ],
+        }],
     })
 };
 
@@ -193,76 +195,85 @@ const color = new IwFormInputSelectConfig([
 const formSelectGender: FormSample = {
     title: 'Simple Gender Select Form',
     form: new IwFormConfig({
-        formInputs: [
-            {
-                name: 'gender',
-                label: 'gender',
-                type: IwFormType.SELECT,
-                // selectIsMapOptionToLabel: true,
-                selectConfig: gender,
-                rules: [IwFormRule.gender({})],
-            },
-            {
-                name: 'color',
-                label: 'color (multiple select)',
-                type: IwFormType.SELECT,
-                // selectIsMapOptionToLabel: true,
-                selectConfig: color,
-                rules: [],
-            },
-        ],
+        formGroups: [{
+            formInputs: [
+                {
+                    name: 'gender',
+                    label: 'gender',
+                    type: IwFormType.SELECT,
+                    // selectIsMapOptionToLabel: true,
+                    selectConfig: gender,
+                    rules: [IwFormRule.gender({})],
+                },
+                {
+                    name: 'color',
+                    label: 'color (multiple select)',
+                    type: IwFormType.SELECT,
+                    // selectIsMapOptionToLabel: true,
+                    selectConfig: color,
+                    rules: [],
+                },
+            ],
+        }
+        ]
     })
 }
 
 const formAutoComplete: FormSample = {
     title: 'Simple AutoComplete Form',
     form: new IwFormConfig({
-        formInputs: [
-            {
-                name: 'food',
-                label: 'Food',
-                type: IwFormType.AUTOCOMPLETE,
-                selectConfig: new IwFormInputSelectConfig([
-                    {
-                        label: 'Burger',
-                        value: 'burger',
-                    },
-                    {
-                        label: 'Chips',
-                        value: 'chips',
-                    },
-                ]),
-            },
-        ],
+        formGroups: [{
+            formInputs: [
+                {
+                    name: 'food',
+                    label: 'Food',
+                    type: IwFormType.AUTOCOMPLETE,
+                    selectConfig: new IwFormInputSelectConfig([
+                        {
+                            label: 'Burger',
+                            value: 'burger',
+                        },
+                        {
+                            label: 'Chips',
+                            value: 'chips',
+                        },
+                    ]),
+                },
+            ],
+        }
+        ]
     })
 }
 
 const formRadioBtn: FormSample = {
     title: 'Simple Radio Button Form',
     form: new IwFormConfig({
-        formInputs: [
-            {
-                name: 'radioBtn',
-                type: IwFormType.OPTION_GROUP,
-                // disabled: true,
-                selectConfig: new IwFormInputSelectConfig([
-                    {
-                        label: 'Battery too low',
-                        value: 'bat',
-                    },
-                    {
-                        label: 'beam light is dim',
-                        value: 'light',
-                        color: 'green',
-                    },
-                    {
-                        label: 'engine oil replacement',
-                        value: 'engine',
-                        color: 'red',
-                    },
-                ]),
-            },
-        ],
+        formGroups: [{
+            formInputs: [
+                {
+                    name: 'radioBtn',
+                    type: IwFormType.OPTION_GROUP,
+                    // disabled: true,
+                    selectConfig: new IwFormInputSelectConfig([
+                        {
+                            label: 'Battery too low',
+                            value: 'bat',
+                        },
+                        {
+                            label: 'beam light is dim',
+                            value: 'light',
+                            color: 'green',
+                        },
+                        {
+                            label: 'engine oil replacement',
+                            value: 'engine',
+                            color: 'red',
+                        },
+                    ]),
+                },
+            ],
+        }
+        ]
     })
 }
 
@@ -272,31 +283,34 @@ const formRadioBtnInlineDisabled: FormSample = {
         formData: {
             radioBtnInline: 'engine',
         },
-        formInputs: [
-            {
-                name: 'radioBtnInline',
-                type: IwFormType.OPTION_GROUP,
-                optionGroupInline: true,
-                label: 'car issue',
-                disabled: true,
-                selectConfig: new IwFormInputSelectConfig([
-                    {
-                        label: 'Battery too low',
-                        value: 'bat',
-                    },
-                    {
-                        label: 'beam light is dim',
-                        value: 'light',
-                        color: 'green',
-                    },
-                    {
-                        label: 'engine oil replacement',
-                        value: 'engine',
-                        color: 'red',
-                    },
-                ]),
-            },
-        ],
+        formGroups: [{
+            formInputs: [
+                {
+                    name: 'radioBtnInline',
+                    type: IwFormType.OPTION_GROUP,
+                    optionGroupInline: true,
+                    label: 'car issue',
+                    disabled: true,
+                    selectConfig: new IwFormInputSelectConfig([
+                        {
+                            label: 'Battery too low',
+                            value: 'bat',
+                        },
+                        {
+                            label: 'beam light is dim',
+                            value: 'light',
+                            color: 'green',
+                        },
+                        {
+                            label: 'engine oil replacement',
+                            value: 'engine',
+                            color: 'red',
+                        },
+                    ]),
+                },
+            ],
+        }
+        ]
     })
 }
 
@@ -306,13 +320,16 @@ const formCheckBoxSimple: FormSample = {
         formData: {
             result: 1,
         },
-        formInputs: [
-            {
-                name: 'result',
-                type: IwFormType.CHECKBOX,
-                label: 'passed',
-            },
-        ],
+        formGroups: [{
+            formInputs: [
+                {
+                    name: 'result',
+                    type: IwFormType.CHECKBOX,
+                    label: 'passed',
+                },
+            ],
+        }
+        ]
     })
 }
 
@@ -322,127 +339,148 @@ const formCheckBoxCustomValue: FormSample = {
         formData: {
             resultFail: 'failed',
         },
-        formInputs: [
-            {
-                name: 'resultFail',
-                type: IwFormType.CHECKBOX,
-                label: 'failed',
-                checkBoxTrueValue: 'failed',
-                checkBoxFalseValue: 'passed',
-            },
-        ],
+        formGroups: [{
+            formInputs: [
+                {
+                    name: 'resultFail',
+                    type: IwFormType.CHECKBOX,
+                    label: 'failed',
+                    checkBoxTrueValue: 'failed',
+                    checkBoxFalseValue: 'passed',
+                },
+            ],
+        }
+        ]
     })
 }
 
 const formDateAfter: FormSample = {
     title: 'Simple Date After Form',
     form: new IwFormConfig({
-        formInputs: [
-            {
-                name: 'dateMin',
-                type: IwFormType.DATE,
-                label: 'min date, available after tomorrow',
-                allowedDate: [getTomorrowDate()],
-                allowedDateFn: 'min',
-                dateOptions: new IwFormCalendar(),
-            },
-        ],
+        formGroups: [{
+            formInputs: [
+                {
+                    name: 'dateMin',
+                    type: IwFormType.DATE,
+                    label: 'min date, available after tomorrow',
+                    allowedDate: [getTomorrowDate()],
+                    allowedDateFn: 'min',
+                    dateOptions: new IwFormCalendar(),
+                },
+            ],
+        }
+        ]
     })
 }
 
 const formDateMax: FormSample = {
     title: 'Simple Date Max Form',
     form: new IwFormConfig({
-        formInputs: [
-            {
-                name: 'dateMax',
-                type: IwFormType.DATE,
-                label: 'max date, not available after today',
-                allowedDate: [getTodayDate()],
-                allowedDateFn: 'max',
-                dateOptions: new IwFormCalendar(),
-            },
-        ],
+        formGroups: [{
+            formInputs: [
+                {
+                    name: 'dateMax',
+                    type: IwFormType.DATE,
+                    label: 'max date, not available after today',
+                    allowedDate: [getTodayDate()],
+                    allowedDateFn: 'max',
+                    dateOptions: new IwFormCalendar(),
+                },
+            ],
+        }
+        ]
     })
 }
 
 const formDateBetween: FormSample = {
     title: 'Simple Date Between Form',
     form: new IwFormConfig({
-        formInputs: [
-            {
-                name: 'dateBetween',
-                type: IwFormType.DATE,
-                label: 'allowed date between date1 and date2',
-                allowedDate: [getTodayDate(), getTomorrowDate()],
-                allowedDateFn: 'between',
-                dateOptions: new IwFormCalendar(),
-            },
-        ],
+        formGroups: [{
+            formInputs: [
+                {
+                    name: 'dateBetween',
+                    type: IwFormType.DATE,
+                    label: 'allowed date between date1 and date2',
+                    allowedDate: [getTodayDate(), getTomorrowDate()],
+                    allowedDateFn: 'between',
+                    dateOptions: new IwFormCalendar(),
+                },
+            ],
+        }
+        ]
     })
 }
 
 const formDateCustomFunction: FormSample = {
     title: 'Simple Date Custom Function Form',
     form: new IwFormConfig({
-        formInputs: [
-            {
-                name: 'dateCustomFn',
-                type: IwFormType.DATE,
-                label: 'custom function allowed date',
-                allowedDate: [getTodayDate()],
-                allowedDateFn: (item: any, mydate: any) => {
-                    // this example we want to get date larger than today
-                    return mydate >= item.allowedDate[0];
+        formGroups: [{
+            formInputs: [
+                {
+                    name: 'dateCustomFn',
+                    type: IwFormType.DATE,
+                    label: 'custom function allowed date',
+                    allowedDate: [getTodayDate()],
+                    allowedDateFn: (item: any, mydate: any) => {
+                        // this example we want to get date larger than today
+                        return mydate >= item.allowedDate[0];
+                    },
+                    dateOptions: new IwFormCalendar(),
                 },
-                dateOptions: new IwFormCalendar(),
-            },
-        ],
+            ],
+        }
+        ]
     })
 }
 
 const formSingleUpload: FormSample = {
     title: 'Simple Single Upload Form',
     form: new IwFormConfig({
-        formInputs: [
-            {
-                name: 'uploader',
-                type: IwFormType.UPLOADER,
-                label: 'Uploader Label',
-                uploadURL: 'http://localhost:4444/upload',
-                uploadAccept: '.jpg, .pdf, image/*',
-                uploadAutoUpload: true,
-            },
-        ],
+        formGroups: [{
+            formInputs: [
+                {
+                    name: 'uploader',
+                    type: IwFormType.UPLOADER,
+                    label: 'Uploader Label',
+                    uploadURL: 'http://localhost:4444/upload',
+                    uploadAccept: '.jpg, .pdf, image/*',
+                    uploadAutoUpload: true,
+                },
+            ],
+        }
+        ]
     })
 }
 
 const formMultipleUpload: FormSample = {
     title: 'Simple Multiple Upload Form',
     form: new IwFormConfig({
-        formInputs: [
-            {
-                name: 'uploader',
-                type: IwFormType.UPLOADER,
-                label: 'Uploader Label',
-                uploadURL: 'http://localhost:4444/upload',
-                uploadAccept: '.jpg, .pdf, image/*',
-                uploadIsMultiple: true,
-                uploadAutoUpload: true,
-                uploadHasNoThumbnail: true,
-                cssTextColor: 'black',
-                cssWrapper: 'col-xs-6',
-            },
-            {
-                name: 'separator',
-                type: IwFormType.SEPARATOR,
-            },
-            {
-                name: 'label',
-                type: IwFormType.LABEL,
-                label: 'section label',
-            },
-        ],
+        formGroups: [{
+            formInputs: [
+                {
+                    name: 'uploader',
+                    type: IwFormType.UPLOADER,
+                    label: 'Uploader Label',
+                    uploadURL: 'http://localhost:4444/upload',
+                    uploadAccept: '.jpg, .pdf, image/*',
+                    uploadIsMultiple: true,
+                    uploadAutoUpload: true,
+                    uploadHasNoThumbnail: true,
+                    cssTextColor: 'black',
+                    cssWrapper: 'col-xs-6',
+                },
+                {
+                    name: 'separator',
+                    type: IwFormType.SEPARATOR,
+                },
+                {
+                    name: 'label',
+                    type: IwFormType.LABEL,
+                    label: 'section label',
+                },
+            ],
+        }
+        ]
     })
 }
 
@@ -450,30 +488,36 @@ const formTime: FormSample = {
     title: 'Simple Time Form',
     form:
         new IwFormConfig({
-            formInputs: [
-                {
-                    name: 'time',
-                    type: IwFormType.TIME,
-                    label: 'dating time',
-                },
-            ],
+            formGroups: [{
+                formInputs: [
+                    {
+                        name: 'time',
+                        type: IwFormType.TIME,
+                        label: 'dating time',
+                    },
+                ],
+            }
+            ]
         })
 }
 
 const formTextMoreAttribute: FormSample = {
     title: 'Simple Text Form with Additional Attribute',
     form: new IwFormConfig({
-        formInputs: [
-            {
-                name: 'Additional Attribute',
-                type: IwFormType.TEXTGROUP_TEXT,
-                label: 'Additional Attribute',
-                placeholder: 'Additional Attribute',
-                disabled: true,
-                cssWrapper: 'col-xs-6',
-                cssInput: 'q-my-none q-ml-xs q-mr-none',
-            },
-        ],
+        formGroups: [{
+            formInputs: [
+                {
+                    name: 'Additional Attribute',
+                    type: IwFormType.TEXTGROUP_TEXT,
+                    label: 'Additional Attribute',
+                    placeholder: 'Additional Attribute',
+                    disabled: true,
+                    cssWrapper: 'col-xs-6',
+                    cssInput: 'q-my-none q-ml-xs q-mr-none',
+                },
+            ],
+        }
+        ]
     })
 }
 
@@ -483,41 +527,47 @@ const formSwitch: FormSample = {
         formData: {
             toggle_password_switch: true,
         },
-        formInputs: [
-            {
-                name: 'toggle_password_switch',
-                label: 'Update password',
-                type: IwFormType.SWITCH,
-                onChange: (myformdata: any) => {
-                    if (!myformdata.toggle_switch) myformdata.password = null;
+        formGroups: [{
+            formInputs: [
+                {
+                    name: 'toggle_password_switch',
+                    label: 'Update password',
+                    type: IwFormType.SWITCH,
+                    onChange: (myformdata: any) => {
+                        if (!myformdata.toggle_switch) myformdata.password = null;
+                    },
                 },
-            },
-            {
-                name: 'password',
-                type: IwFormType.TEXTGROUP_PASSWORD,
-                isVisible: (mydata: any) => {
-                    if (mydata.toggle_password_switch) return true;
-                    return false;
+                {
+                    name: 'password',
+                    type: IwFormType.TEXTGROUP_PASSWORD,
+                    isVisible: (mydata: any) => {
+                        if (mydata.toggle_password_switch) return true;
+                        return false;
+                    },
                 },
-            },
-        ],
+            ],
+        }
+        ]
     })
 }
 
 const formSwitchWithPropData: FormSample = {
     title: 'Simple Switch Form with onChange',
     form: new IwFormConfig({
-        formInputs: [
-            {
-                name: 'toggle_switch_with_prop',
-                label: 'test prop - see console',
-                type: IwFormType.SWITCH,
-                onChange: (myformdata: any, changeprop: any) => {
-                    console.log(myformdata);
-                    console.log(changeprop);
+        formGroups: [{
+            formInputs: [
+                {
+                    name: 'toggle_switch_with_prop',
+                    label: 'test prop - see console',
+                    type: IwFormType.SWITCH,
+                    onChange: (myformdata: any, changeprop: any) => {
+                        console.log(myformdata);
+                        console.log(changeprop);
+                    },
                 },
-            },
-        ],
+            ],
+        }
+        ]
     })
 }
 
@@ -525,17 +575,20 @@ const formSwitchWithPropData: FormSample = {
 const formWithDynamicComponent: FormSample = {
     title: 'form with dynamic component',
     form: new IwFormConfig({
-        formInputs: [
-            {
-                name: 'name',
-                type: IwFormType.TEXTGROUP_TEXT,
-            },
-            {
-                name: 'formWithDynamicComponent',
-                type: IwFormType.COMPONENT,
-                component: IwFormSampleComponent,
-            },
-        ],
+        formGroups: [{
+            formInputs: [
+                {
+                    name: 'name',
+                    type: IwFormType.TEXTGROUP_TEXT,
+                },
+                {
+                    name: 'formWithDynamicComponent',
+                    type: IwFormType.COMPONENT,
+                    component: IwFormSampleComponent,
+                },
+            ],
+        }
+        ]
     })
 }
 
@@ -543,25 +596,67 @@ const gridForm: FormSample = {
     title: 'Simple Grid Form',
     form: new IwFormConfig({
         cssForm: 'grid grid-cols-3 gap-1',
-        formInputs: [
+        formGroups: [{
+            formInputs: [
+                {
+                    type: IwFormType.TEXTGROUP_TEXT,
+                    name: 'name1',
+                    label: 'Input with three columns',
+                    cssWrapper: 'col-span-3',
+                },
+                {
+                    type: IwFormType.TEXTGROUP_TEXT,
+                    name: 'name2',
+                    label: 'Input with one column',
+                    cssWrapper: 'col-span-1',
+                },
+                {
+                    type: IwFormType.TEXTGROUP_TEXT,
+                    name: 'name3',
+                    label: 'Input with 2 columns',
+                    cssWrapper: 'col-span-2',
+                },
+            ]
+        }
+        ]
+    })
+}
+
+const multipleGroups: FormSample = {
+    title: 'Multiple formGroups',
+    form: new IwFormConfig({
+        formGroups: [
             {
-                type: IwFormType.TEXTGROUP_TEXT,
-                name: 'name1',
-                label: 'Input with three columns',
-                cssWrapper: 'col-span-3',
+                label: 'Group 1',
+                css: 'grid grid-cols-3 gap-1',
+                formInputs: [
+                    {
+                        type: IwFormType.TEXTGROUP_TEXT,
+                        name: 'name1',
+                        label: 'Surname',
+                    },
+                    {
+                        type: IwFormType.TEXTGROUP_TEXT,
+                        name: 'name2',
+                        label: 'Family name',
+                    },
+                ]
             },
             {
-                type: IwFormType.TEXTGROUP_TEXT,
-                name: 'name2',
-                label: 'Input with one column',
-                cssWrapper: 'col-span-1',
-            },
-            {
-                type: IwFormType.TEXTGROUP_TEXT,
-                name: 'name3',
-                label: 'Input with 2 columns',
-                cssWrapper: 'col-span-2',
-            },
+                label: 'Group 2',
+                formInputs: [
+                    {
+                        type: IwFormType.TEXTGROUP_TEXT,
+                        name: 'gender',
+                        label: 'gender',
+                    },
+                    {
+                        type: IwFormType.TEXTGROUP_TEXT,
+                        name: 'Address',
+                        label: 'address',
+                    },
+                ]
+            }
         ]
     })
 }
@@ -602,6 +697,7 @@ const forms: FormSample[] = [
     formSwitch,
     formSwitchWithPropData,
     formWithDynamicComponent,
+    multipleGroups,
 ]
 
 // will be populated the template refs value after mount
@@ -622,12 +718,14 @@ function getAllFormDate() {
         Section:
         <a href="#basic-example">
             <button type="button"
-                    class="bg-transparent text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Basic Example</button>
+                    class="bg-transparent text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Basic
+                Example</button>
         </a>
 
         <a href="#grid-style">
             <button type="button"
-                    class="bg-transparent text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Grid Style</button>
+                    class="bg-transparent text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Grid
+                Style</button>
 
         </a>
 
@@ -651,9 +749,9 @@ function getAllFormDate() {
     <h1 class="p-6 text-5xl"
         id="grid-style">Styling with Grid</h1>
 
-    <section class="border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl mt-6 p-6">
+    <!-- <section class="border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl mt-6 p-6">
         <IwForm :myForm="gridForm.form"></IwForm>
-    </section>
+    </section> -->
 </template>
 
 <style scoped>
