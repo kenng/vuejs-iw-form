@@ -192,7 +192,7 @@ function onFocus(item: IwFormInput, data: any) {
 }
 
 function selectInputOnChange(item: IwFormInput,
-  selectedKeys: any,
+  selectedKeys: IwFormInputSelectedOption,
 ) {
   myFormData.value[item.name] = selectedKeys
 
@@ -414,7 +414,8 @@ initFormData();
                    :ref="getRef(item)"
                    :required="setRequired(item)" />
             <p class="iwFormInputHelperText">
-              <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name] }}</span></template>
+              <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]
+              }}</span></template>
               <template v-else> {{ item.helperText }} </template>
             </p>
           </div>
@@ -430,7 +431,8 @@ initFormData();
                             @removed="(selectedKeys, selectedRaw, justRemoved) => selectInputOnChange(item, selectedKeys)"
                             :disabled="item.disabled" />
             <p class="iwFormInputHelperText">
-              <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name] }}</span></template>
+              <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]
+              }}</span></template>
               <template v-else> {{ item.helperText }} </template>
             </p>
           </template>
@@ -465,7 +467,8 @@ initFormData();
                             @reset="inputOnReset(item)"
                             :options="item.dateOptions!"></EasepickCalendar>
           <p class="iwFormInputHelperText">
-            <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name] }}</span></template>
+            <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]
+            }}</span></template>
             <template v-else> {{ item.helperText }} </template>
           </p>
         </template>
