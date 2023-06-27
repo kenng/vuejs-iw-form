@@ -154,9 +154,9 @@ function inputOnReset(item: IwFormInput) {
 
 
 function selectInputOnChange(item: IwFormInput,
-  selectedKeys: IwFormInputSelectedOption,
+  selectedKeys: IwFormInputSelectOption,
 ) {
-  myFormData.value[item.name] = selectedKeys
+  myFormData.value[item.name] = selectedKeys['value']
 
   if (validate(item, selectedKeys)) {
     delete errors.value[item.name]
