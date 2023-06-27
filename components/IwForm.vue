@@ -271,6 +271,8 @@ initFormData();
                    v-model="myFormData[item.name]"
                    :name="item.name"
                    :disable="item.disabled"
+                   :true-value="item.checkBoxTrueValue ? item.checkBoxTrueValue : true"
+                   :false-value="item.checkBoxFalseValue ? item.checkBoxFalseValue : false"
                    class="iwFormCheckbox">
             <label :for="`${formId}-${item.name}`"
                    class="iwFormInputLabelInline">{{ setLabel(item) }}</label>
