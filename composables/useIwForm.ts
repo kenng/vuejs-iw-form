@@ -88,26 +88,6 @@ export const useIwForm = (config: IwFormUseConfig) => {
         // validate(item, data)
     }
 
-    function selectInputOnChange(item: IwFormInput,
-        selectedKeys: IwFormInputSelectedOption,
-    ) {
-        myFormData.value[item.name] = selectedKeys
-
-        if (validate(item, selectedKeys)) {
-            delete errors.value[item.name]
-        }
-
-        onChange(item, selectedKeys)
-    }
-
-    function dateOnChange(item: IwFormInput, val: any) {
-        myFormData.value[item.name] = val
-        if (validate(item, val)) {
-            delete errors.value[item.name]
-        }
-
-        onChange(item, val)
-    }
 
     function setLabel(item: IwFormInput) {
         let label = item.label

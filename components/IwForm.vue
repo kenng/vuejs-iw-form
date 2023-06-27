@@ -105,6 +105,8 @@ const {
   // variables
   myFormData,
   errors,
+  totalSubmission,
+  formErrorMsg,
 
   // functions
   getAriaLabel,
@@ -113,8 +115,6 @@ const {
   onInput,
   onBlur,
   onFocus,
-  selectInputOnChange,
-  dateOnChange,
   setLabel,
   setRequired,
   getRef,
@@ -124,6 +124,7 @@ const {
   formOnReset,
   formOnSubmit,
   initFormData,
+  validate,
 } = useIwForm({
   myForm: props.myForm,
   onSubmit: props.onSubmit,
@@ -149,6 +150,28 @@ async function onChange(item: IwFormInput, val: any) {
 function inputOnReset(item: IwFormInput) {
   myFormData.value[item.name] = null
   emit('reset-input', { item })
+}
+
+
+function selectInputOnChange(item: IwFormInput,
+  selectedKeys: IwFormInputSelectedOption,
+) {
+  myFormData.value[item.name] = selectedKeys
+
+  if (validate(item, selectedKeys)) {
+    delete errors.value[item.name]
+  }
+
+  onChange(item, selectedKeys)
+}
+
+function dateOnChange(item: IwFormInput, val: any) {
+  myFormData.value[item.name] = val
+  if (validate(item, val)) {
+    delete errors.value[item.name]
+  }
+
+  onChange(item, val)
 }
 
 //////////////////////////////////////////////////////////////////////
