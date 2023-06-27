@@ -4,23 +4,32 @@ import IwFormConfig, { IwFormType } from '../utils/IwFormConfig'
 
 describe('test on useIwForm', () => {
     it('can init successfully', () => {
+        const name = 'John Doe'
         const myForm: IwFormConfig = new IwFormConfig({
+            formData: {
+                'name': name,
+            },
             formGroups: [
                 {
                     formInputs: [
                         {
-                            name: 'company_name',
-                            label: 'Company Name',
                             type: IwFormType.TEXTGROUP_TEXT,
+                            name: 'name',
+                        },
+                        {
+                            type: IwFormType.TEXTGROUP_TEXT,
+                            name: 'address',
                         }
                     ]
                 }
             ]
         })
-        const { initFormData } = useIwForm({
+        const { initFormData, myFormData } = useIwForm({
             myForm
         });
 
         initFormData()
+
+        expect(myFormData.value['name']).toBe(name)
     })
 })

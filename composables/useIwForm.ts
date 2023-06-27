@@ -12,7 +12,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
     const errors = ref({})
     const formErrorMsg = ref('')
     const inputRefs = ref([])
-    const emit = defineEmits(['change', 'reset-input'])
+
 
     function getAriaLabel(item: IwFormInput): string {
         if (item.disabled) return 'Input disabled';
@@ -75,14 +75,6 @@ export const useIwForm = (config: IwFormUseConfig) => {
         }
     }
 
-    async function onChange(item: IwFormInput, val: any) {
-        if (item.onChange) item.onChange(item, val)
-        if (item.onChangeUpdateInput) {
-            const res = await item.onChangeUpdateInput(item, val)
-        }
-
-        emit('change', { item, val })
-    }
 
     function onBlur(item: IwFormInput, data: any) {
         validate(item, data)
@@ -115,11 +107,6 @@ export const useIwForm = (config: IwFormUseConfig) => {
         }
 
         onChange(item, val)
-    }
-
-    function inputOnReset(item: IwFormInput) {
-        myFormData.value[item.name] = null
-        emit('reset-input', { item })
     }
 
     function setLabel(item: IwFormInput) {
@@ -255,7 +242,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
     //   }
 
     function initFormData() {
-        if (config.myForm.formData && Object.keys(config.myForm.formData).length > 1) {
+        if (config.myForm.formData && Object.keys(config.myForm.formData).length >= 1) {
             myFormData.value = JSON.parse(JSON.stringify(config.myForm.formData))
         }
 
@@ -281,12 +268,10 @@ export const useIwForm = (config: IwFormUseConfig) => {
         validate,
         validateAll,
         onInput,
-        onChange,
         onBlur,
         onFocus,
         selectInputOnChange,
         dateOnChange,
-        inputOnReset,
         setLabel,
         setRequired,
         getRef,

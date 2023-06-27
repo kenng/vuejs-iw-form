@@ -111,12 +111,10 @@ const {
   getCss,
   getInputCss,
   onInput,
-  onChange,
   onBlur,
   onFocus,
   selectInputOnChange,
   dateOnChange,
-  inputOnReset,
   setLabel,
   setRequired,
   getRef,
@@ -133,9 +131,25 @@ const {
   resetIgnored: props.resetIgnored,
 })
 
+const emit = defineEmits(['change', 'reset-input'])
+
 //////////////////////////////////////////////////////////////////////
 //  Functions
 //////////////////////////////////////////////////////////////////////
+
+async function onChange(item: IwFormInput, val: any) {
+  if (item.onChange) item.onChange(item, val)
+  if (item.onChangeUpdateInput) {
+    const res = await item.onChangeUpdateInput(item, val)
+  }
+
+  emit('change', { item, val })
+}
+
+function inputOnReset(item: IwFormInput) {
+  myFormData.value[item.name] = null
+  emit('reset-input', { item })
+}
 
 //////////////////////////////////////////////////////////////////////
 // export & expose
