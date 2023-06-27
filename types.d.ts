@@ -9,6 +9,14 @@ type NonFunctionPropertyNames<T> = {
 
 type NonFunctionProperties<T> = Pick<T, NonFunctionPropertyNames<T>>;
 
+
+interface IwFormUseConfig {
+    myForm: IwFormConfig,
+    onSubmit?: IwFormOnSubmit | undefined,
+    onReset?: Function,
+    resetIgnored?: IwFormResetIgnored,
+}
+
 interface IwFormSubmit {
     (formData: any, formExtra?: any, ...param: any): any;
 }
@@ -20,6 +28,10 @@ interface IwFormOnError {
 interface IwFormOnSuccess {
     (msg?: string): any;
 }
+
+type IwFormOnSubmit = (data: { [key: string]: any }) => void
+
+type IwFormResetIgnored = string[] | (() => string[])
 
 type IwFormInputSelectOption = {
     label: string;

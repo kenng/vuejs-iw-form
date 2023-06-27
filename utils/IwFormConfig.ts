@@ -59,7 +59,6 @@ export default class IwFormConfig {
         this.cssForm = cssForm;
         this.formData = formData;
         this.formGroups = formGroups;
-        debugger
         if (skipFormData) this.mySkipFormData = skipFormData;
         for (const group of formGroups) {
             this.buildFormData(group.formInputs);
