@@ -1,4 +1,5 @@
 <script setup lang='ts'>
+import { ref, PropType } from 'vue';
 import IwFormInputSelectConfig from '../utils/IwFormInputSelectConfig';
 import VueMultiselect from 'vue-multiselect';
 
