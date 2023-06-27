@@ -1,10 +1,10 @@
 <script setup lang='ts'>
-import { ref, PropType } from 'vue'
+import { PropType } from 'vue'
 import { Icon } from '@iconify/vue';
 import IwFormConfig, { IwFormType } from '../utils/IwFormConfig';
-import IwObject from '../utils/IwObject'
 import EasepickCalendar from './EasepickCalendar.vue';
 import VueMultiSelect from './VueMultiSelect.vue';
+import useIwForm from '../composables/useIwForm';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -18,7 +18,6 @@ const IwFormTypeTextGroup: Array<IwFormType> = [
   IwFormType.TEXTGROUP_TEXTAREA,
 ];
 
-const emit = defineEmits(['change', 'reset-input'])
 
 const props = defineProps({
   // required
@@ -44,7 +43,7 @@ const props = defineProps({
     default: false,
   },
   onSubmit: {
-    type: Function as PropType<(data: { [key: string]: any }) => void>,
+    type: Function as PropType<IwFormOnSubmit>,
     required: false,
   },
   onReset: {
@@ -52,7 +51,7 @@ const props = defineProps({
     required: false,
   },
   resetIgnored: {
-    type: Object as PropType<string[] | (() => string[])>,
+    type: Object as PropType<IwFormResetIgnored>,
     default: () => [],
   },
   resetText: {
@@ -102,73 +101,42 @@ const props = defineProps({
 //////////////////////////////////////////////////////////////////////
 const IwFormTypeEnum = IwFormType
 const formId = (new Date()).getTime() + Math.random() * 10000
-let totalSubmission = 0;
-let canSubmitAgain = props.canSubmitAgain;
-// let dialogIsOpen = false;
+const {
+  // variables
+  myFormData,
+  errors,
+  totalSubmission,
+  formErrorMsg,
 
-// refs
-const myFormData = ref({})
-const errors = ref({})
-const formErrorMsg = ref('')
-const inputRefs = ref([])
+  // functions
+  getAriaLabel,
+  getCss,
+  getInputCss,
+  onInput,
+  onBlur,
+  onFocus,
+  setLabel,
+  setRequired,
+  getRef,
+  isDisabled,
+  getCssWrapper,
+  getFormData,
+  formOnReset,
+  formOnSubmit,
+  initFormData,
+  validate,
+} = useIwForm({
+  myForm: props.myForm,
+  onSubmit: props.onSubmit,
+  onReset: props.onReset,
+  resetIgnored: props.resetIgnored,
+})
+
+const emit = defineEmits(['change', 'reset-input'])
 
 //////////////////////////////////////////////////////////////////////
 //  Functions
 //////////////////////////////////////////////////////////////////////
-function getAriaLabel(item: IwFormInput): string {
-  if (item.disabled) return 'Input disabled';
-  return 'form input'
-}
-
-function getInputCss(item: IwFormInput): string {
-  let css;
-  if (item.disabled) {
-    css = 'iwFormInputDisabled'
-  } else {
-    css = 'iwFormInputText'
-  }
-
-  if (item.showPrefixIcon) css += ' iwFormPrefixIconPadding'
-
-  return css + ' ' + item.cssInput
-}
-
-function validate(item: IwFormInput, data: any) {
-  if (item.rules) {
-    for (const rule of item.rules) {
-      const param = { value: data, myFormData: myFormData.value } as IRuleData
-      const err = rule(param)
-      if (typeof err === 'string') {
-        errors.value[item.name] = err
-        return false
-        break
-      }
-    }
-  }
-  return true
-}
-
-function validateAll(): boolean {
-  let validated = true;
-
-  for (const item of props.myForm.formInputs) {
-    if (!validate(item, myFormData.value[item.name])) {
-      validated = false
-    }
-  }
-
-  return validated;
-}
-
-function onInput(item: IwFormInput, val: any) {
-  const key = item.name
-  myFormData.value[key] = val
-  if (errors.value[key]) {
-    if (validate(item, val)) {
-      delete errors.value[key]
-    }
-  }
-}
 
 async function onChange(item: IwFormInput, val: any) {
   if (item.onChange) item.onChange(item, val)
@@ -179,22 +147,16 @@ async function onChange(item: IwFormInput, val: any) {
   emit('change', { item, val })
 }
 
-function onBlur(item: IwFormInput, data: any) {
-  validate(item, data)
-
-  if (typeof item.onBlur == 'function') {
-    return item.onBlur(myFormData);
-  }
+function inputOnReset(item: IwFormInput) {
+  myFormData.value[item.name] = null
+  emit('reset-input', { item })
 }
 
-function onFocus(item: IwFormInput, data: any) {
-  // validate(item, data)
-}
 
 function selectInputOnChange(item: IwFormInput,
-  selectedKeys: IwFormInputSelectedOption,
+  selectedKeys: IwFormInputSelectOption,
 ) {
-  myFormData.value[item.name] = selectedKeys
+  myFormData.value[item.name] = selectedKeys['value']
 
   if (validate(item, selectedKeys)) {
     delete errors.value[item.name]
@@ -210,151 +172,6 @@ function dateOnChange(item: IwFormInput, val: any) {
   }
 
   onChange(item, val)
-}
-
-function inputOnReset(item: IwFormInput) {
-  myFormData.value[item.name] = null
-  emit('reset-input', { item })
-}
-
-function setLabel(item: IwFormInput) {
-  let label = item.label
-  if (!label) label = item.name
-
-  return label.charAt(0).toUpperCase() + label.slice(1)
-}
-
-function setRequired(item: IwFormInput) {
-  if (item.required) return true
-  return false
-}
-
-function getRef(item: IwFormInput) {
-  if (item.ref) return item.ref;
-}
-
-function isDisabled(disabled: boolean | undefined, isReadOnly: boolean) {
-  return disabled || isReadOnly
-}
-
-function getCssWrapper(cssParam: Function | string | undefined, isReadOnly: boolean = false) {
-  let readOnlyCSS = isReadOnly ? ' iwFormReadOnly ' : '';
-  if (typeof cssParam === 'function') return readOnlyCSS + cssParam();
-  else if (typeof cssParam === 'string') return readOnlyCSS + cssParam;
-  else return readOnlyCSS + 'iwFormInputWrapper ';
-}
-
-function getFormData() {
-  return myFormData.value;
-}
-
-function toggleReadOnly() {
-  // this.isReadOnly = !this.isReadOnly;
-  // if (this.isReadOnly) this.formTitle = `Edit ${this.title}`;
-  // else this.formTitle = this.title;
-  // this.$emit('toggleReadOnly', this.myFormData, this.formExtra);
-}
-
-function formOnReset() {
-  let resetIgnored: string[];
-  if (typeof props.resetIgnored === 'function') {
-    resetIgnored = props.resetIgnored()
-  } else {
-    resetIgnored = []
-  }
-
-  // trigger input component rest function
-  inputRefs.value.forEach(function (theInput: any) {
-    if (theInput.onReset) theInput.onReset()
-  });
-
-  // reset data
-  new IwObject(myFormData.value).reset(resetIgnored);
-  for (const key of Object.keys(myFormData.value)) {
-    myFormData.value[key] = null
-  }
-
-  setCanSubmitAgain(false);
-  if (props.onReset) props.onReset()
-}
-
-function removeDisabledInputValue(): Object {
-  const formData = {}
-  props.myForm.formInputs.forEach((item) => {
-    if (!item.disabled) {
-      const name = item.name
-      formData[name] = myFormData.value[name]
-    }
-  })
-
-  return formData
-}
-
-async function formOnSubmit(ev: Event) {
-  if (!validateAll()) return
-
-  if (totalSubmission == 0) {
-    try {
-      if (props.onSubmit) {
-        const data = removeDisabledInputValue()
-        await props.onSubmit(data)
-        if (props.myForm.onSuccess) props.myForm.onSuccess()
-      }
-    } catch (err: any) {
-      console.error(err)
-      formErrorMsg.value = err.message
-      // TODO:
-      if (props.myForm.onError) props.myForm.onError(err.message)
-      if (props.myForm.rethrowErrorOnSubmit) throw err
-    }
-    // Prompt Dialog
-    // dialogIsOpen = true;
-  } else if (canSubmitAgain) {
-    submitConfirmed();
-  }
-}
-
-function submitConfirmed() {
-  // getMyForm()
-  //   .validate()
-  //   .then((success: boolean) => {
-  //     if (!success) {
-  //       return $store.dispatch(
-  //         'showSnackbarError',
-  //         'Missing or invalid input value',
-  //       );
-  //     }
-  //     $emit('submit', myFormData, formExtra);
-  //     // if (resetOnSubmit) reset();
-
-  //     setCanSubmitAgain(null);
-  //   })
-  //   .catch(() => {
-  //     $store.dispatch(
-  //       'showSnackbarError',
-  //       'Missing or invalid input value',
-  //       // eslint-disable-next-line @typescript-eslint/no-empty-function
-  //     );
-  //     // console.log($refs.myform);
-  //   });
-}
-
-function setCanSubmitAgain(canSubmitAgainParam: boolean) {
-  if (canSubmitAgainParam) {
-    canSubmitAgain = canSubmitAgainParam
-  } else if (props.canSubmitAgain) {
-    canSubmitAgain = true;
-  }
-}
-
-function initFormData() {
-  if (props.myForm.formData && Object.keys(props.myForm.formData).length > 1) {
-    myFormData.value = JSON.parse(JSON.stringify(props.myForm.formData))
-  }
-
-  for (const item of props.myForm.formInputs) {
-    if (!myFormData.value[item.name]) myFormData.value[item.name] = null
-  }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -374,112 +191,116 @@ initFormData();
           @submit.prevent.stop='formOnSubmit'
           @reset.prevent.stop='formOnReset'>
       <slot name='buttonsTop' />
-      <div v-for="(item, key) in myForm.formInputs"
-           :key="item.name"
-           :class="getCssWrapper(item.cssWrapper, props.isReadOnly)">
-        <template name="label"
-                  v-if='IwFormTypeEnum.LABEL === (item.type)'>
-          <div></div>
-        </template>
+      <div v-for="(group, groupKey) in myForm.formGroups"
+           :key="groupKey"
+           :class="group.css">
+        <div v-for="(item, key) in group.formInputs"
+             :key="item.name"
+             :class="getCssWrapper(item.cssWrapper, props.isReadOnly)">
+          <template name="label"
+                    v-if='IwFormTypeEnum.LABEL === (item.type)'>
+            <div :class="getCss(item)">{{ item.label }}</div>
+          </template>
 
-        <template name="separator"
-                  v-else-if='IwFormTypeEnum.SEPARATOR === (item.type)'>
-          <hr>
-        </template>
+          <template name="separator"
+                    v-else-if='IwFormTypeEnum.SEPARATOR === (item.type)'>
+            <hr class="iwFormHr">
+          </template>
 
-        <template name="text-group"
-                  v-else-if='IwFormTypeTextGroup.indexOf(item.type) >= 0'>
-          <label :for="`${formId}-${item.name}`"
-                 class="iwFormInputLabel">{{ setLabel(item) }}</label>
-          <div class="mb-2 relative">
-            <div v-if="item.showPrefixIcon"
-                 class="iwFormInputPrependIcon">
-              <Icon class="w-5 h-5 text-gray-500 dark:text-gray-400"
-                    :icon="item.prefixIcon!"></Icon>
-            </div>
-            <input :key="key"
-                   :id="`${formId}-${item.name}`"
-                   :name="item.name"
-                   :value="myFormData[item.name]"
-                   :aria-label="getAriaLabel(item)"
-                   @input="(event) => onInput(item, (event.target as HTMLInputElement).value)"
-                   @change="(event) => onChange(item, (event.target as HTMLInputElement).value)"
-                   @blur="(_) => onBlur(item, myFormData[item.name])"
-                   @focus="(_) => onFocus(item, myFormData[item.name])"
-                   :type="(item.type)"
-                   :class="getInputCss(item)"
-                   :placeholder="item.placeholder"
-                   :rules="item.rules"
-                   :disabled="isDisabled(item.disabled, isReadOnly)"
-                   :ref="getRef(item)"
-                   :required="setRequired(item)" />
-            <p class="iwFormInputHelperText">
-              <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]
-              }}</span></template>
-              <template v-else> {{ item.helperText }} </template>
-            </p>
-          </div>
-        </template>
-
-        <template name="select"
-                  v-else-if="IwFormTypeEnum.SELECT === (item.type)">
-          <template v-if='!isReadOnly'>
+          <template name="text-group"
+                    v-else-if='IwFormTypeTextGroup.indexOf(item.type) >= 0'>
             <label :for="`${formId}-${item.name}`"
                    class="iwFormInputLabel">{{ setLabel(item) }}</label>
-            <VueMultiSelect :config="item.selectConfig"
-                            @changed="(selectedKeys, selectedRaw, justSelected) => selectInputOnChange(item, selectedKeys)"
-                            @removed="(selectedKeys, selectedRaw, justRemoved) => selectInputOnChange(item, selectedKeys)"
-                            :disabled="item.disabled" />
+            <div class="mb-2 relative">
+              <div v-if="item.showPrefixIcon"
+                   class="iwFormInputPrependIcon">
+                <Icon class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                      :icon="item.prefixIcon!"></Icon>
+              </div>
+              <input :key="key"
+                     :id="`${formId}-${item.name}`"
+                     :name="item.name"
+                     :value="myFormData[item.name]"
+                     :aria-label="getAriaLabel(item)"
+                     @input="(event) => onInput(item, (event.target as HTMLInputElement).value)"
+                     @change="(event) => onChange(item, (event.target as HTMLInputElement).value)"
+                     @blur="(_) => onBlur(item, myFormData[item.name])"
+                     @focus="(_) => onFocus(item, myFormData[item.name])"
+                     :type="(item.type)"
+                     :class="getInputCss(item)"
+                     :placeholder="item.placeholder"
+                     :rules="item.rules"
+                     :disabled="isDisabled(item.disabled, isReadOnly)"
+                     :ref="getRef(item)"
+                     :required="setRequired(item)" />
+              <p class="iwFormInputHelperText">
+                <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]
+                }}</span></template>
+                <template v-else> {{ item.helperText }} </template>
+              </p>
+            </div>
+          </template>
+
+          <template name="select"
+                    v-else-if="IwFormTypeEnum.SELECT === (item.type)">
+            <template v-if='!isReadOnly'>
+              <label :for="`${formId}-${item.name}`"
+                     class="iwFormInputLabel">{{ setLabel(item) }}</label>
+              <VueMultiSelect :config="item.selectConfig"
+                              @changed="(selectedKeys, selectedRaw, justSelected) => selectInputOnChange(item, selectedKeys)"
+                              @removed="(selectedKeys, selectedRaw, justRemoved) => selectInputOnChange(item, selectedKeys)"
+                              :disabled="item.disabled" />
+              <p class="iwFormInputHelperText">
+                <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]
+                }}</span></template>
+                <template v-else> {{ item.helperText }} </template>
+              </p>
+            </template>
+            <template v-else>
+              <input type="text"
+                     v-model='myFormData[item.name]'
+                     :label='item.label'
+                     disable />
+            </template>
+          </template>
+
+          <template name="checkbox"
+                    v-else-if='IwFormTypeEnum.CHECKBOX === (item.type)'>
+            <input :id="`${formId}-${item.name}`"
+                   type="checkbox"
+                   v-model="myFormData[item.name]"
+                   :name="item.name"
+                   :disable="item.disabled"
+                   class="iwFormCheckbox">
+            <label :for="`${formId}-${item.name}`"
+                   class="iwFormInputLabelInline">{{ setLabel(item) }}</label>
+          </template>
+
+          <template name="date"
+                    v-else-if='IwFormTypeEnum.DATE === (item.type)'>
+            <label :for="`${formId}-${item.name}`"
+                   class="iwFormInputLabel">{{ setLabel(item) }}</label>
+            <EasepickCalendar :id="`${formId}-${item.name}`"
+                              ref="inputRefs"
+                              :disabled="item.disabled"
+                              @change="(val) => dateOnChange(item, val)"
+                              @reset="inputOnReset(item)"
+                              :options="item.dateOptions!"></EasepickCalendar>
             <p class="iwFormInputHelperText">
               <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]
               }}</span></template>
               <template v-else> {{ item.helperText }} </template>
             </p>
           </template>
-          <template v-else>
-            <input type="text"
-                   v-model='myFormData[item.name]'
-                   :label='item.label'
-                   disable />
+
+          <template name="component"
+                    v-else-if="IwFormTypeEnum.COMPONENT === (item.type)">
+            <component :is="item.component"
+                       :formInput="item"
+                       :formData="myFormData"></component>
           </template>
-        </template>
-
-        <template name="checkbox"
-                  v-else-if='IwFormTypeEnum.CHECKBOX === (item.type)'>
-          <input :id="`${formId}-${item.name}`"
-                 type="checkbox"
-                 v-model="myFormData[item.name]"
-                 :name="item.name"
-                 :disable="item.disabled"
-                 class="iwFormCheckbox">
-          <label :for="`${formId}-${item.name}`"
-                 class="iwFormInputLabelInline">{{ setLabel(item) }}</label>
-        </template>
-
-        <template name="date"
-                  v-else-if='IwFormTypeEnum.DATE === (item.type)'>
-          <label :for="`${formId}-${item.name}`"
-                 class="iwFormInputLabel">{{ setLabel(item) }}</label>
-          <EasepickCalendar :id="`${formId}-${item.name}`"
-                            ref="inputRefs"
-                            :disabled="item.disabled"
-                            @change="(val) => dateOnChange(item, val)"
-                            @reset="inputOnReset(item)"
-                            :options="item.dateOptions!"></EasepickCalendar>
-          <p class="iwFormInputHelperText">
-            <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]
-            }}</span></template>
-            <template v-else> {{ item.helperText }} </template>
-          </p>
-        </template>
-
-        <template name="component"
-                  v-else-if="IwFormTypeEnum.COMPONENT === (item.type)">
-          <component :is="item.component"
-                     :formInput="item"
-                     :formData="myFormData"></component>
-        </template>
-      </div><!-- end of form inputs -->
+        </div><!-- end of form inputs -->
+      </div><!-- end of form groups -->
 
       <div :class="css.cssSubmitBtnWrapper ?? 'iwFormInputWrapper'">
         <template v-if="showSubmitBtn">

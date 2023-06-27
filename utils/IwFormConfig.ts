@@ -25,7 +25,8 @@ export default class IwFormConfig {
     name?: string;
     cssForm: string;
     formData: object = {};
-    formInputs: Array<IwFormInput>;
+    formGroups: Array<IwFormGroup>;
+    // formInputs: Array<IwFormInput>;
     onError: IwFormOnError | undefined;
     onSuccess: IwFormOnSuccess | undefined;
     rethrowErrorOnSubmit: boolean;
@@ -39,7 +40,7 @@ export default class IwFormConfig {
         name,
         cssForm = '',
         formData = {},
-        formInputs,
+        formGroups,
         skipFormData,
         rethrowErrorOnSubmit = false,
         onError,
@@ -48,7 +49,7 @@ export default class IwFormConfig {
         name?: string;
         cssForm?: string;
         formData?: object;
-        formInputs: Array<IwFormInput>;
+        formGroups: Array<IwFormGroup>;
         skipFormData?: Array<IwFormType>;
         onError?: IwFormOnError;
         onSuccess?: IwFormOnSuccess;
@@ -57,9 +58,11 @@ export default class IwFormConfig {
         this.name = name;
         this.cssForm = cssForm;
         this.formData = formData;
-        this.formInputs = formInputs;
+        this.formGroups = formGroups;
         if (skipFormData) this.mySkipFormData = skipFormData;
-        this.buildFormData(formInputs);
+        for (const group of formGroups) {
+            this.buildFormData(group.formInputs);
+        }
         this.rethrowErrorOnSubmit = rethrowErrorOnSubmit;
         this.onError = onError;
         this.onSuccess = onSuccess;
@@ -73,16 +76,19 @@ export default class IwFormConfig {
      * @returns
      */
     updateSelectInput(name: string, config: IwFormInputSelectConfig) {
-        const theInput = this.formInputs.find(
-            (input) => input.name === name
-        )
-
-        if (!theInput) {
-            console.error(`${name} not found`, this.formInputs)
-            return
+        let theInput;
+        for (const group of (this.formGroups)) {
+            theInput = group.formInputs.find(
+                (input) => input.name === name
+            )
+            if (!theInput) {
+                console.error(`${name} not found`, group.formInputs)
+                return
+            }
         }
 
-        theInput.selectConfig = config
+
+        theInput!.selectConfig = config
     }
 
     buildFormData(formInputs: Array<IwFormInput>) {
