@@ -250,8 +250,6 @@ export const useIwForm = (config: IwFormUseConfig) => {
         onInput,
         onBlur,
         onFocus,
-        selectInputOnChange,
-        dateOnChange,
         setLabel,
         setRequired,
         getRef,
