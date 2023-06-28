@@ -34,6 +34,7 @@ const formTextName: FormSample = {
         },
         // config: { isStyleDark },
         formGroups: [{
+            css: 'grid md:grid-cols-3',
             formInputs: [
                 {
                     name: 'company_name',
@@ -326,6 +327,13 @@ const formCheckBoxSimple: FormSample = {
                     name: 'result',
                     type: IwFormType.CHECKBOX,
                     label: 'passed',
+                },
+                {
+                    name: 'preferred',
+                    type: IwFormType.CHECKBOX,
+                    label: 'Preferred choice',
+                    checkBoxTrueValue: 'Yes',
+                    checkBoxFalseValue: 'No',
                 },
             ],
         }
