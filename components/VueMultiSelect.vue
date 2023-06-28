@@ -30,11 +30,16 @@ const selectedOption = ref<IwFormInputSelectOption | Array<IwFormInputSelectOpti
 //////////////////////////////////////////////////////////////////////
 function initSelected() {
     if (props.config.selected) {
-        selectedOption.value = props.config.options.find(
-            option => option[keyName] == props.config.selected
-        )
+        if (null == props.config.selected['value']) {
+            console.error(props.config.selected)
+            console.error('selected value should not be null')
+        } else {
+            selectedOption.value = props.config.options.find(
+                option => option[keyName] == props.config.selected
+            )
 
-        emit('changed', { value: getSelectedKeys() }, selectedOption.value)
+            emit('changed', { value: getSelectedKeys() }, selectedOption.value)
+        }
     }
 }
 
