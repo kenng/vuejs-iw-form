@@ -30,16 +30,17 @@ const selectedOption = ref<IwFormInputSelectOption | Array<IwFormInputSelectOpti
 //////////////////////////////////////////////////////////////////////
 function initSelected() {
     if (props.config.selected) {
-        if (null == props.config.selected['value']) {
-            console.error(props.config.selected)
+        const selected = props.config.selected
+        if (typeof selected === 'object' && null == selected['value']) {
+            console.error(selected)
             console.error('selected value should not be null')
-        } else {
-            selectedOption.value = props.config.options.find(
-                option => option[keyName] == props.config.selected
-            )
-
-            emit('changed', { value: getSelectedKeys() }, selectedOption.value)
+            return
         }
+        selectedOption.value = props.config.options.find(
+            option => option[keyName] == selected
+        )
+
+        emit('changed', { value: getSelectedKeys() }, selectedOption.value)
     }
 }
 
@@ -102,6 +103,7 @@ initSelected();
                     :max="props.config.maxSelected"
                     :multiple="props.config.multiple"
                     :searchable="props.config.searchable"
+                    :selectLabel="props.config.selectLabel"
                     :taggable="props.config.taggable"
                     :tagPlaceholder="props.config.tagPlaceholder" />
 </template>

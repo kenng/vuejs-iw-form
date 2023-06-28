@@ -17,9 +17,10 @@ export default class IwFormInputSelectConfig {
     public placeholder = 'Select one'
     public searchable = false
     public selected: IwFormInputSelectedOption = undefined
+    public selectLabel: string = ''
     // taggable: enable / disable tagging
     public taggable = false
-    public tagPlaceholder = 'Press enter to create a tag'
+    public tagPlaceholder = ''
     // tagPosition: By default new tags will appear above the search results. Changing to 'bottom' will revert this behaviour and will proritize the search results
     public tagPosition = 'top'
 
