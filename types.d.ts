@@ -44,7 +44,7 @@ type IwFormInputSelectOption = {
 
 type IwFormInputSelectedOption = { value: number | string, label: string } | undefined
 
-type IwFormInputSelectedKeys = number | number[] | string | string[]
+type IwFormInputSelectedKeys = number | number[] | string | string[] | undefined
 
 interface IwFormGroup {
     css?: string;

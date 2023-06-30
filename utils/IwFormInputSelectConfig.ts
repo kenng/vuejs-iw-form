@@ -16,7 +16,7 @@ export default class IwFormInputSelectConfig {
     public optionsLimit = 1000
     public placeholder = 'Select one'
     public searchable = false
-    public selected: IwFormInputSelectedOption = undefined
+    public selected: IwFormInputSelectedKeys = undefined
     public selectLabel: string = ''
     // taggable: enable / disable tagging
     public taggable = false
