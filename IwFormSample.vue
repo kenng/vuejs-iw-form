@@ -204,6 +204,15 @@ const formSelectGender: FormSample = {
                     type: IwFormType.SELECT,
                     // selectIsMapOptionToLabel: true,
                     selectConfig: gender,
+                    onChange: (item: any,
+                        val: IwFormInputSelectedKeys,
+                        selectedRaw: IwFormInputSelectedOption,
+                        justSelected: IwFormInputSelectedOption) => {
+                        console.log(item)
+                        console.log(val)
+                        console.log(selectedRaw)
+                        console.log(justSelected)
+                    },
                     rules: [IwFormRule.gender({})],
                 },
                 {

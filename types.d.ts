@@ -97,7 +97,7 @@ interface IwFormInput {
      */
     onBlur?: Function;
     onChange?: Function;
-    onChangeUpdateInput?: (item: IwFormInput, value: any) => Promise<IwFormOnChangeResponse>;
+    onChangeUpdateInput?: (item: IwFormInput, value: any, ...extra: any[]) => Promise<IwFormOnChangeResponse>;
     onClickFn?: Function;
     isVisible?: boolean | Function;
 

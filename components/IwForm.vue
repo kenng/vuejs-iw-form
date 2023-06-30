@@ -138,13 +138,13 @@ const emit = defineEmits(['change', 'reset-input'])
 //  Functions
 //////////////////////////////////////////////////////////////////////
 
-async function onChange(item: IwFormInput, val: any) {
-  if (item.onChange) item.onChange(item, val)
+async function onChange(item: IwFormInput, val: any, ...extra: any[]) {
+  if (item.onChange) item.onChange(item, val, ...extra)
   if (item.onChangeUpdateInput) {
-    const res = await item.onChangeUpdateInput(item, val)
+    const res = await item.onChangeUpdateInput(item, val, ...extra)
   }
 
-  emit('change', { item, val })
+  emit('change', { item, val, ...extra })
 }
 
 function inputOnReset(item: IwFormInput) {
@@ -164,7 +164,7 @@ function selectInputOnChange(item: IwFormInput,
     delete errors.value[item.name]
   }
 
-  onChange(item, selectedKeys)
+  onChange(item, selectedKeys, selectedRaw, justSelected)
 }
 
 function dateOnChange(item: IwFormInput, val: any) {
