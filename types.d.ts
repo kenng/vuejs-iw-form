@@ -42,7 +42,9 @@ type IwFormInputSelectOption = {
     disabled?: boolean
 }
 
-type IwFormInputSelectedOption = number | string | { value: number | string, [key: string]: any } | undefined
+type IwFormInputSelectedOption = { value: number | string, label: string } | undefined
+
+type IwFormInputSelectedKeys = number | number[] | string | string[]
 
 interface IwFormGroup {
     css?: string;

@@ -154,9 +154,11 @@ function inputOnReset(item: IwFormInput) {
 
 
 function selectInputOnChange(item: IwFormInput,
-  selectedKeys: IwFormInputSelectOption,
+  selectedKeys: IwFormInputSelectedKeys,
+  selectedRaw: IwFormInputSelectedOption | IwFormInputSelectedOption[],
+  justSelected: IwFormInputSelectedOption
 ) {
-  myFormData.value[item.name] = selectedKeys['value']
+  myFormData.value[item.name] = selectedKeys
 
   if (validate(item, selectedKeys)) {
     delete errors.value[item.name]
@@ -247,8 +249,8 @@ initFormData();
               <label :for="`${formId}-${item.name}`"
                      class="iwFormInputLabel">{{ setLabel(item) }}</label>
               <VueMultiSelect :config="item.selectConfig"
-                              @changed="(selectedKeys, selectedRaw, justSelected) => selectInputOnChange(item, selectedKeys)"
-                              @removed="(selectedKeys, selectedRaw, justRemoved) => selectInputOnChange(item, selectedKeys)"
+                              @changed="(selectedKeys, selectedRaw, justSelected) => selectInputOnChange(item, selectedKeys, selectedRaw, justSelected)"
+                              @removed="(selectedKeys, selectedRaw, justRemoved) => selectInputOnChange(item, selectedKeys, selectedRaw, justSelected)"
                               :disabled="item.disabled" />
               <p class="iwFormInputHelperText">
                 <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]

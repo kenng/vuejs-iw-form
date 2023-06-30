@@ -44,18 +44,18 @@ function initSelected() {
     }
 }
 
-function getSelectedKeys() {
+function getSelectedKeys(): IwFormInputSelectedKeys {
     if (!Array.isArray(selectedOption.value)) {
         return selectedOption.value![keyName]
     } else {
         const keys: any = []
-        selectedOption.value.forEach(item => keys.push[item[keyName]])
-        return selectedOption.value
+        selectedOption.value.forEach(item => keys.push(item[keyName]))
+        return keys
     }
 }
 
 function onSelect(selected: IwFormInputSelectOption, id: any) {
-    emit('changed', { value: getSelectedKeys() }, selectedOption.value, selected)
+    emit('changed', getSelectedKeys(), selectedOption.value, selected)
 }
 
 function onRemove(removed: IwFormInputSelectOption, id: any) {

@@ -9,7 +9,10 @@ export function mapToDropdownOptions(
     {
         showAll = true,
         showNull = false,
-    } = {}) {
+    }: {
+        showAll?: boolean,
+        showNull?: boolean,
+    }) {
     const res: IwFormInputSelectOption[] = []
 
     if (showNull) {
@@ -32,7 +35,10 @@ export function mapToDropdownFromObject(data: { [key: string]: string },
     {
         showAll = true,
         showNull = false,
-    } = {}) {
+    }: {
+        showAll?: boolean,
+        showNull?: boolean,
+    }) {
     const res: IwFormInputSelectOption[] = []
 
     if (showNull) {
@@ -66,7 +72,11 @@ export function mapToDropdownOptionsWithKey(
         keyName = 'id',
         showAll = true,
         showNull = false,
-    } = {},
+    }: {
+        keyName?: string
+        showAll?: boolean,
+        showNull?: boolean,
+    },
 ) {
     const res: IwFormInputSelectOption[] = []
 
