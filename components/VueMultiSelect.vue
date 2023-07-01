@@ -1,4 +1,5 @@
 <script setup lang='ts'>
+import { ref, PropType } from 'vue'
 import IwFormInputSelectConfig from '../utils/IwFormInputSelectConfig';
 import VueMultiselect from 'vue-multiselect';
 
@@ -107,6 +108,3 @@ initSelected();
                     :taggable="props.config.taggable"
                     :tagPlaceholder="props.config.tagPlaceholder" />
 </template>
-
-<style scoped>
-</style>

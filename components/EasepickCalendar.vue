@@ -7,9 +7,9 @@ import { TimePlugin } from "@easepick/time-plugin"
 // import { KbdPlugin } from "@easepick/kbd-plugin"
 import { PresetPlugin } from "@easepick/preset-plugin"
 import { LockPlugin } from "@easepick/lock-plugin"
-// import { IPickerConfig } from "@easepick/core/dist/types"
-// import { ILockConfig } from "@easepick/lock-plugin/dist/interface"
-// import { IAmpPlugin } from "@easepick/amp-plugin/dist/interface"
+import type { IPickerConfig } from "@easepick/core/dist/types"
+import type { ILockConfig } from "@easepick/lock-plugin/dist/interface"
+import type { IAmpPlugin } from "@easepick/amp-plugin/dist/interface"
 import dayjs from 'dayjs'
 import IwFormCalendar from '../utils/IwFormCalendar'
 import { Icon } from '@iconify/vue';
@@ -154,5 +154,4 @@ defineExpose({ onReset })
     </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

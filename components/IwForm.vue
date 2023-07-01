@@ -250,7 +250,7 @@ initFormData();
                      class="iwFormInputLabel">{{ setLabel(item) }}</label>
               <VueMultiSelect :config="item.selectConfig"
                               @changed="(selectedKeys, selectedRaw, justSelected) => selectInputOnChange(item, selectedKeys, selectedRaw, justSelected)"
-                              @removed="(selectedKeys, selectedRaw, justRemoved) => selectInputOnChange(item, selectedKeys, selectedRaw, justSelected)"
+                              @removed="(selectedKeys, selectedRaw, justRemoved) => selectInputOnChange(item, selectedKeys, selectedRaw, justRemoved)"
                               :disabled="item.disabled" />
               <p class="iwFormInputHelperText">
                 <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]
@@ -333,7 +333,5 @@ initFormData();
   </div>
 </template>
 
-<style src="vue-multiselect/dist/vue-multiselect.css">
-</style>
-<style scoped>
-</style>
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>
+<style scoped></style>
