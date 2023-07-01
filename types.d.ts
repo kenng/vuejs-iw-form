@@ -70,10 +70,6 @@ interface IwFormInput {
     cssTextColor?: string;
     cssWrapper?: string;
     cssInput?: string;
-    styleFilled?: boolean;
-    styleDense?: boolean;
-    styleDark?: boolean;
-    styleBorderless?: boolean;
 
     showPrefixIcon?: boolean;
     prefixIcon?: string;
@@ -103,7 +99,6 @@ interface IwFormInput {
 
     selectConfig?: IwFormInputSelectConfig
 
-    formFilterIsHideInResult?: boolean;
     /**
      * @attr uploadedFilenameKey to specify the form data key
      * e.g. uploadedFilenameKey: "my_profile_photo"

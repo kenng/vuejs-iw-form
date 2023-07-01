@@ -119,7 +119,6 @@ const {
   setRequired,
   getRef,
   isDisabled,
-  getCssWrapper,
   getFormData,
   formOnReset,
   formOnSubmit,
@@ -198,7 +197,7 @@ initFormData();
            :class="group.css">
         <div v-for="(item, key) in group.formInputs"
              :key="item.name"
-             :class="getCssWrapper(item.cssWrapper, props.isReadOnly)">
+             :class="getCss(item, { cssArray: [item.cssWrapper ?? 'iwFormInputWrapper'], cssObj: { iwFormReadOnly: props.isReadOnly } })">
           <template name="label"
                     v-if='IwFormTypeEnum.LABEL === (item.type)'>
             <div :class="getCss(item)">{{ item.label }}</div>
@@ -333,5 +332,7 @@ initFormData();
   </div>
 </template>
 
-<style src="vue-multiselect/dist/vue-multiselect.css"></style>
-<style scoped></style>
+<style src="vue-multiselect/dist/vue-multiselect.css">
+</style>
+<style scoped>
+</style>

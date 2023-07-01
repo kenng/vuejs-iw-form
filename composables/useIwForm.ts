@@ -20,10 +20,6 @@ export const useIwForm = (config: IwFormUseConfig) => {
         return 'form input'
     }
 
-    function getCss(item: IwFormInput): string {
-        return item.cssInput ?? ''
-    }
-
     function getInputCss(item: IwFormInput): string {
         let css;
         if (item.disabled) {
@@ -110,11 +106,29 @@ export const useIwForm = (config: IwFormUseConfig) => {
         return disabled || isReadOnly
     }
 
-    function getCssWrapper(cssParam: Function | string | undefined, isReadOnly: boolean = false) {
-        let readOnlyCSS = isReadOnly ? ' iwFormReadOnly ' : '';
-        if (typeof cssParam === 'function') return readOnlyCSS + cssParam();
-        else if (typeof cssParam === 'string') return readOnlyCSS + cssParam;
-        else return readOnlyCSS + 'iwFormInputWrapper ';
+    function getCss(item: IwFormInput, param?: { cssArray?: string[], cssObj?: { [key: string]: boolean } }) {
+        let extraCss: string = ''
+
+        if (param) {
+            if (param.cssArray) {
+                for (const css of param.cssArray) {
+                    extraCss += ` ${css}`
+                }
+            }
+
+            if (param.cssObj) {
+                for (const [key, isTrue] of Object.entries(param.cssObj)) {
+                    if (isTrue) extraCss += ` ${key} `
+                }
+            }
+        }
+
+        if (typeof item.isVisible == 'function') {
+            const hidden = item.isVisible(myFormData) ? '' : ' hidden'
+            extraCss += hidden
+        }
+
+        return `${extraCss}`
     }
 
     function getFormData() {
@@ -255,7 +269,6 @@ export const useIwForm = (config: IwFormUseConfig) => {
         setRequired,
         getRef,
         isDisabled,
-        getCssWrapper,
         getFormData,
         formOnReset,
         removeDisabledInputValue,
