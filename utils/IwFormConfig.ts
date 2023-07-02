@@ -21,6 +21,8 @@ export enum IwFormType {
 }
 
 export default class IwFormConfig {
+    public renderCallBack: Function | null = null
+
     name?: string;
     cssForm: string;
     formData: object = {};
@@ -65,18 +67,6 @@ export default class IwFormConfig {
         this.rethrowErrorOnSubmit = rethrowErrorOnSubmit;
         this.onError = onError;
         this.onSuccess = onSuccess;
-
-        this.initFormInputsKey()
-    }
-
-    initFormInputsKey() {
-        this.formGroups.forEach((group) => {
-            group.formInputs.forEach((input) => {
-                if (!input.key) {
-                    input.key = `${Date.now()}-${Math.floor(Math.random() * 100000)}`
-                }
-            })
-        })
     }
 
     /**
@@ -86,7 +76,7 @@ export default class IwFormConfig {
      * @param config
      * @returns
      */
-    public updateSelectInput(name: string, config: IwFormInputSelectConfig) {
+    updateSelectInput(name: string, config: IwFormInputSelectConfig) {
         let theInput;
         for (let i = 0; i < this.formGroups.length; i++) {
             const group = this.formGroups[i]
@@ -95,10 +85,16 @@ export default class IwFormConfig {
             )
 
             if (theInput) {
-                theInput.key = `${Date.now()}-${Math.floor(Math.random() * 100000)}`
                 theInput!.selectConfig = config
+                this.markAsDirty(theInput.name)
                 break
             }
+        }
+    }
+
+    markAsDirty(name: string) {
+        if (this.renderCallBack) {
+            this.renderCallBack(name)
         }
     }
 

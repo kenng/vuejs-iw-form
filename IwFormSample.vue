@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 // @unocss-include
-import { ref } from 'vue'
+import { ref, VNodeRef } from 'vue'
 import IwFormConfig, { IwFormType } from './utils/IwFormConfig';
 import IwFormCalendar from './utils/IwFormCalendar';
 import IwFormInputSelectConfig from './utils/IwFormInputSelectConfig';
@@ -13,6 +13,9 @@ interface FormSample {
     title: string
     form: IwFormConfig
 }
+
+const basicFormsRef = ref<InstanceType<typeof IwForm>[]>([])
+const gridFormRef = ref<InstanceType<typeof IwForm>>()
 
 const submit = (
     theFormData: any,
@@ -153,7 +156,7 @@ const formTextName: FormSample = {
     })
 };
 
-const gender = new IwFormInputSelectConfig([
+const gender = (isMultiple: boolean = false) => new IwFormInputSelectConfig([
     {
         label: 'Male',
         value: 'M',
@@ -166,32 +169,30 @@ const gender = new IwFormInputSelectConfig([
         label: 'Other',
         value: 'O',
     },
-    {
-        label: 'Invalid value',
-        value: 'Invalid',
-    },
-])
-
-const color = new IwFormInputSelectConfig([
-    {
-        label: 'Red',
-        value: 'red',
-    },
-    {
-        label: 'Green',
-        value: 'green',
-    },
-    {
-        label: 'Blue',
-        value: 'blue',
-    },
-    {
-        label: 'Invalid value',
-        value: 'Invalid',
-    },
 ], {
-    multiple: true,
+    multiple: isMultiple
 })
+
+let selectedColorIndex = 0
+const color = [
+    new IwFormInputSelectConfig([
+        {
+            label: 'Red',
+            value: 'red',
+        },
+    ], {
+        multiple: true,
+    }),
+
+    new IwFormInputSelectConfig([
+        {
+            label: 'Blue',
+            value: 'blue',
+        },
+    ])
+
+]
+
 
 const formSelectGender: FormSample = {
     title: 'Simple Gender Select Form',
@@ -203,26 +204,41 @@ const formSelectGender: FormSample = {
                     label: 'gender',
                     type: IwFormType.SELECT,
                     // selectIsMapOptionToLabel: true,
-                    selectConfig: gender,
+                    selectConfig: gender(),
                     onChange: (item: any,
                         val: IwFormInputSelectedKeys,
                         selectedRaw: IwFormInputSelectedOption,
-                        justSelected: IwFormInputSelectedOption) => {
+                        justSelected: IwFormInputSelectedOption,
+                        theForm: IwFormConfig) => {
                         console.log(item)
                         console.log(val)
                         console.log(selectedRaw)
                         console.log(justSelected)
+
+                        // --- update color dropdown
+                        if ('M' === val) {
+                            selectedColorIndex = 1
+                        } else {
+                            selectedColorIndex = 0
+                        }
+                        theForm.updateSelectInput('color', color[selectedColorIndex])
                     },
                     rules: [IwFormRule.gender({})],
                 },
                 {
                     name: 'color',
-                    label: 'color (multiple select)',
+                    label: 'color (changed based on gender)',
                     type: IwFormType.SELECT,
                     // selectIsMapOptionToLabel: true,
-                    selectConfig: color,
+                    selectConfig: color[selectedColorIndex],
                     rules: [],
                 },
+                {
+                    name: 'genderInClass',
+                    type: IwFormType.SELECT,
+                    label: 'Select all the genders in the class (multiple choices)',
+                    selectConfig: gender(true)
+                }
             ],
         }
         ]
@@ -731,7 +747,7 @@ function getAllFormDate() {
 </script>
 
 <template>
-    <section class="p-6">
+    <div class="title">
         Section:
         <a href="#basic-example">
             <button type="button"
@@ -745,19 +761,29 @@ function getAllFormDate() {
                 Style</button>
 
         </a>
+    </div>
 
-    </section>
-    <section id="basic-example"
+    <section class="p-12 basic-form">
+        <div id="basic-example"
              class="border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl mt-6 p-6">
-        <div v-for='(theForm, index) in forms'
-             :key="index"
-             class="flex">
-            <div class="w-2/4">
-                <h3 class="text-lg decoration-4 underline">[ Form ]: {{ theForm.title }}</h3>
-                <IwForm :on-submit="submit"
-                        :myForm="theForm.form"
-                        :refs="(el: any) => itemRefs.push(el)"></IwForm>
-                <hr>
+            <div v-for='(theForm, index) in forms'
+                 :key="index"
+                 class="flex">
+                <div class="w-2/4">
+                    <h3 class="text-lg decoration-4 underline">[ Form ]: {{ theForm.title }}</h3>
+                    <IwForm ref="basicFormsRef"
+                            :on-submit="submit"
+                            :myForm="theForm.form"
+                            :refs="(el: any) => itemRefs.push(el)"></IwForm>
+                    <hr>
+                </div>
+                <div class="w-2/4 pl-6"
+                     v-if="basicFormsRef[index]">
+                    Output: <br><br>
+                    <div v-for="(item, key) in basicFormsRef[index].getFormData()">
+                        {{ `${key}: ${item}` }}
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -766,9 +792,18 @@ function getAllFormDate() {
     <h1 class="p-6 text-5xl"
         id="grid-style">Styling with Grid</h1>
 
-    <!-- <section class="border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl mt-6 p-6">
-        <IwForm :myForm="gridForm.form"></IwForm>
-    </section> -->
+    <section class="flex border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl mt-6 p-6">
+        <div class="w-2/4">
+            <IwForm ref="gridFormRef"
+                    :myForm="gridForm.form"></IwForm>
+        </div>
+        <div class="w-2/4"
+             v-if="gridFormRef">
+            <div v-for="(item, key) in gridFormRef.getFormData()">
+                {{ `${key}: ${item}` }}
+            </div>
+        </div>
+    </section>
 </template>
 
 <style scoped>

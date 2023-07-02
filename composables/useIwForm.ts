@@ -1,6 +1,7 @@
 /** @unocss-include */
 import { ref, defineEmits } from 'vue'
 import IwObject from '../utils/IwObject';
+import IwFormConfig from '../utils/IwFormConfig';
 
 export const useIwForm = (config: IwFormUseConfig) => {
 
@@ -13,7 +14,14 @@ export const useIwForm = (config: IwFormUseConfig) => {
     const errors = ref({})
     const formErrorMsg = ref('')
     const inputRefs = ref([])
+    const keys = ref<string[]>([])
 
+    const myForm: IwFormConfig = config.myForm
+    myForm.formGroups.forEach(group => {
+        group.formInputs.forEach(formInput => {
+            keys.value[formInput.name] = `${formInput.name}-${Date.now()}-${Math.random() * 10000}`
+        })
+    })
 
     function getAriaLabel(item: IwFormInput): string {
         if (item.disabled) return 'Input disabled';
@@ -236,6 +244,12 @@ export const useIwForm = (config: IwFormUseConfig) => {
     //     }
     //   }
 
+    function initRenderCallback() {
+        myForm.renderCallBack = (name: string) => {
+            keys.value[name] = `${name}-${Date.now()}-${Math.random() * 10000}`
+        }
+    }
+
     function initFormData() {
         if (config.myForm.formData && Object.keys(config.myForm.formData).length >= 1) {
             myFormData.value = JSON.parse(JSON.stringify(config.myForm.formData))
@@ -255,6 +269,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
         errors,
         totalSubmission,
         formErrorMsg,
+        keys,
 
         // functions
         getAriaLabel,
@@ -273,6 +288,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
         formOnReset,
         removeDisabledInputValue,
         formOnSubmit,
+        initRenderCallback,
         initFormData,
     }
 

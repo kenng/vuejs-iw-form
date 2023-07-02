@@ -99,6 +99,7 @@ const props = defineProps({
 //////////////////////////////////////////////////////////////////////
 //  Variables
 //////////////////////////////////////////////////////////////////////
+const formKey = ref(`${Date.now()}-${Math.random() * 10000}`)
 const IwFormTypeEnum = IwFormType
 const formId = (new Date()).getTime() + Math.random() * 10000
 const {
@@ -107,6 +108,7 @@ const {
   errors,
   totalSubmission,
   formErrorMsg,
+  keys,
 
   // functions
   getAriaLabel,
@@ -122,6 +124,7 @@ const {
   getFormData,
   formOnReset,
   formOnSubmit,
+  initRenderCallback,
   initFormData,
   validate,
 } = useIwForm({
@@ -155,7 +158,8 @@ function inputOnReset(item: IwFormInput) {
 function selectInputOnChange(item: IwFormInput,
   selectedKeys: IwFormInputSelectedKeys,
   selectedRaw: IwFormInputSelectedOption | IwFormInputSelectedOption[],
-  justSelected: IwFormInputSelectedOption
+  justSelected: IwFormInputSelectedOption,
+  theForm: IwFormConfig
 ) {
   myFormData.value[item.name] = selectedKeys
 
@@ -163,7 +167,7 @@ function selectInputOnChange(item: IwFormInput,
     delete errors.value[item.name]
   }
 
-  onChange(item, selectedKeys, selectedRaw, justSelected)
+  onChange(item, selectedKeys, selectedRaw, justSelected, theForm)
 }
 
 function dateOnChange(item: IwFormInput, val: any) {
@@ -184,6 +188,8 @@ defineExpose({ getFormData })
 // init
 //////////////////////////////////////////////////////////////////////
 initFormData();
+initRenderCallback();
+
 </script>
 
 <template>
@@ -196,7 +202,7 @@ initFormData();
            :key="groupKey"
            :class="group.css">
         <div v-for="(item, key) in group.formInputs"
-             :key="item.key"
+             :key="keys[item.name]"
              :class="getCss(item, { cssArray: [item.cssWrapper ?? 'iwFormInputWrapper'], cssObj: { iwFormReadOnly: props.isReadOnly } })">
           <template name="label"
                     v-if='IwFormTypeEnum.LABEL === (item.type)'>
@@ -248,8 +254,10 @@ initFormData();
               <label :for="`${formId}-${item.name}`"
                      class="iwFormInputLabel">{{ setLabel(item) }}</label>
               <VueMultiSelect :config="item.selectConfig"
-                              @changed="(selectedKeys, selectedRaw, justSelected) => selectInputOnChange(item, selectedKeys, selectedRaw, justSelected)"
-                              @removed="(selectedKeys, selectedRaw, justRemoved) => selectInputOnChange(item, selectedKeys, selectedRaw, justRemoved)"
+                              @changed="(selectedKeys, selectedRaw, justSelected) =>
+                                selectInputOnChange(item, selectedKeys, selectedRaw, justSelected, myForm)"
+                              @removed="(selectedKeys, selectedRaw, justRemoved) =>
+                                selectInputOnChange(item, selectedKeys, selectedRaw, justRemoved, myForm)"
                               :disabled="item.disabled" />
               <p class="iwFormInputHelperText">
                 <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]
