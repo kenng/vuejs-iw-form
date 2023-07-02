@@ -9,7 +9,6 @@ export enum IwFormType {
     TEXTGROUP_PASSWORD = 'password',
     TEXTGROUP_TEXTAREA = 'textarea',
     SELECT = 'select',
-    SELECT_MULTI = 'select_multi',
     AUTOCOMPLETE = 'autocomplete',
     OPTION_GROUP = 'option_group',
     CHECKBOX = 'checkbox',
@@ -66,6 +65,18 @@ export default class IwFormConfig {
         this.rethrowErrorOnSubmit = rethrowErrorOnSubmit;
         this.onError = onError;
         this.onSuccess = onSuccess;
+
+        this.initFormInputsKey()
+    }
+
+    initFormInputsKey() {
+        this.formGroups.forEach((group) => {
+            group.formInputs.forEach((input) => {
+                if (!input.key) {
+                    input.key = `${Date.now()}-${Math.floor(Math.random() * 100000)}`
+                }
+            })
+        })
     }
 
     /**
@@ -75,20 +86,20 @@ export default class IwFormConfig {
      * @param config
      * @returns
      */
-    updateSelectInput(name: string, config: IwFormInputSelectConfig) {
+    public updateSelectInput(name: string, config: IwFormInputSelectConfig) {
         let theInput;
-        for (const group of (this.formGroups)) {
+        for (let i = 0; i < this.formGroups.length; i++) {
+            const group = this.formGroups[i]
             theInput = group.formInputs.find(
                 (input) => input.name === name
             )
-            if (!theInput) {
-                console.error(`${name} not found`, group.formInputs)
-                return
+
+            if (theInput) {
+                theInput.key = `${Date.now()}-${Math.floor(Math.random() * 100000)}`
+                theInput!.selectConfig = config
+                break
             }
         }
-
-
-        theInput!.selectConfig = config
     }
 
     buildFormData(formInputs: Array<IwFormInput>) {

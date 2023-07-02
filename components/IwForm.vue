@@ -196,7 +196,7 @@ initFormData();
            :key="groupKey"
            :class="group.css">
         <div v-for="(item, key) in group.formInputs"
-             :key="item.name"
+             :key="item.key"
              :class="getCss(item, { cssArray: [item.cssWrapper ?? 'iwFormInputWrapper'], cssObj: { iwFormReadOnly: props.isReadOnly } })">
           <template name="label"
                     v-if='IwFormTypeEnum.LABEL === (item.type)'>
