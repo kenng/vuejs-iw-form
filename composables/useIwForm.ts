@@ -1,7 +1,7 @@
 /** @unocss-include */
 import { ref, defineEmits } from 'vue'
 import IwObject from '../utils/IwObject';
-import IwFormConfig from '../utils/IwFormConfig';
+import IwFormConfig, { IwFormType } from '../utils/IwFormConfig';
 
 export const useIwForm = (config: IwFormUseConfig) => {
 
@@ -257,6 +257,8 @@ export const useIwForm = (config: IwFormUseConfig) => {
 
         for (const group of (config.myForm.formGroups)) {
             for (const item of group.formInputs) {
+                if (IwFormType.SUBMIT_BTN == item.type) continue
+
                 if (!myFormData.value[item.name]) myFormData.value[item.name] = null
             }
         }

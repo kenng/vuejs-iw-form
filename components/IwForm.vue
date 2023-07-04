@@ -310,6 +310,17 @@ initRenderCallback();
                        :formInput="item"
                        :formData="myFormData"></component>
           </template>
+
+          <template name="submit-btn"
+                    v-else-if="IwFormTypeEnum.SUBMIT_BTN === (item.type)">
+            <label :for="`${formId}-submit-btn`"
+                   class="iwFormInputLabel"></label>
+            <button :id="`${formId}-submit-btn`"
+                    class="iwFormBtn iwFormSubmitBtn"
+                    type="submit"> {{ totalSubmission > 0 ? submitAgainText : submitText }} </button>
+            <p class="iwFormInputHelperText"></p>
+          </template>
+
         </div><!-- end of form inputs -->
       </div><!-- end of form groups -->
 

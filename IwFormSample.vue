@@ -646,8 +646,8 @@ const formWithDynamicComponent: FormSample = {
 const gridForm: FormSample = {
     title: 'Simple Grid Form',
     form: new IwFormConfig({
-        cssForm: 'grid grid-cols-3 gap-1',
         formGroups: [{
+            css: 'grid grid-cols-3 gap-1',
             formInputs: [
                 {
                     type: IwFormType.TEXTGROUP_TEXT,
@@ -667,6 +667,17 @@ const gridForm: FormSample = {
                     label: 'Input with 2 columns',
                     cssWrapper: 'col-span-2',
                 },
+                {
+                    type: IwFormType.TEXTGROUP_TEXT,
+                    name: 'name3',
+                    label: 'Input with one column',
+                    cssWrapper: 'col-span-1',
+                },
+                {
+                    type: IwFormType.SUBMIT_BTN,
+                    name: 'submitBtn',
+                    cssWrapper: '',
+                }
             ]
         }
         ]
@@ -812,10 +823,13 @@ function getAllFormDate() {
 
     <section class="flex border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl mt-6 p-6">
         <div class="w-2/4">
+            <h3 class="mb-6"> Objective: to style inputs using grid. Submit Button as the last element of the inputs.
+            </h3>
             <IwForm ref="gridFormRef"
+                    :showSubmitBtn="false"
                     :myForm="gridForm.form"></IwForm>
         </div>
-        <div class="w-2/4"
+        <div class="w-2/4 pl-6"
              v-if="gridFormRef">
             <div v-for="(item, key) in gridFormRef.getFormData()">
                 {{ `${key}: ${item}` }}
