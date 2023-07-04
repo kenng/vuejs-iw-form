@@ -3,6 +3,7 @@ import { ref, PropType } from 'vue'
 import IwFormInputSelectConfig from '../utils/IwFormInputSelectConfig';
 import VueMultiselect from 'vue-multiselect';
 import 'vue-multiselect/dist/vue-multiselect.css'
+import { MenuItem } from '@headlessui/vue';
 
 ///////////////////////////////////////////////@  Import, Types & meta
 //////////////////////////////////////////////////////////////////////
@@ -33,16 +34,29 @@ const selectedOption = ref<IwFormInputSelectOption | Array<IwFormInputSelectOpti
 function initSelected() {
     if (props.config.selected) {
         const selected = props.config.selected
-        if (typeof selected === 'object' && null == selected['value']) {
-            console.error(selected)
-            console.error('selected value should not be null')
-            return
-        }
-        selectedOption.value = props.config.options.find(
-            option => option[keyName] == selected
-        )
 
-        emit('changed', { value: getSelectedKeys() }, selectedOption.value)
+        if (Array.isArray(selected)) {
+            selectedOption.value = []
+            for (const item of selected) {
+                const found = props.config.options.find(
+                    option => option[keyName] == item
+                )
+                if (found) {
+                    selectedOption.value.push(found)
+                } else {
+                    console.error(`${item} not found in options`)
+                    console.error(props.config.options)
+                }
+            }
+
+        } else {
+            selectedOption.value = undefined
+            selectedOption.value = props.config.options.find(
+                option => option[keyName] == selected
+            )
+        }
+
+        emit('changed', getSelectedKeys(), selectedOption.value, selectedOption.value)
     }
 }
 

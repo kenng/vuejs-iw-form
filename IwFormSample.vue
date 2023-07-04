@@ -182,6 +182,7 @@ const color = [
         },
     ], {
         multiple: true,
+        selected: 'red',
     }),
 
     new IwFormInputSelectConfig([
@@ -193,6 +194,23 @@ const color = [
 
 ]
 
+const countries = new IwFormInputSelectConfig([
+    {
+        label: 'Malaysia',
+        value: 'MY',
+    },
+    {
+        label: 'Singapore',
+        value: 'SG',
+    },
+    {
+        label: 'Other',
+        value: 'O',
+    },
+], {
+    multiple: true,
+    selected: ['MY', 'SG'],
+})
 
 const formSelectGender: FormSample = {
     title: 'Simple Gender Select Form',
@@ -234,10 +252,10 @@ const formSelectGender: FormSample = {
                     rules: [],
                 },
                 {
-                    name: 'genderInClass',
+                    name: 'countries',
                     type: IwFormType.SELECT,
-                    label: 'Select all the genders in the class (multiple choices)',
-                    selectConfig: gender(true)
+                    label: 'Select all the related countries (multiple choices)',
+                    selectConfig: countries
                 }
             ],
         }
