@@ -3,7 +3,7 @@ import { ref, PropType } from 'vue'
 import IwFormInputSelectConfig from '../utils/IwFormInputSelectConfig';
 import VueMultiselect from 'vue-multiselect';
 import 'vue-multiselect/dist/vue-multiselect.css'
-import { MenuItem } from '@headlessui/vue';
+import useVueMultiSelect from '../composables/useVueMultiSelect';
 
 ///////////////////////////////////////////////@  Import, Types & meta
 //////////////////////////////////////////////////////////////////////
@@ -21,54 +21,25 @@ const props = defineProps({
     disabled: { type: Boolean, default: false }
 })
 
-const keyName = props.config.keyName
 
-const selectedOption = ref<IwFormInputSelectOption | Array<IwFormInputSelectOption>>()
+const {
+    // variables
+    keyName,
+    selectedOption,
 
+    // functions
+    initSelected,
+    getSelectedKeys,
+    onInput,
+    getTrackBy,
+    getLabelBy
+} = useVueMultiSelect(props)
 
 /////////////////////////////////////////////////@  Computed & Watches
 //////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////@  Functions
 //////////////////////////////////////////////////////////////////////
-function initSelected() {
-    if (props.config.selected) {
-        const selected = props.config.selected
-
-        if (Array.isArray(selected)) {
-            selectedOption.value = []
-            for (const item of selected) {
-                const found = props.config.options.find(
-                    option => option[keyName] == item
-                )
-                if (found) {
-                    selectedOption.value.push(found)
-                } else {
-                    console.error(`${item} not found in options`)
-                    console.error(props.config.options)
-                }
-            }
-
-        } else {
-            selectedOption.value = undefined
-            selectedOption.value = props.config.options.find(
-                option => option[keyName] == selected
-            )
-        }
-
-        emit('changed', getSelectedKeys(), selectedOption.value, selectedOption.value)
-    }
-}
-
-function getSelectedKeys(): IwFormInputSelectedKeys {
-    if (!Array.isArray(selectedOption.value)) {
-        return selectedOption.value![keyName]
-    } else {
-        const keys: any = []
-        selectedOption.value.forEach(item => keys.push(item[keyName]))
-        return keys
-    }
-}
 
 function onSelect(selected: IwFormInputSelectOption, id: any) {
     emit('changed', getSelectedKeys(), selectedOption.value, selected)
@@ -78,24 +49,19 @@ function onRemove(removed: IwFormInputSelectOption, id: any) {
     emit('removed', getSelectedKeys(), selectedOption.value, removed)
 }
 
-function onInput(value: any, id: any) {
+function init() {
+    if (props.config.selected) {
+        initSelected();
+        emit('changed', getSelectedKeys(), selectedOption.value, selectedOption.value)
+    }
 }
-
-function getTrackBy(config: IwFormInputSelectConfig) {
-    return config.isOptionObject ? config.keyName : null
-}
-
-function getLabelBy(config: IwFormInputSelectConfig) {
-    return config.isOptionObject ? config.labelName : null
-}
-
 /////////////////////////////////////////////////////////@  Lifecycles
 //////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////@ Initialization
 //////////////////////////////////////////////////////////////////////
 
-initSelected();
+init()
 
 ////////////////////////////////////////////////////@  Export & Expose
 //////////////////////////////////////////////////////////////////////
