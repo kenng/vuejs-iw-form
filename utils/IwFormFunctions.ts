@@ -6,11 +6,9 @@
  */
 export function mapToDropdownOptions(
     data: { [key: string]: string },
-    {
-        showAll = true,
-        showNull = false,
-    }: IwFormSelectOptionParam) {
+    params: IwFormSelectOptionParam = {}) {
     const res: IwFormInputSelectOption[] = []
+    const { showAll = true, showNull = false } = params
 
     if (showNull) {
         res.push({ value: '', label: '(Empty Value)', operator: 'null' })
@@ -29,10 +27,8 @@ export function mapToDropdownOptions(
 }
 
 export function mapToDropdownFromObject(data: { [key: string]: string },
-    {
-        showAll = true,
-        showNull = false,
-    }: IwFormSelectOptionParam) {
+    params: IwFormSelectOptionParam = {}) {
+    const { showAll = true, showNull = false } = params
     const res: IwFormInputSelectOption[] = []
 
     if (showNull) {
@@ -62,12 +58,9 @@ export function mapToDropdownFromObject(data: { [key: string]: string },
  * { { "id": 1, "name": "COMPANY_SUPER_ADMIN", "label": "Company Super Admin" }, ...}
  */
 export function mapToDropdownOptionsWithKey(
-    data: any, labelName: string, {
-        keyName = 'id',
-        showAll = true,
-        showNull = false,
-    }: IwFormSelectOptionParamWithKey,
+    data: any, labelName: string, params: IwFormSelectOptionParamWithKey,
 ) {
+    const { keyName = 'id', showAll = true, showNull = false } = params
     const res: IwFormInputSelectOption[] = []
 
     if (showNull) {
@@ -102,20 +95,6 @@ export function setAppendIconOnClickFn(
 export function setClearable(isItemEditable: boolean | null, isReadOnly: boolean) {
     return !isReadOnly && (isItemEditable || true);
 }
-
-function setVisible(isVisible: Function | boolean) {
-    // if (typeof isVisible === 'function')
-    //     return isVisible(this.myformData);
-    // else if (typeof isVisible === 'boolean') return isVisible;
-    // else return true;
-}
-
-export function setOnClick(item: IwFormInput, myformData: any) {
-    if (item.onClickFn) {
-        item.onClickFn(myformData);
-    }
-}
-
 /**
  * `item.allowedDateFn` can be
  * - a callback function:
