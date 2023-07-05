@@ -39,9 +39,12 @@ const useVueMultiSelect = (props: IwFormSelectProps) => {
         }
     }
 
-    function getSelectedKeys(): IwFormInputSelectedKeys {
+    function getSelectedKeys(): IwFormInputSelectedKeys | null {
         if (!Array.isArray(selectedOption.value)) {
-            return selectedOption.value![keyName]
+            if (selectedOption.value) {
+                return selectedOption.value![keyName]
+            }
+            return null
         } else {
             const keys: any = []
             selectedOption.value.forEach(item => keys.push(item[keyName]))
