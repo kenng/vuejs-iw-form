@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { ref, PropType } from 'vue'
+import { PropType } from 'vue'
 import IwFormInputSelectConfig from '../utils/IwFormInputSelectConfig';
 import VueMultiselect from 'vue-multiselect';
 import 'vue-multiselect/dist/vue-multiselect.css'
@@ -28,11 +28,12 @@ const {
     selectedOption,
 
     // functions
-    initSelected,
+    getLabelBy,
     getSelectedKeys,
-    onInput,
     getTrackBy,
-    getLabelBy
+    initSelected,
+    onInput,
+    onReset,
 } = useVueMultiSelect(props)
 
 /////////////////////////////////////////////////@  Computed & Watches
@@ -55,6 +56,8 @@ function init() {
         emit('changed', getSelectedKeys(), selectedOption.value, selectedOption.value)
     }
 }
+
+
 /////////////////////////////////////////////////////////@  Lifecycles
 //////////////////////////////////////////////////////////////////////
 
@@ -65,6 +68,7 @@ init()
 
 ////////////////////////////////////////////////////@  Export & Expose
 //////////////////////////////////////////////////////////////////////
+defineExpose({ onReset })
 </script>
 
 <template>

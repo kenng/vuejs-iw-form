@@ -104,11 +104,12 @@ const IwFormTypeEnum = IwFormType
 const formId = (new Date()).getTime() + Math.random() * 10000
 const {
   // variables
-  myFormData,
   errors,
-  totalSubmission,
   formErrorMsg,
+  inputRefs,
   keys,
+  myFormData,
+  totalSubmission,
 
   // functions
   getAriaLabel,
@@ -254,6 +255,7 @@ initRenderCallback();
               <label :for="`${formId}-${item.name}`"
                      class="iwFormInputLabel">{{ setLabel(item) }}</label>
               <VueMultiSelect :config="item.selectConfig"
+                              ref="inputRefs"
                               @changed="(selectedKeys, selectedRaw, justSelected) =>
                                 selectInputOnChange(item, selectedKeys, selectedRaw, justSelected, myForm)"
                               @removed="(selectedKeys, selectedRaw, justRemoved) =>

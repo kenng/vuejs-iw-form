@@ -5,6 +5,27 @@ const useVueMultiSelect = (props: IwFormSelectProps) => {
     const keyName = props.config.keyName
     const selectedOption = ref<IwFormInputSelectOption | Array<IwFormInputSelectOption>>()
 
+    function getLabelBy(config: IwFormInputSelectConfig) {
+        return config.isOptionObject ? config.labelName : null
+    }
+
+    function getSelectedKeys(): IwFormInputSelectedKeys | null {
+        if (!Array.isArray(selectedOption.value)) {
+            if (selectedOption.value) {
+                return selectedOption.value![keyName]
+            }
+            return null
+        } else {
+            const keys: any = []
+            selectedOption.value.forEach(item => keys.push(item[keyName]))
+            return keys
+        }
+    }
+
+    function getTrackBy(config: IwFormInputSelectConfig) {
+        return config.isOptionObject ? config.keyName : null
+    }
+
     function initSelected() {
         if (props.config.selected) {
             const selected = props.config.selected
@@ -39,28 +60,18 @@ const useVueMultiSelect = (props: IwFormSelectProps) => {
         }
     }
 
-    function getSelectedKeys(): IwFormInputSelectedKeys | null {
-        if (!Array.isArray(selectedOption.value)) {
-            if (selectedOption.value) {
-                return selectedOption.value![keyName]
-            }
-            return null
-        } else {
-            const keys: any = []
-            selectedOption.value.forEach(item => keys.push(item[keyName]))
-            return keys
-        }
-    }
-
     function onInput(value: any, id: any) {
     }
 
-    function getTrackBy(config: IwFormInputSelectConfig) {
-        return config.isOptionObject ? config.keyName : null
-    }
 
-    function getLabelBy(config: IwFormInputSelectConfig) {
-        return config.isOptionObject ? config.labelName : null
+    function onReset() {
+        for (const option of props.config.options) {
+            if (!option.value) {
+                selectedOption.value = option
+                return
+            }
+        }
+        selectedOption.value = undefined
     }
 
     return {
@@ -69,11 +80,12 @@ const useVueMultiSelect = (props: IwFormSelectProps) => {
         selectedOption,
 
         // functions
-        initSelected,
+        getLabelBy,
         getSelectedKeys,
-        onInput,
         getTrackBy,
-        getLabelBy
+        initSelected,
+        onInput,
+        onReset,
     }
 }
 

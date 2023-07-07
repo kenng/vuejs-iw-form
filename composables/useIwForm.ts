@@ -267,11 +267,12 @@ export const useIwForm = (config: IwFormUseConfig) => {
 
     return {
         // variables
-        myFormData,
         errors,
-        totalSubmission,
         formErrorMsg,
+        inputRefs,
         keys,
+        myFormData,
+        totalSubmission,
 
         // functions
         getAriaLabel,
