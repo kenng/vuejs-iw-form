@@ -114,7 +114,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
         return disabled || isReadOnly
     }
 
-    function getCss(item: IwFormInput, param?: { cssArray?: string[], cssObj?: { [key: string]: boolean } }) {
+    function getCss(item: IwFormInput, param?: { cssArray?: string[], cssObj?: Record<string, boolean> }) {
         let extraCss: string = ''
 
         if (param) {

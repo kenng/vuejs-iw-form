@@ -72,7 +72,7 @@ interface IwFormInput {
     disabled?: boolean;
     rules?: Array<Function>;
     required?: boolean;
-    extra?: any;
+    query?: ViPaginatedTableFilterInput;
 
     label?: string;
     placeholder?: string;
