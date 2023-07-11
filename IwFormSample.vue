@@ -669,7 +669,7 @@ const gridForm: FormSample = {
                 },
                 {
                     type: IwFormType.TEXTGROUP_TEXT,
-                    name: 'name3',
+                    name: 'name4',
                     label: 'Input with one column',
                     cssWrapper: 'col-span-1',
                 },
