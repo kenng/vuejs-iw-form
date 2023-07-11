@@ -155,6 +155,12 @@ function inputOnReset(item: IwFormInput) {
   emit('reset-input', { item })
 }
 
+function setVisible(item: IwFormInput) {
+  if (typeof item.isVisible === 'boolean') return item.isVisible
+  if (typeof item.isVisible === 'function') return item.isVisible(item)
+
+  return true
+}
 
 function selectInputOnChange(item: IwFormInput,
   selectedKeys: IwFormInputSelectedKeys,
@@ -216,7 +222,7 @@ initRenderCallback();
           </template>
 
           <template name="text-group"
-                    v-else-if='IwFormTypeTextGroup.indexOf(item.type) >= 0'>
+                    v-else-if='IwFormTypeTextGroup.indexOf(item.type) >= 0 && setVisible(item)'>
             <label :for="`${formId}-${item.name}`"
                    class="iwFormInputLabel">{{ setLabel(item) }}</label>
             <div class="mb-2 relative">
@@ -250,7 +256,7 @@ initRenderCallback();
           </template>
 
           <template name="select"
-                    v-else-if="IwFormTypeEnum.SELECT === (item.type)">
+                    v-else-if="IwFormTypeEnum.SELECT === (item.type) && setVisible(item)">
             <template v-if='!isReadOnly'>
               <label :for="`${formId}-${item.name}`"
                      class="iwFormInputLabel">{{ setLabel(item) }}</label>
@@ -276,7 +282,7 @@ initRenderCallback();
           </template>
 
           <template name="checkbox"
-                    v-else-if='IwFormTypeEnum.CHECKBOX === (item.type)'>
+                    v-else-if='IwFormTypeEnum.CHECKBOX === (item.type) && setVisible(item)'>
             <input :id="`${formId}-${item.name}`"
                    type="checkbox"
                    v-model="myFormData[item.name]"
@@ -290,7 +296,7 @@ initRenderCallback();
           </template>
 
           <template name="date"
-                    v-else-if='IwFormTypeEnum.DATE === (item.type)'>
+                    v-else-if='IwFormTypeEnum.DATE === (item.type) && setVisible(item)'>
             <label :for="`${formId}-${item.name}`"
                    class="iwFormInputLabel">{{ setLabel(item) }}</label>
             <EasepickCalendar :id="`${formId}-${item.name}`"
