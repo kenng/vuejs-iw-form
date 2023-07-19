@@ -244,6 +244,28 @@ export const useIwForm = (config: IwFormUseConfig) => {
     //     }
     //   }
 
+
+    function getVisibility(item: IwFormInput) {
+        if (typeof item.isVisible === 'boolean') return item.isVisible
+        if (typeof item.isVisible === 'function') return item.isVisible(item, myFormData)
+
+        return true
+    }
+
+    function isVisible(item: IwFormInput): boolean {
+        return isVisibleOnData(item) || getVisibility(item)
+    }
+
+    function isVisibleOnData(item: IwFormInput): boolean {
+        if (item.visibleOnData) {
+            for (const dataKey of item.visibleOnData) {
+                if (!myFormData.value[dataKey]) return false
+            }
+        }
+
+        return true
+    }
+
     function initRenderCallback() {
         myForm.renderCallBack = (name: string) => {
             keys.value[name] = `${name}-${Date.now()}-${Math.random() * 10000}`
@@ -291,6 +313,8 @@ export const useIwForm = (config: IwFormUseConfig) => {
         formOnReset,
         removeDisabledInputValue,
         formOnSubmit,
+        getVisibility,
+        isVisible,
         initRenderCallback,
         initFormData,
     }

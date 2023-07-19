@@ -108,6 +108,8 @@ interface IwFormInput {
     onChangeUpdateInput?: (item: IwFormInput, value: any, ...extra: any[]) => Promise<IwFormOnChangeResponse>;
     onClickFn?: Function;
     isVisible?: boolean | Function;
+    // visible only if the form data is set
+    visibleOnData?: string[]
 
     selectConfig?: IwFormInputSelectConfig
 
