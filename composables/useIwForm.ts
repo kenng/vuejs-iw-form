@@ -253,7 +253,10 @@ export const useIwForm = (config: IwFormUseConfig) => {
     }
 
     function isVisible(item: IwFormInput): boolean {
-        return isVisibleOnData(item) || getVisibility(item)
+        if (null != item.visibleOnData) {
+            return isVisibleOnData(item)
+        }
+        return getVisibility(item)
     }
 
     function isVisibleOnData(item: IwFormInput): boolean {
@@ -261,9 +264,10 @@ export const useIwForm = (config: IwFormUseConfig) => {
             for (const dataKey of item.visibleOnData) {
                 if (!myFormData.value[dataKey]) return false
             }
+            return true
         }
 
-        return true
+        return false
     }
 
     function initRenderCallback() {
