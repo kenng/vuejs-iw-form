@@ -193,6 +193,10 @@ export const useIwForm = (config: IwFormUseConfig) => {
         if (totalSubmission == 0) {
             try {
                 if (config.onSubmit) {
+                    // clear previous error if any
+                    formErrorMsg.value = ''
+
+                    // prepare the data
                     const data = removeDisabledInputValue()
                     await config.onSubmit(data)
                     if (config.myForm.onSuccess) config.myForm.onSuccess()
