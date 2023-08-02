@@ -189,7 +189,7 @@ function dateOnChange(item: IwFormInput, val: any) {
 async function myFormOnSubmit(ev: Event) {
   submitIsLoading.value = true
   await formOnSubmit(ev)
-  submitIsLoading.value = true
+  submitIsLoading.value = false
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -335,12 +335,9 @@ initRenderCallback();
 
           <template name="submit-btn"
                     v-else-if="IwFormTypeEnum.SUBMIT_BTN === (item.type)">
-            <label :for="`${formId}-submit-btn`"
-                   class="iwFormInputLabel"></label>
-            <button :id="`${formId}-submit-btn`"
-                    class="iwFormBtn iwFormSubmitBtn"
-                    type="submit"> {{ totalSubmission > 0 ? formSubmitAgainText : submitText }} </button>
-            <p class="iwFormInputHelperText"></p>
+            <IwFormBtn type="submit"
+                       :isLoading="showSubmitLoading && submitIsLoading"
+                       :label="`${totalSubmission > 0 ? formSubmitAgainText : submitText}`" />
           </template>
 
         </div><!-- end of form inputs -->
