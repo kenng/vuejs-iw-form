@@ -1,13 +1,13 @@
 <script setup lang='ts'>
 // @unocss-include
 import { ref, VNodeRef } from 'vue'
-import IwFormConfig, { IwFormType } from './utils/IwFormConfig';
-import IwFormCalendar from './utils/IwFormCalendar';
-import IwFormInputSelectConfig from './utils/IwFormInputSelectConfig';
+import IwFormConfig, { IwFormType } from '../utils/IwFormConfig';
+import IwFormCalendar from '../utils/IwFormCalendar';
+import IwFormInputSelectConfig from '../utils/IwFormInputSelectConfig';
 import dayjs from 'dayjs'
-import IwFormRule from './utils/IwFormRule';
-import IwForm from './components/IwForm.vue';
-import IwFormSampleComponent from './IwFormSampleComponent.vue';
+import IwFormRule from '../utils/IwFormRule';
+import IwForm from '../components/IwForm.vue';
+import IwFormSampleComponent from '../IwFormSampleComponent.vue';
 
 interface FormSample {
     title: string
