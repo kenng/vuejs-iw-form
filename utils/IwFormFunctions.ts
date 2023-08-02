@@ -18,7 +18,7 @@ export function mapToDropdownOptions(
         res.push({ value: '', label: 'All' })
     }
 
-    // example data: {"salesManagers":{"2":"sales1@vilor.com","3":"sales2@vilor.com"}}
+    // example data: {"2":"sales1@vilor.com","3":"sales2@vilor.com"}
     for (const [key, val] of Object.entries(data)) {
         res.push({ value: key, label: val })
     }

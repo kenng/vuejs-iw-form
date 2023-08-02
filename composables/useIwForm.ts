@@ -15,6 +15,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
     const formErrorMsg = ref('')
     const inputRefs = ref([])
     const keys = ref<string[]>([])
+    const submitIsLoading = ref<boolean>(false)
 
     const myForm: IwFormConfig = config.myForm
     myForm.formGroups.forEach(group => {
@@ -302,6 +303,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
         inputRefs,
         keys,
         myFormData,
+        submitIsLoading,
         totalSubmission,
 
         // functions

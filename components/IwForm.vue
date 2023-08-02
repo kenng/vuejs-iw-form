@@ -70,6 +70,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  showSubmitLoading: {
+    type: Boolean,
+    default: true,
+  },
   showCloseBtn: {
     type: Boolean,
     default: false,
@@ -80,7 +84,6 @@ const props = defineProps({
   },
   submitAgainText: {
     type: String,
-    default: 'Submit Again',
   },
   title: {
     type: String,
@@ -95,6 +98,8 @@ const props = defineProps({
     default: true,
   },
 });
+
+const formSubmitAgainText = props.submitAgainText ?? props.submitText
 
 //////////////////////////////////////////////////////////////////////
 //  Variables
@@ -128,6 +133,7 @@ const {
   initFormData,
   validate,
   isVisible,
+  submitIsLoading,
 } = useIwForm({
   myForm: props.myForm,
   onSubmit: props.onSubmit,
@@ -180,6 +186,12 @@ function dateOnChange(item: IwFormInput, val: any) {
   onChange(item, val)
 }
 
+async function myFormOnSubmit(ev: Event) {
+  submitIsLoading.value = true
+  await formOnSubmit(ev)
+  submitIsLoading.value = true
+}
+
 //////////////////////////////////////////////////////////////////////
 // export & expose
 //////////////////////////////////////////////////////////////////////
@@ -196,7 +208,7 @@ initRenderCallback();
 <template>
   <div class="iwFormWrapper">
     <form :class="myForm.cssForm"
-          @submit.prevent.stop='formOnSubmit'
+          @submit.prevent.stop='myFormOnSubmit'
           @reset.prevent.stop='formOnReset'>
       <slot name='buttonsTop' />
       <div v-for="(group, groupKey) in myForm.formGroups"
@@ -327,7 +339,7 @@ initRenderCallback();
                    class="iwFormInputLabel"></label>
             <button :id="`${formId}-submit-btn`"
                     class="iwFormBtn iwFormSubmitBtn"
-                    type="submit"> {{ totalSubmission > 0 ? submitAgainText : submitText }} </button>
+                    type="submit"> {{ totalSubmission > 0 ? formSubmitAgainText : submitText }} </button>
             <p class="iwFormInputHelperText"></p>
           </template>
 
@@ -336,12 +348,11 @@ initRenderCallback();
 
       <div :class="css.cssSubmitBtnWrapper ?? 'iwFormInputWrapper'">
         <template v-if="showSubmitBtn">
-          <label :for="`${formId}-submit-btn`"
-                 class="iwFormInputLabel"></label>
-          <button :id="`${formId}-submit-btn`"
-                  class="iwFormBtn iwFormSubmitBtn"
-                  type="submit"> {{ totalSubmission > 0 ? submitAgainText : submitText }} </button>
-          <p class="iwFormInputHelperText"></p>
+          <slot name='submitBtn'>
+            <IwFormBtn type="submit"
+                       :isLoading="showSubmitLoading && submitIsLoading"
+                       :label="`${totalSubmission > 0 ? formSubmitAgainText : submitText}`" />
+          </slot>
         </template>
       </div>
       <div :class="css.cssResetBtnWrapper ?? 'iwFormResetBtnWrapper'">

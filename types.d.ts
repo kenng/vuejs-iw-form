@@ -167,3 +167,5 @@ interface IIwFormRule {
 
 type IwFormRuleResponse = (data: IRuleData) => boolean | string
 type IwFormMethod = (data: any) => IwFormRuleResponse
+
+type IwFormBtnType = 'button' | 'submit' | 'reset'
