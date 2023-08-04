@@ -62,6 +62,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  showHelperText: {
+    type: Boolean,
+    default: true,
+  },
   showResetBtn: {
     type: Boolean,
     default: true,
@@ -254,7 +258,8 @@ initRenderCallback();
                        :disabled="isDisabled(item.disabled, isReadOnly)"
                        :ref="getRef(item)"
                        :required="setRequired(item)" />
-                <p class="iwFormInputHelperText">
+                <p v-if="showHelperText"
+                   class="iwFormInputHelperText">
                   <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]
                   }}</span></template>
                   <template v-else> {{ item.helperText }} </template>
@@ -276,7 +281,8 @@ initRenderCallback();
                                 @removed="(selectedKeys, selectedRaw, justRemoved) =>
                                   selectInputOnChange(item, selectedKeys, selectedRaw, justRemoved, myForm)"
                                 :disabled="item.disabled" />
-                <p class="iwFormInputHelperText">
+                <p v-if="showHelperText"
+                   class="iwFormInputHelperText">
                   <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]
                   }}</span></template>
                   <template v-else> {{ item.helperText }} </template>
@@ -318,7 +324,8 @@ initRenderCallback();
                                 @change="(val) => dateOnChange(item, val)"
                                 @reset="inputOnReset(item)"
                                 :options="item.dateOptions!"></EasepickCalendar>
-              <p class="iwFormInputHelperText">
+              <p v-if="showHelperText"
+                 class="iwFormInputHelperText">
                 <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]
                 }}</span></template>
                 <template v-else> {{ item.helperText }} </template>

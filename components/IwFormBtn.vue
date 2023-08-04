@@ -52,7 +52,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <div class="IwFormBtnWrapper">
+    <div class="iwFormBtnWrapper">
         <label :for="`${id}-submit-btn`"
                class="iwFormInputLabel"></label>
         <button :id="`${id}-submit-btn`"
