@@ -242,22 +242,23 @@ initRenderCallback();
                   <Icon class="w-5 h-5 text-gray-500 dark:text-gray-400"
                         :icon="item.prefixIcon!"></Icon>
                 </div>
-                <input :key="key"
-                       :id="`${formId}-${item.name}`"
-                       :name="item.name"
-                       :value="myFormData[item.name]"
-                       :aria-label="getAriaLabel(item)"
-                       @input="(event) => onInput(item, (event.target as HTMLInputElement).value)"
-                       @change="(event) => onChange(item, (event.target as HTMLInputElement).value)"
-                       @blur="(_) => onBlur(item, myFormData[item.name])"
-                       @focus="(_) => onFocus(item, myFormData[item.name])"
-                       :type="(item.type)"
+                <input :aria-label="getAriaLabel(item)"
+                       :autocomplete="item.autocomplete ?? 'on'"
                        :class="getInputCss(item)"
-                       :placeholder="item.placeholder"
-                       :rules="item.rules"
                        :disabled="isDisabled(item.disabled, isReadOnly)"
+                       :id="`${formId}-${item.name}`"
+                       :key="key"
+                       :name="item.name"
+                       :placeholder="item.placeholder"
                        :ref="getRef(item)"
-                       :required="setRequired(item)" />
+                       :required="setRequired(item)"
+                       :rules="item.rules"
+                       :type="(item.type)"
+                       :value="myFormData[item.name]"
+                       @blur="(_) => onBlur(item, myFormData[item.name])"
+                       @change="(event) => onChange(item, (event.target as HTMLInputElement).value)"
+                       @focus="(_) => onFocus(item, myFormData[item.name])"
+                       @input="(event) => onInput(item, (event.target as HTMLInputElement).value)" />
                 <p v-if="showHelperText"
                    class="iwFormInputHelperText">
                   <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]

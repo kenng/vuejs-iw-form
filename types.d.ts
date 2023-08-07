@@ -66,6 +66,7 @@ interface IwFormGroup {
 
 interface IwFormInput {
     // name in type will be the formData variable name as well
+    autocomplete?: string;
     name: string;
     ref?: string;
     type: IwFormType;
