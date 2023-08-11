@@ -146,7 +146,11 @@ const {
 })
 
 const emit = defineEmits(['change', 'reset-input'])
+const folded = ref(true); // Start with folded state as true
 
+const toggleFolded = () => {
+  folded.value = !folded.value;
+};
 //////////////////////////////////////////////////////////////////////
 //  Functions
 //////////////////////////////////////////////////////////////////////
@@ -221,6 +225,7 @@ initRenderCallback();
         <div v-for="(item, key) in group.formInputs"
              :key="keys[item.name]"
              :class="getCss(item, { cssArray: [item.cssWrapper ?? 'iwFormInputWrapper'], cssObj: { iwFormReadOnly: props.isReadOnly } })">
+          <template v-if="!item.foldable || (!folded && item.foldable)">
           <template name="label"
                     v-if='IwFormTypeEnum.LABEL === (item.type)'>
             <div :class="getCss(item)">{{ item.label }}</div>
@@ -347,7 +352,7 @@ initRenderCallback();
                        :isLoading="showSubmitLoading && submitIsLoading"
                        :label="`${totalSubmission > 0 ? formSubmitAgainText : submitText}`" />
           </template>
-
+ </template>
         </div><!-- end of form inputs -->
       </div><!-- end of form groups -->
 
@@ -365,6 +370,15 @@ initRenderCallback();
           <button class="iwFormResetBtn"
                   @click="formOnReset"
                   type="button">{{ resetText }}</button>
+        </template>
+      </div>
+      <div :class="css.cssShowBtnWrapper ?? 'iwFormShowBtnWrapper'">
+        <template v-if="showMoreBtn">
+          <button @click="toggleFolded"
+                  class="iwFormShowBtn"
+                  type="button">
+            {{ folded ? props.foldingLabel : 'Show Less' }}
+          </button>
         </template>
       </div>
     </form>
