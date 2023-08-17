@@ -347,10 +347,23 @@ initRenderCallback();
           </template>
 
           <template name="submit-btn"
-                    v-else-if="IwFormTypeEnum.SUBMIT_BTN === (item.type)">
-            <IwFormBtn type="submit"
-                       :isLoading="showSubmitLoading && submitIsLoading"
-                       :label="`${totalSubmission > 0 ? formSubmitAgainText : submitText}`" />
+                      v-if="IwFormTypeEnum.SUBMIT_BTN === (item.type)">
+              <IwFormBtn type="submit"
+                         :isLoading="showSubmitLoading && submitIsLoading"
+                         :label="`${totalSubmission > 0 ? formSubmitAgainText : submitText}`"
+                         :class="{
+                           iwFormInputLabel: !folded,
+                           foldedSubmitBtn: folded
+                         }" />
+          </template>
+          <template name="reset-btn"
+                    v-else-if="IwFormTypeEnum.RESET_BTN === (item.type)">
+            <button :class="{
+              showResetBtn: !folded,
+              foldedResetBtn: folded
+            }"
+                    @click="formOnReset"
+                    type="button">{{ resetText }}</button>
           </template>
  </template>
         </div><!-- end of form inputs -->
@@ -367,9 +380,12 @@ initRenderCallback();
       </div>
       <div :class="css.cssResetBtnWrapper ?? 'iwFormResetBtnWrapper'">
         <template v-if="showResetBtn">
-          <button class="iwFormResetBtn"
-                  @click="formOnReset"
-                  type="button">{{ resetText }}</button>
+          <slot name='resetBtn'>
+            <button class="iwFormResetBtn"
+                    @click="formOnReset"
+                    type="button">{{ resetText }}</button>
+          </slot>
+
         </template>
       </div>
       <div :class="css.cssShowBtnWrapper ?? 'iwFormShowBtnWrapper'">
