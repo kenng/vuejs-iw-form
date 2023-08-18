@@ -131,6 +131,7 @@ const {
   getAriaLabel,
   getCss,
   getInputCss,
+  getFormGroupSubmitLabel,
   onInput,
   onBlur,
   onFocus,
@@ -366,22 +367,21 @@ initRenderCallback();
                          :formData="myFormData"></component>
             </template>
 
-            <template name="submit-btn"
-                      v-else-if="IwFormTypeEnum.SUBMIT_BTN === (item.type)">
-              <div class="iwFormSubmitBtnWrapper">
-                <IwFormBtn type="submit"
-                           :isLoading="showSubmitLoading && submitIsLoading"
-                           :label="`${totalSubmission > 0 ? formSubmitAgainText : submitText}`" />
-                <div :class="css.cssResetBtnWrapper ?? 'iwFormResetFilterBtnWrapper'">
-                  <button v-if="showResetBtn"
-                          class="iwFormResetFilterBtn"
-                          @click="formOnReset"
-                          type="button">{{ resetText }}</button>
-                </div>
-              </div>
-            </template>
+
           </div>
         </template><!-- end of form inputs -->
+        <div :class="['iwFormSubmitBtnWrapper', group.submitBtn?.css ?? '']"
+             v-if="group.showSubmitBtn">
+          <IwFormBtn type="submit"
+                     :isLoading="showSubmitLoading && submitIsLoading"
+                     :label="getFormGroupSubmitLabel(group, totalSubmission > 0 ? formSubmitAgainText : submitText)" />
+          <div :class="css.cssResetBtnWrapper ?? 'iwFormResetFilterBtnWrapper'">
+            <button v-if="showResetBtn"
+                    class="iwFormResetFilterBtn"
+                    @click="formOnReset"
+                    type="button">{{ resetText }}</button>
+          </div>
+        </div>
       </div><!-- end of form groups -->
 
       <div :class="css.cssSubmitBtnWrapper ?? 'iwFormInputWrapper'">

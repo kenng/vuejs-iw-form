@@ -61,7 +61,12 @@ interface IwFormSelectProps {
 interface IwFormGroup {
     css?: string;
     label?: string;
-    formInputs: Array<IwFormInput | IwFormInputBtn>;
+    formInputs: Array<IwFormInput>;
+    showSubmitBtn?: boolean;
+    submitBtn?: {
+        css?: string
+        label?: string
+    }
 }
 
 interface IwFormInputBtn {

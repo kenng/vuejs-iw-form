@@ -111,7 +111,7 @@
 }
 
 .iwFormSubmitBtnWrapper {
-    @apply relative;
+    @apply m-2 relative;
 }
 
 .iwFormWrapper {

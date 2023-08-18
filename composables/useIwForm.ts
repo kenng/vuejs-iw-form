@@ -42,6 +42,17 @@ export const useIwForm = (config: IwFormUseConfig) => {
         return css + ' ' + item.cssInput
     }
 
+    function getFormGroupSubmitLabel(group: IwFormGroup, defaultLabel: string) {
+        const submitBtn = group.submitBtn
+        if (submitBtn) {
+            if (submitBtn.label) {
+                return submitBtn.label
+            }
+        }
+
+        return defaultLabel
+    }
+
     function validate(item: IwFormInput, data: any) {
         if (item.rules) {
             for (const rule of item.rules) {
@@ -309,6 +320,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
         // functions
         getAriaLabel,
         getCss,
+        getFormGroupSubmitLabel,
         getInputCss,
         validate,
         validateAll,

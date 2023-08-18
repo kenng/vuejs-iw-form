@@ -648,6 +648,7 @@ const gridForm: FormSample = {
     form: new IwFormConfig({
         formGroups: [{
             css: 'grid grid-cols-3 gap-1',
+            showSubmitBtn: true,
             formInputs: [
                 {
                     type: IwFormType.TEXTGROUP_TEXT,
@@ -673,11 +674,6 @@ const gridForm: FormSample = {
                     label: 'Input with one column',
                     cssWrapper: 'col-span-1',
                 },
-                {
-                    type: IwFormType.SUBMIT_BTN,
-                    name: 'submitBtn',
-                    cssWrapper: '',
-                }
             ]
         }
         ]
