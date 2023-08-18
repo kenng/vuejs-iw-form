@@ -151,6 +151,7 @@ interface IwFormInput {
 interface IwFormStyle {
     cssSubmitBtnWrapper?: string,
     cssResetBtnWrapper?: string,
+    cssShowFoldBtnWrapper?: string,
 }
 
 interface IRuleData {
