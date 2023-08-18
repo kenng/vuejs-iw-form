@@ -178,7 +178,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
         const formData = {}
         for (const group of (config.myForm.formGroups)) {
             group.formInputs.forEach((item: IwFormInput) => {
-                if (!item.disabled) {
+                if (!item.disabled && IwFormType.SUBMIT_BTN != item.type) {
                     const name = item.name
                     formData[name] = myFormData.value[name]
                 }
