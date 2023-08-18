@@ -5,7 +5,7 @@ import IwFormConfig, { IwFormType } from '../utils/IwFormConfig';
 import EasepickCalendar from './EasepickCalendar.vue';
 import VueMultiSelect from './VueMultiSelect.vue';
 import useIwForm from '../composables/useIwForm';
-
+import "../iw-form.css"
 
 //////////////////////////////////////////////////////////////////////
 //  Emit & Props
@@ -241,7 +241,7 @@ initRenderCallback();
 
       <div v-for="(group, groupKey) in myForm.formGroups"
            :key="groupKey"
-           :class="group.css">
+           :class="[group.css ?? 'iwFormGroup']">
         <template v-for="(item, key) in group.formInputs"
                   :key="keys[item.name]">
           <div v-if="!item.foldable || (!folded && item.foldable)"
@@ -411,6 +411,3 @@ initRenderCallback();
     </div>
   </div>
 </template>
-
-<style scoped>
-</style>
