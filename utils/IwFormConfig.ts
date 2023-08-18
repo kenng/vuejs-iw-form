@@ -19,7 +19,6 @@ export enum IwFormType {
     UPLOADER = 'uploader',
     COMPONENT = 'component',
     SUBMIT_BTN = 'submit-btn',
-    RESET_BTN = 'reset-btn',
 }
 
 export default class IwFormConfig {

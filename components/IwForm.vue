@@ -35,7 +35,7 @@ const props = defineProps({
     type: Object as PropType<IwFormStyle>,
     default: {
       cssSubmitBtnWrapper: 'iwFormInputWrapper',
-      cssResetBtnWrapper: 'iwFormResetBtnWrapper',
+      cssResetBtnWrapper: 'iwFormResetFilterBtnWrapper',
     },
   },
   isReadOnly: {
@@ -223,21 +223,33 @@ initRenderCallback();
 
 <template>
   <div class="iwFormWrapper">
+    <slot name='buttonsTop'></slot>
+
+    <div :class="css.cssShowFoldBtnWrapper ?? 'iwFormShowFoldBtnWrapper'">
+      <template v-if="showFoldBtn">
+        <button @click="toggleFolded"
+                class="iwFormShowFoldBtn"
+                type="button">
+          {{ folded ? foldLabel : 'Show Less <' }}
+             </button>
+      </template>
+    </div>
+
     <form :class="myForm.cssForm"
           @submit.prevent.stop='myFormOnSubmit'
           @reset.prevent.stop='formOnReset'>
-      <slot name='buttonsTop' />
+
       <div v-for="(group, groupKey) in myForm.formGroups"
            :key="groupKey"
            :class="group.css">
         <template v-for="(item, key) in group.formInputs"
-             :key="keys[item.name]"
-             :class="getCss(item, { cssArray: [item.cssWrapper ?? 'iwFormInputWrapper'], cssObj: { iwFormReadOnly: props.isReadOnly } })">
-          <div v-if="!item.foldable || (!folded && item.foldable)">
-          <template name="label"
-                    v-if='IwFormTypeEnum.LABEL === (item.type)'>
-            <div :class="getCss(item)">{{ item.label }}</div>
-          </template>
+                  :key="keys[item.name]">
+          <div v-if="!item.foldable || (!folded && item.foldable)"
+               :class="getCss(item, { cssArray: [item.cssWrapper ?? 'iwFormInputWrapper'], cssObj: { iwFormReadOnly: props.isReadOnly } })">
+            <template name="label"
+                      v-if='IwFormTypeEnum.LABEL === (item.type)'>
+              <div :class="getCss(item)">{{ item.label }}</div>
+            </template>
 
             <template name="separator"
                       v-else-if='IwFormTypeEnum.SEPARATOR === (item.type)'>
@@ -354,42 +366,42 @@ initRenderCallback();
                          :formData="myFormData"></component>
             </template>
 
-          <template name="submit-btn"
+            <template name="submit-btn"
                       v-else-if="IwFormTypeEnum.SUBMIT_BTN === (item.type)">
-              <IwFormBtn type="submit"
-                         :isLoading="showSubmitLoading && submitIsLoading"
-                         :label="`${totalSubmission > 0 ? formSubmitAgainText : submitText}`" />
-              <button class="resetFilterBtn"
-                      @click="formOnReset"
-                      type="button">{{ resetText }}</button>
+              <div class="iwFormSubmitBtnWrapper">
+                <IwFormBtn type="submit"
+                           :isLoading="showSubmitLoading && submitIsLoading"
+                           :label="`${totalSubmission > 0 ? formSubmitAgainText : submitText}`" />
+                <div :class="css.cssResetBtnWrapper ?? 'iwFormResetFilterBtnWrapper'">
+                  <button v-if="showResetBtn"
+                          class="iwFormResetFilterBtn"
+                          @click="formOnReset"
+                          type="button">{{ resetText }}</button>
+                </div>
+              </div>
             </template>
           </div>
         </template><!-- end of form inputs -->
       </div><!-- end of form groups -->
 
       <div :class="css.cssSubmitBtnWrapper ?? 'iwFormInputWrapper'">
-        <template v-if="showSubmitBtn || showResetBtn">
+        <template v-if="showSubmitBtn">
           <slot name='submitBtn'>
-            <IwFormBtn type="submit"
-                       :isLoading="showSubmitLoading && submitIsLoading"
-                       :label="`${totalSubmission > 0 ? formSubmitAgainText : submitText}`" />
-            <div :class="css.cssResetBtnWrapper ?? 'iwFormResetBtnWrapper'">
-              <button class="iwFormResetBtn"
-                      @click="formOnReset"
-                      type="button">{{ resetText }}</button>
+            <div class="iwFormSubmitBtnWrapper">
+              <IwFormBtn type="submit"
+                         :isLoading="showSubmitLoading && submitIsLoading"
+                         :label="`${totalSubmission > 0 ? formSubmitAgainText : submitText}`" />
+              <div :class="css.cssResetBtnWrapper ?? 'iwFormResetFilterBtnWrapper'">
+                <button v-if="showResetBtn"
+                        class="iwFormResetFilterBtn"
+                        @click="formOnReset"
+                        type="button">{{ resetText }}</button>
+              </div>
             </div>
           </slot>
         </template>
       </div>
-      <div :class="css.cssShowFoldBtnWrapper ?? 'iwFormShowBtnWrapper'">
-        <template v-if="showFoldBtn">
-          <button @click="toggleFolded"
-                  class="iwFormShowBtn"
-                  type="button">
-            {{ folded ? foldLabel : 'Show Less <' }}
-               </button>
-        </template>
-      </div>
+
     </form>
 
     <div v-if="formErrorMsg"
