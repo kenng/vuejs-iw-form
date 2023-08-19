@@ -15,7 +15,6 @@ const IwFormTypeTextGroup: Array<IwFormType> = [
   IwFormType.TEXTGROUP_EMAIL,
   IwFormType.TEXTGROUP_NUMBER,
   IwFormType.TEXTGROUP_PASSWORD,
-  IwFormType.TEXTGROUP_TEXTAREA,
 ];
 
 
@@ -255,6 +254,31 @@ initRenderCallback();
             <template name="separator"
                       v-else-if='IwFormTypeEnum.SEPARATOR === (item.type)'>
               <hr class="iwFormHr">
+            </template>
+
+            <template name="text-group"
+                      v-else-if='IwFormTypeEnum.TEXTGROUP_TEXTAREA === (item.type)'>
+              <label :for="`${formId}-${item.name}`"
+                     class="iwFormInputLabel">{{ setLabel(item) }}</label>
+              <textarea :aria-label="getAriaLabel(item)"
+                        :autocomplete="item.autocomplete ?? 'on'"
+                        :class="getInputCss(item)"
+                        :disabled="isDisabled(item.disabled, isReadOnly)"
+                        :id="`${formId}-${item.name}`"
+                        :key="key"
+                        :name="item.name"
+                        :placeholder="item.placeholder"
+                        :ref="getRef(item)"
+                        :required="setRequired(item)"
+                        :rows="item.textAreaRows ?? 4"
+                        :rules="item.rules"
+                        :type="(item.type)"
+                        :value="myFormData[item.name]"
+                        @blur="(_) => onBlur(item, myFormData[item.name])"
+                        @change="(event) => onChange(item, (event.target as HTMLInputElement).value)"
+                        @focus="(_) => onFocus(item, myFormData[item.name])"
+                        @input="(event) => onInput(item, (event.target as HTMLInputElement).value)">
+              </textarea>
             </template>
 
             <template name="text-group"

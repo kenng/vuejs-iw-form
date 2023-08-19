@@ -29,12 +29,12 @@ export const useIwForm = (config: IwFormUseConfig) => {
         return 'form input'
     }
 
-    function getInputCss(item: IwFormInput): string {
+    function getInputCss(item: IwFormInput, defaultCss?: string): string {
         let css;
         if (item.disabled) {
             css = 'iwFormInputDisabled'
         } else {
-            css = 'iwFormInputText'
+            css = defaultCss ?? 'iwFormInputText'
         }
 
         if (item.showPrefixIcon) css += ' iwFormPrefixIconPadding'

@@ -94,6 +94,8 @@ interface IwFormInput {
     cssWrapper?: string;
     cssInput?: string;
 
+    textAreaRows?: number;
+
     showPrefixIcon?: boolean;
     prefixIcon?: string;
     showSuffixIcon?: boolean;
