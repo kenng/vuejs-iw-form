@@ -167,6 +167,7 @@ async function onChange(item: IwFormInput, val: any, ...extra: any[]) {
   if (item.onChange) item.onChange(item, val, ...extra)
   if (item.onChangeUpdateInput) {
     const res = await item.onChangeUpdateInput(item, val, ...extra)
+    props.myForm.updateSelectInput(res.linkedInputName, res.newSelectConfig)
   }
 
   emit('change', { item, val, ...extra })

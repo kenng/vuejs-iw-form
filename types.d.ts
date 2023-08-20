@@ -73,6 +73,11 @@ interface IwFormInputBtn {
     type: 'submit-btn',
 }
 
+interface IwFormOnChangeUpdateInput {
+    linkedInputName: string,
+    newSelectConfig: IwFormInputSelectConfig
+}
+
 interface IwFormInput {
     // name in type will be the formData variable name as well
     foldable?: boolean;
@@ -118,7 +123,7 @@ interface IwFormInput {
      */
     onBlur?: Function;
     onChange?: Function;
-    onChangeUpdateInput?: (item: IwFormInput, value: any, ...extra: any[]) => Promise<IwFormOnChangeResponse>;
+    onChangeUpdateInput?: (item: IwFormInput, value: any, ...extra: any[]) => Promise<IwFormOnChangeUpdateInput>;
     onClickFn?: Function;
     isVisible?: boolean | Function;
     // visible only if the form data is set

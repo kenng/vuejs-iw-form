@@ -289,6 +289,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
     function initRenderCallback() {
         myForm.renderCallBack = (name: string) => {
             keys.value[name] = `${name}-${Date.now()}-${Math.random() * 10000}`
+            myFormData.value[name] = null
         }
     }
 
