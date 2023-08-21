@@ -34,7 +34,8 @@ const demoSelectMultiple: IwFormConfig = new IwFormConfig({
                 name: 'countries',
                 type: IwFormType.SELECT,
                 label: 'Select all the related countries (multiple choices)',
-                selectConfig: countries
+                selectConfig: countries,
+                rules: [IwFormRule.required]
             }
         ],
     }

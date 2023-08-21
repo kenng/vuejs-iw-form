@@ -90,10 +90,20 @@ onMounted(() => {
             position: 'left',
         },
         setup(picker: any) {
+            picker.on('change', (e: any) => {
+                let dateFormat = 'YYYY-MM-DD'
+                if (props.options.enableTimePicker) {
+                    dateFormat = 'YYYY-MM-DD HH:mm'
+                }
+                const selectedDateTime = dayjs(calendar.getDate()).format(dateFormat)
+                emit('change', [selectedDateTime])
+            });
+
             picker.on('select', (e: any) => {
                 if (e.detail.date) {
                     emit('change', [e.detail.date])
                 } else if (e.detail.start) {
+                    // cater to range selection
                     let startDateTime = e.detail.start
                     let endDateTime = e.detail.end
 
@@ -131,8 +141,18 @@ onMounted(() => {
     options.AmpPlugin = AmpPluginOpts
     const calendar = createCalendar(options)
 
-    if (props.options.value) calendar.setDate(props.options.value);
-    if (props.options.showValueAsToday) calendar.setDate(new Date());
+    if (props.options.value) {
+        calendar.setDate(props.options.value);
+        if (props.options.enableTimePicker) {
+            const dateTime = props.options.value as string
+            const splitted = dateTime.split(" ")
+            if (splitted.length == 2) {
+                calendar.setTime(splitted[1]);
+            }
+        }
+    } else if (props.options.showValueAsToday) {
+        calendar.setDate(new Date());
+    }
 })
 
 //////////////////////////////////////////////////////////////////////
@@ -154,4 +174,5 @@ defineExpose({ onReset })
     </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>

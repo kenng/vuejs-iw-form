@@ -1,16 +1,17 @@
 <script setup lang='ts'>
-import { PropType } from 'vue'
+import { PropType, ref } from 'vue'
 import { Icon } from '@iconify/vue';
 import IwFormConfig, { IwFormType } from '../utils/IwFormConfig';
 import EasepickCalendar from './EasepickCalendar.vue';
 import VueMultiSelect from './VueMultiSelect.vue';
 import useIwForm from '../composables/useIwForm';
 import "../iw-form.css"
+import dayjs from 'dayjs';
 
 //////////////////////////////////////////////////////////////////////
 //  Emit & Props
 //////////////////////////////////////////////////////////////////////
-const IwFormTypeTextGroup: Array<IwFormType> = [
+const IwFormTypeTextGroup: Array<IIwFormType> = [
   IwFormType.TEXTGROUP_TEXT,
   IwFormType.TEXTGROUP_EMAIL,
   IwFormType.TEXTGROUP_NUMBER,
@@ -163,7 +164,7 @@ const toggleFolded = () => {
 //  Functions
 //////////////////////////////////////////////////////////////////////
 
-async function onChange(item: IwFormInput, val: any, ...extra: any[]) {
+async function onChange(item: IwFormInputCore, val: any, ...extra: any[]) {
   if (item.onChange) item.onChange(item, val, ...extra)
   if (item.onChangeUpdateInput) {
     const res = await item.onChangeUpdateInput(item, val, ...extra)
@@ -179,7 +180,7 @@ function inputOnReset(item: IwFormInput) {
 }
 
 
-function selectInputOnChange(item: IwFormInput,
+function selectInputOnChange(item: IwFormInputSelect,
   selectedKeys: IwFormInputSelectedKeys,
   selectedRaw: IwFormInputSelectedOption | IwFormInputSelectedOption[],
   justSelected: IwFormInputSelectedOption,
@@ -191,16 +192,31 @@ function selectInputOnChange(item: IwFormInput,
     delete errors.value[item.name]
   }
 
-  onChange(item, selectedKeys, selectedRaw, justSelected, theForm)
+  onChange(item as unknown as IwFormInputCore, selectedKeys, selectedRaw, justSelected, theForm)
 }
 
-function dateOnChange(item: IwFormInput, val: any) {
-  myFormData.value[item.name] = val
+/**
+ * @param item IwFormInputDate
+ * @param val Date[] an array of Date objects for single date or a range of date (i.e. start date to end date)
+*/
+function dateOnChange(item: IwFormInputDate, val: Date[]) {
+  let res: Date[] | string = val
+  if (1 == val.length) {
+    let dateFormat = 'YYYY-MM-DD'
+    if (item.dateOptions.enableTimePicker) {
+      dateFormat = 'YYYY-MM-DD HH:mm'
+    }
+    res = dayjs(val[0]).format(dateFormat)
+    myFormData.value[item.name] = res
+  } else {
+    myFormData.value[item.name] = val
+  }
+
   if (validate(item, val)) {
     delete errors.value[item.name]
   }
 
-  onChange(item, val)
+  onChange(item as unknown as IwFormInputCore, res)
 }
 
 async function myFormOnSubmit(ev: Event) {

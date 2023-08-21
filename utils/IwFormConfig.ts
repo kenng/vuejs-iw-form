@@ -18,7 +18,6 @@ export enum IwFormType {
     BUTTON = 'button',
     UPLOADER = 'uploader',
     COMPONENT = 'component',
-    SUBMIT_BTN = 'submit-btn',
 }
 
 export default class IwFormConfig {
