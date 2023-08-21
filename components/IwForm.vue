@@ -248,7 +248,10 @@ initRenderCallback();
                       v-else-if='IwFormTypeTextGroup.indexOf(item.type) >= 0'>
               <template v-if="isVisible(item)">
                 <label :for="`${formId}-${item.name}`"
-                       class="iwFormInputLabel">{{ setLabel(item) }}</label>
+                       class="iwFormInputLabel">{{ setLabel(item) }}
+                  <span v-if="setRequired(item)"
+                        class="text-rose-600 text-xl"> *</span>       
+                </label>
                 <div class="mb-2 relative">
                   <div v-if="item.showPrefixIcon"
                        class="iwFormInputPrependIcon">
@@ -287,7 +290,10 @@ initRenderCallback();
               <template v-if="isVisible(item)">
                 <template v-if='!isReadOnly'>
                   <label :for="`${formId}-${item.name}`"
-                         class="iwFormInputLabel">{{ setLabel(item) }}</label>
+                         class="iwFormInputLabel">{{ setLabel(item) }}
+                    <span v-if="setRequired(item)"
+                          class="text-rose-600 text-xl"> *</span>          
+                  </label>
                   <VueMultiSelect :config="item.selectConfig"
                                   ref="inputRefs"
                                   @changed="(selectedKeys, selectedRaw, justSelected) =>
