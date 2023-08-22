@@ -26,10 +26,6 @@ const props = defineProps({
         type: String as PropType<IwCalendarInputType>,
         default: 'dateTime',
     },
-    format: {
-        type: String,
-        default: 'YYYY-MM-DD HH:mm',
-    }
 })
 
 const emit = defineEmits(['change', 'reset'])
@@ -82,24 +78,31 @@ onMounted(() => {
     }
 
     const options: IPickerConfig = {
-        element: easepickRef.value!,
         css,
-        zIndex: 1,
+        element: easepickRef.value!,
+        format: props.options.format,
         readonly: props.options.readonly,
         PresetPlugin: {
             position: 'left',
         },
+        zIndex: 1,
         setup(picker: any) {
+            picker.on('change', (e: any) => {
+                const selectedDateTime = dayjs(calendar.getDate()).format(props.options.format)
+                emit('change', [selectedDateTime])
+            });
+
             picker.on('select', (e: any) => {
                 if (e.detail.date) {
                     emit('change', [e.detail.date])
                 } else if (e.detail.start) {
+                    // cater to range selection
                     let startDateTime = e.detail.start
                     let endDateTime = e.detail.end
 
                     if ('dateTime' === props.type) {
                         if (startDateTime.isSame(endDateTime)) {
-                            endDateTime = dayjs(endDateTime).endOf('day').format(props.format);
+                            endDateTime = dayjs(endDateTime).endOf('day').format(props.options.format);
                         }
                     } else {
                         startDateTime = startDateTime.format()
@@ -131,8 +134,18 @@ onMounted(() => {
     options.AmpPlugin = AmpPluginOpts
     const calendar = createCalendar(options)
 
-    if (props.options.value) calendar.setDate(props.options.value);
-    if (props.options.showValueAsToday) calendar.setDate(new Date());
+    if (props.options.value) {
+        calendar.setDate(props.options.value);
+        if (props.options.enableTimePicker) {
+            const dateTime = props.options.value as string
+            const splitted = dateTime.split(" ")
+            if (splitted.length == 2) {
+                calendar.setTime(splitted[1]);
+            }
+        }
+    } else if (props.options.showValueAsToday) {
+        calendar.setDate(new Date());
+    }
 })
 
 //////////////////////////////////////////////////////////////////////
@@ -154,4 +167,5 @@ defineExpose({ onReset })
     </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>

@@ -29,17 +29,28 @@ export const useIwForm = (config: IwFormUseConfig) => {
         return 'form input'
     }
 
-    function getInputCss(item: IwFormInput): string {
+    function getInputCss(item: IwFormInput, defaultCss?: string): string {
         let css;
         if (item.disabled) {
             css = 'iwFormInputDisabled'
         } else {
-            css = 'iwFormInputText'
+            css = defaultCss ?? 'iwFormInputText'
         }
 
         if (item.showPrefixIcon) css += ' iwFormPrefixIconPadding'
 
         return css + ' ' + item.cssInput
+    }
+
+    function getFormGroupSubmitLabel(group: IwFormGroup, defaultLabel: string) {
+        const submitBtn = group.submitBtn
+        if (submitBtn) {
+            if (submitBtn.label) {
+                return submitBtn.label
+            }
+        }
+
+        return defaultLabel
     }
 
     function validate(item: IwFormInput, data: any) {
@@ -267,7 +278,10 @@ export const useIwForm = (config: IwFormUseConfig) => {
     function isVisibleOnData(item: IwFormInput): boolean {
         if (item.visibleOnData) {
             for (const dataKey of item.visibleOnData) {
-                if (!myFormData.value[dataKey]) return false
+                const val = myFormData.value[dataKey]
+                if (!val || 0 == val) {
+                    return false
+                }
             }
             return true
         }
@@ -278,18 +292,27 @@ export const useIwForm = (config: IwFormUseConfig) => {
     function initRenderCallback() {
         myForm.renderCallBack = (name: string) => {
             keys.value[name] = `${name}-${Date.now()}-${Math.random() * 10000}`
+            myFormData.value[name] = null
         }
     }
 
     function initFormData() {
+        for (const group of (config.myForm.formGroups)) {
+            group.formInputs.forEach((item: IwFormInput) => {
+                if (typeof item.value != 'undefined'
+                    && !item.disabled) {
+                    const name = item.name
+                    myFormData.value[name] = item.value
+                }
+            })
+        }
+
         if (config.myForm.formData && Object.keys(config.myForm.formData).length >= 1) {
             myFormData.value = JSON.parse(JSON.stringify(config.myForm.formData))
         }
 
         for (const group of (config.myForm.formGroups)) {
             for (const item of group.formInputs) {
-                if (IwFormType.SUBMIT_BTN == item.type) continue
-
                 if (!myFormData.value[item.name]) myFormData.value[item.name] = null
             }
         }
@@ -309,6 +332,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
         // functions
         getAriaLabel,
         getCss,
+        getFormGroupSubmitLabel,
         getInputCss,
         validate,
         validateAll,

@@ -26,6 +26,16 @@ export function mapToDropdownOptions(
     return res
 }
 
+/**
+ * Simple mapping of JSON object to dropdown options
+ * @param data
+ * @param params
+ * @returns
+ *
+ * Example
+ *  data: { SenangPay: 'SenangPay', KiplePay: 'KiplePay'}
+ *  output: {{label: 'SenangPay', value: 'SenangPay'}, ...}
+ */
 export function mapToDropdownFromObject(data: { [key: string]: string },
     params: IwFormSelectOptionParam = {}) {
     const { showAll = true, showNull = false } = params

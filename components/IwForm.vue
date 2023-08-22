@@ -1,21 +1,21 @@
 <script setup lang='ts'>
-import { PropType } from 'vue'
+import { PropType, ref } from 'vue'
 import { Icon } from '@iconify/vue';
 import IwFormConfig, { IwFormType } from '../utils/IwFormConfig';
 import EasepickCalendar from './EasepickCalendar.vue';
 import VueMultiSelect from './VueMultiSelect.vue';
 import useIwForm from '../composables/useIwForm';
-
+import "../iw-form.css"
+import dayjs from 'dayjs';
 
 //////////////////////////////////////////////////////////////////////
 //  Emit & Props
 //////////////////////////////////////////////////////////////////////
-const IwFormTypeTextGroup: Array<IwFormType> = [
+const IwFormTypeTextGroup: Array<IIwFormType> = [
   IwFormType.TEXTGROUP_TEXT,
   IwFormType.TEXTGROUP_EMAIL,
   IwFormType.TEXTGROUP_NUMBER,
   IwFormType.TEXTGROUP_PASSWORD,
-  IwFormType.TEXTGROUP_TEXTAREA,
 ];
 
 
@@ -35,7 +35,7 @@ const props = defineProps({
     type: Object as PropType<IwFormStyle>,
     default: {
       cssSubmitBtnWrapper: 'iwFormInputWrapper',
-      cssResetBtnWrapper: 'iwFormResetBtnWrapper',
+      cssResetBtnWrapper: 'iwFormResetFilterBtnWrapper',
     },
   },
   isReadOnly: {
@@ -76,7 +76,7 @@ const props = defineProps({
   },
   showResetBtn: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   showSubmitBtn: {
     type: Boolean,
@@ -135,6 +135,7 @@ const {
   getAriaLabel,
   getCss,
   getInputCss,
+  getFormGroupSubmitLabel,
   onInput,
   onBlur,
   onFocus,
@@ -167,10 +168,11 @@ const toggleFolded = () => {
 //  Functions
 //////////////////////////////////////////////////////////////////////
 
-async function onChange(item: IwFormInput, val: any, ...extra: any[]) {
+async function onChange(item: IwFormInputCore, val: any, ...extra: any[]) {
   if (item.onChange) item.onChange(item, val, ...extra)
   if (item.onChangeUpdateInput) {
     const res = await item.onChangeUpdateInput(item, val, ...extra)
+    props.myForm.updateSelectInput(res.linkedInputName, res.newSelectConfig)
   }
 
   emit('change', { item, val, ...extra })
@@ -182,7 +184,7 @@ function inputOnReset(item: IwFormInput) {
 }
 
 
-function selectInputOnChange(item: IwFormInput,
+function selectInputOnChange(item: IwFormInputSelect,
   selectedKeys: IwFormInputSelectedKeys,
   selectedRaw: IwFormInputSelectedOption | IwFormInputSelectedOption[],
   justSelected: IwFormInputSelectedOption,
@@ -194,16 +196,31 @@ function selectInputOnChange(item: IwFormInput,
     delete errors.value[item.name]
   }
 
-  onChange(item, selectedKeys, selectedRaw, justSelected, theForm)
+  onChange(item as unknown as IwFormInputCore, selectedKeys, selectedRaw, justSelected, theForm)
 }
 
-function dateOnChange(item: IwFormInput, val: any) {
-  myFormData.value[item.name] = val
+/**
+ * @param item IwFormInputDate
+ * @param val Date[] an array of Date objects for single date or a range of date (i.e. start date to end date)
+*/
+function dateOnChange(item: IwFormInputDate, val: Date[]) {
+  let res: Date[] | string = val
+  if (1 == val.length) {
+    let dateFormat = 'YYYY-MM-DD'
+    if (item.dateOptions.enableTimePicker) {
+      dateFormat = 'YYYY-MM-DD HH:mm'
+    }
+    res = dayjs(val[0]).format(dateFormat)
+    myFormData.value[item.name] = res
+  } else {
+    myFormData.value[item.name] = val
+  }
+
   if (validate(item, val)) {
     delete errors.value[item.name]
   }
 
-  onChange(item, val)
+  onChange(item as unknown as IwFormInputCore, res)
 }
 
 async function myFormOnSubmit(ev: Event) {
@@ -227,25 +244,62 @@ initRenderCallback();
 
 <template>
   <div class="iwFormWrapper">
+    <slot name='buttonsTop'></slot>
+
+    <div :class="css.cssShowFoldBtnWrapper ?? 'iwFormShowFoldBtnWrapper'">
+      <template v-if="showFoldBtn">
+        <button @click="toggleFolded"
+                class="iwFormShowFoldBtn"
+                type="button">
+          {{ folded ? foldLabel : 'Show Less <' }}
+             </button>
+      </template>
+    </div>
+
     <form :class="myForm.cssForm"
           @submit.prevent.stop='myFormOnSubmit'
           @reset.prevent.stop='formOnReset'>
-      <slot name='buttonsTop' />
+
       <div v-for="(group, groupKey) in myForm.formGroups"
            :key="groupKey"
-           :class="group.css">
+           :class="[group.css ?? 'iwFormGroup']">
         <template v-for="(item, key) in group.formInputs"
-             :key="keys[item.name]"
-             :class="getCss(item, { cssArray: [item.cssWrapper ?? 'iwFormInputWrapper'], cssObj: { iwFormReadOnly: props.isReadOnly } })">
-          <div v-if="!item.foldable || (!folded && item.foldable)">
-          <template name="label"
-                    v-if='IwFormTypeEnum.LABEL === (item.type)'>
-            <div :class="getCss(item)">{{ item.label }}</div>
-          </template>
+                  :key="keys[item.name]">
+          <div v-if="!item.foldable || (!folded && item.foldable)"
+               :class="getCss(item, { cssArray: [item.cssWrapper ?? 'iwFormInputWrapper'], cssObj: { iwFormReadOnly: props.isReadOnly } })">
+            <template name="label"
+                      v-if='IwFormTypeEnum.LABEL === (item.type)'>
+              <div :class="getCss(item)">{{ item.label }}</div>
+            </template>
 
             <template name="separator"
                       v-else-if='IwFormTypeEnum.SEPARATOR === (item.type)'>
               <hr class="iwFormHr">
+            </template>
+
+            <template name="text-group"
+                      v-else-if='IwFormTypeEnum.TEXTGROUP_TEXTAREA === (item.type)'>
+              <label :for="`${formId}-${item.name}`"
+                     class="iwFormInputLabel">{{ setLabel(item) }}</label>
+              <textarea :aria-label="getAriaLabel(item)"
+                        :autocomplete="item.autocomplete ?? 'on'"
+                        :class="getInputCss(item)"
+                        :disabled="isDisabled(item.disabled, isReadOnly)"
+                        :id="`${formId}-${item.name}`"
+                        :key="key"
+                        :name="item.name"
+                        :placeholder="item.placeholder"
+                        :ref="getRef(item)"
+                        :required="setRequired(item)"
+                        :rows="item.textAreaRows ?? 4"
+                        :rules="item.rules"
+                        :type="(item.type)"
+                        :value="myFormData[item.name]"
+                        @blur="(_) => onBlur(item, myFormData[item.name])"
+                        @change="(event) => onChange(item, (event.target as HTMLInputElement).value)"
+                        @focus="(_) => onFocus(item, myFormData[item.name])"
+                        @input="(event) => onInput(item, (event.target as HTMLInputElement).value)">
+              </textarea>
             </template>
 
             <template name="text-group"
@@ -254,7 +308,7 @@ initRenderCallback();
                 <label :for="`${formId}-${item.name}`"
                        class="iwFormInputLabel">{{ setLabel(item) }}
                   <span v-if="setRequired(item)"
-                        class="text-rose-600 text-xl"> *</span>       
+                        class="text-rose-600 text-xl"> *</span>
                 </label>
                 <div class="mb-2 relative">
                   <div v-if="item.showPrefixIcon"
@@ -302,7 +356,7 @@ initRenderCallback();
                   <label :for="`${formId}-${item.name}`"
                          class="iwFormInputLabel">{{ setLabel(item) }}
                     <span v-if="setRequired(item)"
-                          class="text-rose-600 text-xl"> *</span>          
+                          class="text-rose-600 text-xl"> *</span>
                   </label>
                   <VueMultiSelect :config="item.selectConfig"
                                   ref="inputRefs"
@@ -376,42 +430,41 @@ initRenderCallback();
                          :formData="myFormData"></component>
             </template>
 
-          <template name="submit-btn"
-                      v-else-if="IwFormTypeEnum.SUBMIT_BTN === (item.type)">
-              <IwFormBtn type="submit"
-                         :isLoading="showSubmitLoading && submitIsLoading"
-                         :label="`${totalSubmission > 0 ? formSubmitAgainText : submitText}`" />
-              <button class="resetFilterBtn"
-                      @click="formOnReset"
-                      type="button">{{ resetText }}</button>
-            </template>
+
           </div>
         </template><!-- end of form inputs -->
+        <div :class="['iwFormSubmitBtnWrapper', group.submitBtn?.css ?? '']"
+             v-if="group.showSubmitBtn">
+          <IwFormBtn type="submit"
+                     :isLoading="showSubmitLoading && submitIsLoading"
+                     :label="getFormGroupSubmitLabel(group, totalSubmission > 0 ? formSubmitAgainText : submitText)" />
+          <div :class="css.cssResetBtnWrapper ?? 'iwFormResetFilterBtnWrapper'">
+            <button v-if="showResetBtn"
+                    class="iwFormResetFilterBtn"
+                    @click="formOnReset"
+                    type="button">{{ resetText }}</button>
+          </div>
+        </div>
       </div><!-- end of form groups -->
 
       <div :class="css.cssSubmitBtnWrapper ?? 'iwFormInputWrapper'">
-        <template v-if="showSubmitBtn || showResetBtn">
+        <template v-if="showSubmitBtn">
           <slot name='submitBtn'>
-            <IwFormBtn type="submit"
-                       :isLoading="showSubmitLoading && submitIsLoading"
-                       :label="`${totalSubmission > 0 ? formSubmitAgainText : submitText}`" />
-            <div :class="css.cssResetBtnWrapper ?? 'iwFormResetBtnWrapper'">
-              <button class="iwFormResetBtn"
-                      @click="formOnReset"
-                      type="button">{{ resetText }}</button>
+            <div class="iwFormSubmitBtnWrapper">
+              <IwFormBtn type="submit"
+                         :isLoading="showSubmitLoading && submitIsLoading"
+                         :label="`${totalSubmission > 0 ? formSubmitAgainText : submitText}`" />
+              <div :class="css.cssResetBtnWrapper ?? 'iwFormResetFilterBtnWrapper'">
+                <button v-if="showResetBtn"
+                        class="iwFormResetFilterBtn"
+                        @click="formOnReset"
+                        type="button">{{ resetText }}</button>
+              </div>
             </div>
           </slot>
         </template>
       </div>
-      <div :class="css.cssShowFoldBtnWrapper ?? 'iwFormShowBtnWrapper'">
-        <template v-if="showFoldBtn">
-          <button @click="toggleFolded"
-                  class="iwFormShowBtn"
-                  type="button">
-            {{ folded ? foldLabel : 'Show Less <' }}
-               </button>
-        </template>
-      </div>
+
     </form>
 
     <div v-if="formErrorMsg"
@@ -421,6 +474,3 @@ initRenderCallback();
     </div>
   </div>
 </template>
-
-<style scoped>
-</style>

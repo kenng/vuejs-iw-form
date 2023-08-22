@@ -1,102 +1,119 @@
-.iwFormBorderDecorator {
-    @apply tw-border tw-border-gray-200 dark:tw-border-gray-700 tw-shadow-sm tw-rounded-xl tw-mt-6;
-}
-
-.iwFormWrapper {
-    @apply tw-grid;
-}
-
-.iwFormInputWrapper {
-    @apply tw-m-2;
-}
-
-.iwFormContainer {
-    @apply tw-grid;
-}
-
-.iwFormInputContainer {
-    @apply tw-m-2;
-}
-
-.iwFormInputText {
-    @apply tw-bg-gray-50 tw-border tw-border-gray-300 tw-text-gray-900 sm:tw-text-sm tw-rounded-lg focus:tw-ring-primary-600 focus:tw-border-primary-600 tw-block tw-w-full tw-p-2.5 dark:tw-bg-gray-700 dark:tw-border-gray-600 dark:tw-placeholder-gray-400 dark:tw-text-white dark:focus:tw-ring-primary-500 dark:focus:tw-border-primary-500;
-}
-
-.iwFormInputDisabled {
-    @apply tw-mb-6 tw-bg-gray-100 tw-border tw-border-gray-300 tw-text-gray-900 tw-text-sm tw-rounded-lg focus:tw-ring-blue-500 focus:tw-border-blue-500 tw-block tw-w-full tw-p-2.5 !tw-cursor-not-allowed dark:tw-bg-gray-700 dark:tw-border-gray-600 dark:tw-placeholder-gray-400 dark:tw-text-gray-400 dark:focus:tw-ring-blue-500 dark:focus:tw-border-blue-500;
-}
-
-.iwFormInputLabel {
-    @apply tw-block tw-mb-2 tw-text-sm tw-font-medium tw-text-gray-900 dark:tw-text-white;
-}
-
-.iwFormInputLabelInline {
-    @apply tw-align-middle tw-ml-2 tw-mb-2 tw-text-sm tw-font-medium tw-text-gray-900 dark:tw-text-white;
-}
-
-.iwFormInputSelet {
-    @apply tw-bg-gray-50 tw-border tw-border-gray-300 tw-text-gray-900 tw-text-sm tw-rounded-lg focus:tw-ring-primary-500 focus:tw-border-primary-500 tw-block tw-w-full tw-p-2.5 dark:tw-bg-gray-700 dark:tw-border-gray-600 dark:tw-placeholder-gray-400 dark:tw-text-white dark:focus:tw-ring-primary-500 dark:focus:tw-border-primary-500;
-}
-
-.iwFormInputDropdown {
-    @apply tw-h-[42px] tw-relative tw-w-full tw-cursor-default tw-rounded-lg tw-py-2 tw-pl-3 tw-pr-10 tw-text-left tw-shadow-md focus:tw-outline-none focus-visible:tw-border-indigo-500 focus-visible:tw-ring-2 focus-visible:tw-ring-white focus-visible:tw-ring-opacity-75 focus-visible:tw-ring-offset-2 focus-visible:tw-ring-offset-orange-300 sm:tw-text-sm tw-text-slate-900;
-}
-
-.iwFormInputCalendarIcon {
-    @apply tw-absolute tw-inset-y-0 tw-left-0 tw-flex tw-items-center tw-pl-3 tw-pointer-events-none;
-}
-
-.iwFormInputCalendar {
-    @apply tw-bg-gray-50 tw-border tw-border-gray-300 tw-text-gray-900 tw-text-sm tw-rounded-lg focus:tw-ring-blue-500 focus:tw-border-blue-500 tw-block tw-w-full tw-pl-10 tw-p-2.5 dark:tw-bg-gray-700 dark:tw-border-gray-600 dark:tw-placeholder-gray-400 dark:tw-text-white dark:focus:tw-ring-blue-500 dark:focus:tw-border-blue-500;
-}
-
-.iwFormInputCalendarDisabled {
-    @apply !tw-cursor-not-allowed tw-bg-gray-50 tw-border tw-border-gray-300 tw-text-gray-900 tw-text-sm tw-rounded-lg focus:tw-ring-blue-500 focus:tw-border-blue-500 tw-block tw-w-full tw-pl-10 tw-p-2.5 dark:tw-bg-gray-700 dark:tw-border-gray-600 dark:tw-placeholder-gray-400 dark:tw-text-gray-400 dark:focus:tw-ring-primary-500 dark:focus:tw-border-primary-500;
-}
-
-.iwFormInputPrependIcon {
-    @apply tw-absolute tw-inset-y-0 tw-left-0 tw-flex tw-items-center tw-pl-3 tw-pointer-events-none;
-}
-
-.iwFormInputHelperText {
-    @apply tw-my-1 tw-text-xs tw-text-gray-500 dark:tw-text-gray-300 tw-h-4;
-}
-
-.iwFormInputErrorText {
-    @apply tw-text-red-600;
+.iwFormAlertError {
+    @apply p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-red-100 dark:text-red-400;
 }
 
 .iwFormBtn {
-    @apply tw-w-full tw-mt-4 tw-text-white tw-bg-primary-600 hover:tw-bg-primary-700 focus:tw-ring-4 focus:tw-outline-none focus:tw-ring-primary-300 tw-font-medium tw-rounded-lg tw-text-sm tw-px-5 tw-py-2.5 tw-text-center dark:tw-bg-primary-600 dark:hover:tw-bg-primary-700 dark:focus:tw-ring-primary-700;
+    @apply w-full mt-4 text-white bg-primary-600 hover: bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-700;
 }
 
-.iwFormSubmitBtn {
-    @apply tw-mt-0;
+.iwFormBtnDisabled {
+    @apply viBtnDisabled;
 }
 
-.iwFormResetBtn {
-    @apply tw-text-primary-600 dark:tw-text-gray-300 tw-bg-transparent tw-font-bold tw-uppercase tw-px-3 tw-py-1 tw-text-xs tw-outline-none focus:tw-outline-none tw-mr-1 tw-mb-1 tw-ease-linear tw-transition-all tw-duration-150;
+.iwFormBtnLabel {
+    @apply viBtnLabel;
 }
 
-.iwFormResetBtnWrapper {
-    @apply tw-col-span-full tw-justify-self-end;
+.iwFormBtnSpinner {
+    @apply viBtnSpinner;
 }
 
-.iwFormResetBtnContainer {
-    @apply tw-col-span-full tw-justify-self-end;
+.iwFormBorderDecorator {
+    @apply border border-gray-200 dark:border-gray-700 shadow-sm rounded-xl mt-6;
 }
 
 .iwFormCheckbox {
-    @apply tw-align-middle tw-w-4 tw-h-4 tw-text-primary-600 tw-bg-gray-100 tw-border-gray-300 tw-rounded focus:tw-ring-primary-500 dark:focus:tw-ring-primary-600 dark:tw-ring-offset-gray-800 focus:tw-ring-2 dark:tw-bg-gray-700 dark:tw-border-gray-600;
+    @apply align-middle w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus: ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600;
 }
 
-.iwFormAlertError {
-    @apply tw-p-4 tw-mb-4 tw-text-sm tw-text-red-800 tw-rounded-lg tw-bg-red-50 dark:tw-bg-red-100 dark:tw-text-red-400;
+.iwFormGroup {
+    @apply grid sm:grid-cols-2 md:grid-cols-3;
 }
 
-.iwFormReadOnly {
+.iwFormInputWrapper {
+    @apply m-2;
+}
+
+.iwFormInputText {
+    @apply bg-gray-50 border border-gray-300 text-gray-700 sm: text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500;
+}
+
+.iwFormInputDisabled {
+    @apply mb-6 bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg focus: ring-blue-500 focus:border-blue-500 block w-full p-2.5 !cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500;
+}
+
+.iwFormInputLabel {
+    @apply min-h-5 block mb-2 text-sm font-medium text-gray-700 dark:text-white;
+}
+
+.iwFormInputLabelInline {
+    @apply align-middle ml-2 mb-2 text-sm font-medium text-gray-700 dark:text-white;
+}
+
+.iwFormInputSelet {
+    @apply bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg focus: ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500;
+}
+
+.iwFormInputDropdown {
+    @apply h-[42px] relative w-full cursor-default rounded-lg py-2 pl-3 pr-10 text-left shadow-md focus: outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm text-slate-900;
+}
+
+.iwFormInputCalendarIcon {
+    @apply absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none;
+}
+
+.iwFormInputCalendar {
+    @apply bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg focus: ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+}
+
+.iwFormInputCalendarDisabled {
+    @apply !cursor-not-allowed bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg focus: ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500;
+}
+
+.iwFormInputPrependIcon {
+    @apply absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none;
+}
+
+.iwFormInputHelperText {
+    @apply my-1 text-xs text-gray-500 dark:text-gray-300 h-4;
+}
+
+.iwFormInputErrorText {
+    @apply text-red-600;
 }
 
 .iwFormPrefixIconPadding {
-    @apply tw-pl-4;
+    @apply pl-4;
+}
+
+.iwFormReadOnly {
+    @apply;
+}
+
+.iwFormResetFilterBtn {
+    @apply text-primary-600 dark:text-gray-300 bg-transparent font-bold uppercase py-1 text-xs outline-none focus:outline-none mb-1 ease-linear transition-all duration-150;
+}
+
+.iwFormResetFilterBtnWrapper {
+    @apply -mt-6 mr-2 text-right;
+}
+
+.iwFormShowFoldBtnWrapper {
+    @apply col-span-full text-right;
+}
+
+.iwFormShowFoldBtn {
+    @apply text-primary-600 dark:text-gray-300 bg-transparent font-bold uppercase px-3 py-1 text-xs outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150;
+}
+
+.iwFormSubmitBtn {
+    @apply mt-0 w-full viBtn;
+}
+
+.iwFormSubmitBtnWrapper {
+    @apply m-2 relative;
+}
+
+.iwFormWrapper {
+    @apply grid;
 }

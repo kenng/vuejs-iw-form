@@ -156,112 +156,6 @@ const formTextName: FormSample = {
     })
 };
 
-const gender = (isMultiple: boolean = false) => new IwFormInputSelectConfig([
-    {
-        label: 'Male',
-        value: 'M',
-    },
-    {
-        label: 'Female',
-        value: 'F',
-    },
-    {
-        label: 'Other',
-        value: 'O',
-    },
-], {
-    multiple: isMultiple
-})
-
-let selectedColorIndex = 0
-const color = [
-    new IwFormInputSelectConfig([
-        {
-            label: 'Red',
-            value: 'red',
-        },
-    ], {
-        multiple: true,
-        selected: 'red',
-    }),
-
-    new IwFormInputSelectConfig([
-        {
-            label: 'Blue',
-            value: 'blue',
-        },
-    ])
-
-]
-
-const countries = new IwFormInputSelectConfig([
-    {
-        label: 'Malaysia',
-        value: 'MY',
-    },
-    {
-        label: 'Singapore',
-        value: 'SG',
-    },
-    {
-        label: 'Other',
-        value: 'O',
-    },
-], {
-    multiple: true,
-    selected: ['MY', 'SG'],
-})
-
-const formSelectGender: FormSample = {
-    title: 'Simple Gender Select Form',
-    form: new IwFormConfig({
-        formGroups: [{
-            formInputs: [
-                {
-                    name: 'gender',
-                    label: 'gender',
-                    type: IwFormType.SELECT,
-                    // selectIsMapOptionToLabel: true,
-                    selectConfig: gender(),
-                    onChange: (item: any,
-                        val: IwFormInputSelectedKeys,
-                        selectedRaw: IwFormInputSelectedOption,
-                        justSelected: IwFormInputSelectedOption,
-                        theForm: IwFormConfig) => {
-                        console.log(item)
-                        console.log(val)
-                        console.log(selectedRaw)
-                        console.log(justSelected)
-
-                        // --- update color dropdown
-                        if ('M' === val) {
-                            selectedColorIndex = 1
-                        } else {
-                            selectedColorIndex = 0
-                        }
-                        theForm.updateSelectInput('color', color[selectedColorIndex])
-                    },
-                    rules: [IwFormRule.gender({})],
-                },
-                {
-                    name: 'color',
-                    label: 'color (changed based on gender)',
-                    type: IwFormType.SELECT,
-                    // selectIsMapOptionToLabel: true,
-                    selectConfig: color[selectedColorIndex],
-                    rules: [],
-                },
-                {
-                    name: 'countries',
-                    type: IwFormType.SELECT,
-                    label: 'Select all the related countries (multiple choices)',
-                    selectConfig: countries
-                }
-            ],
-        }
-        ]
-    })
-}
 
 const formAutoComplete: FormSample = {
     title: 'Simple AutoComplete Form',
@@ -622,7 +516,6 @@ const formSwitchWithPropData: FormSample = {
     })
 }
 
-
 const formWithDynamicComponent: FormSample = {
     title: 'form with dynamic component',
     form: new IwFormConfig({
@@ -648,6 +541,7 @@ const gridForm: FormSample = {
     form: new IwFormConfig({
         formGroups: [{
             css: 'grid grid-cols-3 gap-1',
+            showSubmitBtn: true,
             formInputs: [
                 {
                     type: IwFormType.TEXTGROUP_TEXT,
@@ -673,11 +567,6 @@ const gridForm: FormSample = {
                     label: 'Input with one column',
                     cssWrapper: 'col-span-1',
                 },
-                {
-                    type: IwFormType.SUBMIT_BTN,
-                    name: 'submitBtn',
-                    cssWrapper: '',
-                }
             ]
         }
         ]
@@ -742,7 +631,6 @@ function getTomorrowDate() {
 
 const forms: FormSample[] = [
     formTextName,
-    formSelectGender,
     formAutoComplete,
     formRadioBtn,
     formRadioBtnInlineDisabled,

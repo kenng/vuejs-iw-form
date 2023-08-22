@@ -12,6 +12,7 @@ export default class IwFormCalendar {
     public value?: Date | string | number
     public minDate?: Date | string | number
     public maxDate?: Date | string | number
+    public format: string = 'YYYY-MM-DD'
 
     constructor(options?: Partial<IwFormCalendar>) {
         Object.assign(this, options)

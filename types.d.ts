@@ -62,81 +62,93 @@ interface IwFormGroup {
     css?: string;
     label?: string;
     formInputs: Array<IwFormInput>;
+    showSubmitBtn?: boolean;
+    submitBtn?: {
+        css?: string
+        label?: string
+    }
 }
 
-interface IwFormInput {
-    // name in type will be the formData variable name as well
-    foldable?: boolean;
-    autocomplete?: string;
+interface IwFormInputBtn {
+    type: 'submit-btn',
+}
+
+interface IwFormOnChangeUpdateInput {
+    linkedInputName: string,
+    newSelectConfig: IwFormInputSelectConfig
+}
+
+type IIwFormType = 'label' | 'separator' | 'text' | 'email' | 'number' | 'password' | 'textarea' | 'select' | 'autocomplete' | 'option_group' | 'checkbox' | 'switch' | 'time' | 'date' | 'button' | 'uploader' | 'component'
+
+interface IwFormInputCore {
+    // essential
     name: string;
-    ref?: string;
-    type: IwFormType;
-    disabled?: boolean;
-    rules?: Array<Function>;
-    required?: boolean;
-    query?: ViPaginatedTableFilterInput;
+    type: Exclude<IIwFormType, 'checkbox' | 'component' | 'date' | 'select' | 'submit-btn' | 'textarea'>
 
-    label?: string;
-    placeholder?: string;
-    helperText?: string;
-    errorText?: string;
-
+    // optional
+    autocomplete?: string;
+    cssInput?: string;
     cssTextColor?: string;
     cssWrapper?: string;
-    cssInput?: string;
-
-    showPrefixIcon?: boolean;
+    disabled?: boolean;
+    errorText?: string;
+    foldable?: boolean;
+    helperText?: string;
+    isVisible?: boolean | Function;
+    label?: string;
+    onBlur?: Function;
+    onChange?: Function;
+    onChangeUpdateInput?: (item: IwFormInput, value: any, ...extra: any[]) => Promise<IwFormOnChangeUpdateInput>;
+    onClickFn?: Function;
+    optionGroupInline?: boolean;
+    placeholder?: string;
     prefixIcon?: string;
+    query?: ViPaginatedTableFilterInput;
+    ref?: string;
+    required?: boolean;
+    rules?: Array<Function>;
+    showPrefixIcon?: boolean;
     showSuffixIcon?: boolean;
     suffixIcon?: string;
+    value?: any
+    visibleOnData?: string[] // visible only if the form data is set
+
+}
+interface IwFormInputComponent extends IwFormInputCore {
+    type: 'component'
 
     component?: VueComponent;
+}
+
+interface IwFormInputDate extends IwFormInputCore {
+    type: 'date'
 
     dateOptions?: IwFormCalendar;
+    allowedDate?: Array<any>;
+    allowedDateFn?: Function | string;
+}
 
-    optionGroupInline?: boolean;
+interface IwFormInputCheckbox extends IwFormInputCore {
+    type: 'checkbox'
 
     checkBoxTrueValue?: string;
     checkBoxFalseValue?: string;
+}
 
-    allowedDate?: Array<any>;
-    allowedDateFn?: Function | string;
+interface IwFormInputSelect extends IwFormInputCore {
+    type: 'select'
+    selectConfig: IwFormInputSelectConfig
+}
 
-    /**
-     * @attr onBlurRevalidate will trigger validate() again if attribute `ref` is set
-     */
-    onBlur?: Function;
-    onChange?: Function;
-    onChangeUpdateInput?: (item: IwFormInput, value: any, ...extra: any[]) => Promise<IwFormOnChangeResponse>;
-    onClickFn?: Function;
-    isVisible?: boolean | Function;
-    // visible only if the form data is set
-    visibleOnData?: string[]
+interface IwFormInputTextArea extends IwFormInputCore {
+    type: 'textarea'
 
-    selectConfig?: IwFormInputSelectConfig
+    textAreaRows?: number;
+}
 
-    /**
-     * @attr uploadedFilenameKey to specify the form data key
-     * e.g. uploadedFilenameKey: "my_profile_photo"
-     * after uploaded, this will be output as "my_profile_photo": "xxxx-uploaded-filename.jpg"
-     * @attr uploadHeaders to set the HTTP header, e.g.
-     * [{name: 'Content-Type', value: 'application/json'}, {name: 'Accept', value: 'application/json'}]
-     * () => [{name: 'X-Custom-Timestamp', value: Date.now()}]
-     * files => [{name: 'X-Custom-Count', value: files.length}]
-     * @attr uploadFactoryFn this can be set to override `url, method, headers, formFields, fieldName, withCredentials, sendRaw`
-     * e.g. uploadFactoryFn: function(files) {
-     *   return new Promise((resolve) => {
-     *     // simulating a delay of 2 seconds
-     *     setTimeout(() => {
-     *       resolve({
-     *         url: 'http://localhost:4444/upload'
-     *         method: xxx
-     *         headers: xxx
-     *       })
-     *     }, 2000)
-     *   })
-     * }
-     */
+interface IwFormInputUploader extends IwFormInputCore {
+    type: 'uploader'
+
     uploadedFilenameKey?: string; // after uploaded, this will be populate the filename
     uploadURL?: string;
     /** @attr uploadAccept: '.jpg, .pdf, image' */
@@ -147,6 +159,8 @@ interface IwFormInput {
     uploadHasNoThumbnail?: boolean;
     uploadFactoryFn?: Function;
 }
+
+type IwFormInput = IwFormInputCore | IwFormInputComponent | IwFormInputCheckbox | IwFormInputDate | IwFormInputSelect | IwFormInputTextArea
 
 interface IwFormStyle {
     cssSubmitBtnWrapper?: string,
