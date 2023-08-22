@@ -76,7 +76,7 @@ const props = defineProps({
   },
   showResetBtn: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   showSubmitBtn: {
     type: Boolean,
@@ -304,7 +304,7 @@ initRenderCallback();
                 <label :for="`${formId}-${item.name}`"
                        class="iwFormInputLabel">{{ setLabel(item) }}
                   <span v-if="setRequired(item)"
-                        class="text-rose-600 text-xl"> *</span>       
+                        class="text-rose-600 text-xl"> *</span>
                 </label>
                 <div class="mb-2 relative">
                   <div v-if="item.showPrefixIcon"
@@ -346,7 +346,7 @@ initRenderCallback();
                   <label :for="`${formId}-${item.name}`"
                          class="iwFormInputLabel">{{ setLabel(item) }}
                     <span v-if="setRequired(item)"
-                          class="text-rose-600 text-xl"> *</span>          
+                          class="text-rose-600 text-xl"> *</span>
                   </label>
                   <VueMultiSelect :config="item.selectConfig"
                                   ref="inputRefs"

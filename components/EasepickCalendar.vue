@@ -26,10 +26,6 @@ const props = defineProps({
         type: String as PropType<IwCalendarInputType>,
         default: 'dateTime',
     },
-    format: {
-        type: String,
-        default: 'YYYY-MM-DD HH:mm',
-    }
 })
 
 const emit = defineEmits(['change', 'reset'])
@@ -82,20 +78,17 @@ onMounted(() => {
     }
 
     const options: IPickerConfig = {
-        element: easepickRef.value!,
         css,
-        zIndex: 1,
+        element: easepickRef.value!,
+        format: props.options.format,
         readonly: props.options.readonly,
         PresetPlugin: {
             position: 'left',
         },
+        zIndex: 1,
         setup(picker: any) {
             picker.on('change', (e: any) => {
-                let dateFormat = 'YYYY-MM-DD'
-                if (props.options.enableTimePicker) {
-                    dateFormat = 'YYYY-MM-DD HH:mm'
-                }
-                const selectedDateTime = dayjs(calendar.getDate()).format(dateFormat)
+                const selectedDateTime = dayjs(calendar.getDate()).format(props.options.format)
                 emit('change', [selectedDateTime])
             });
 
@@ -109,7 +102,7 @@ onMounted(() => {
 
                     if ('dateTime' === props.type) {
                         if (startDateTime.isSame(endDateTime)) {
-                            endDateTime = dayjs(endDateTime).endOf('day').format(props.format);
+                            endDateTime = dayjs(endDateTime).endOf('day').format(props.options.format);
                         }
                     } else {
                         startDateTime = startDateTime.format()
