@@ -340,11 +340,8 @@ initRenderCallback();
                        :false-value="item.checkBoxFalseValue ?? false">
                 <label :for="`${formId}-${item.name}`"
                        class="iwFormInputLabelInline">{{ setLabel(item) }}
-                <label :for="`${formId}-${item.name}`"
-                       class="iwFormInputLabel">{{ setLabel(item) }}
                   <span v-if="setRequired(item)"
-                        class="text-rose-600 text-xl"> *</span>
-                </label>       
+                        class="text-rose-600 text-xl"> *</span>    
                 </label>
               </template>
             </template>
@@ -354,11 +351,8 @@ initRenderCallback();
               <template v-if="isVisible(item)">
                 <label :for="`${formId}-${item.name}`"
                        class="iwFormInputLabel">{{ setLabel(item) }}
-                  <label :for="`${formId}-${item.name}`"
-                       class="iwFormInputLabel">{{ setLabel(item) }}
-                    <span v-if="setRequired(item)"
-                          class="text-rose-600 text-xl"> *</span>
-                  </label>       
+                  <span v-if="setRequired(item)"
+                        class="text-rose-600 text-xl"> *</span>    
                 </label>
                 <EasepickCalendar :id="`${formId}-${item.name}`"
                                   ref="inputRefs"
