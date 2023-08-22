@@ -109,6 +109,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  clearable: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const formSubmitAgainText = props.submitAgainText ?? props.submitText
@@ -275,6 +279,12 @@ initRenderCallback();
                          @change="(event) => onChange(item, (event.target as HTMLInputElement).value)"
                          @focus="(_) => onFocus(item, myFormData[item.name])"
                          @input="(event) => onInput(item, (event.target as HTMLInputElement).value)" />
+                    <div v-if="clearable">
+                      <span @click="onInput(item, '')">
+                        <Icon icon="maki:cross-11"
+                              class="w-4 h-4 right-2 top-3 absolute cursor-pointer" />
+                      </span>
+                    </div>
                   <p v-if="showHelperText"
                      class="iwFormInputHelperText">
                     <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]
@@ -329,7 +339,13 @@ initRenderCallback();
                        :true-value="item.checkBoxTrueValue ?? true"
                        :false-value="item.checkBoxFalseValue ?? false">
                 <label :for="`${formId}-${item.name}`"
-                       class="iwFormInputLabelInline">{{ setLabel(item) }}</label>
+                       class="iwFormInputLabelInline">{{ setLabel(item) }}
+                <label :for="`${formId}-${item.name}`"
+                       class="iwFormInputLabel">{{ setLabel(item) }}
+                  <span v-if="setRequired(item)"
+                        class="text-rose-600 text-xl"> *</span>
+                </label>       
+                </label>
               </template>
             </template>
 
@@ -337,7 +353,13 @@ initRenderCallback();
                       v-else-if='IwFormTypeEnum.DATE === (item.type)'>
               <template v-if="isVisible(item)">
                 <label :for="`${formId}-${item.name}`"
-                       class="iwFormInputLabel">{{ setLabel(item) }}</label>
+                       class="iwFormInputLabel">{{ setLabel(item) }}
+                  <label :for="`${formId}-${item.name}`"
+                       class="iwFormInputLabel">{{ setLabel(item) }}
+                    <span v-if="setRequired(item)"
+                          class="text-rose-600 text-xl"> *</span>
+                  </label>       
+                </label>
                 <EasepickCalendar :id="`${formId}-${item.name}`"
                                   ref="inputRefs"
                                   :disabled="item.disabled"
