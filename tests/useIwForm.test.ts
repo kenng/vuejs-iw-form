@@ -1,24 +1,37 @@
 import { describe, expect, it, vitest } from 'vitest'
 import useIwForm from '../composables/useIwForm'
-import IwFormConfig, { IwFormType } from '../utils/IwFormConfig'
+import IwFormConfig from '../utils/IwFormConfig'
 
 describe('test on useIwForm', () => {
     it('can init successfully', () => {
         const name = 'John Doe'
+        const age = 15
+        const contact = '0123456789'
         const myForm: IwFormConfig = new IwFormConfig({
             formData: {
-                'name': name,
+                name,
+                age,
             },
             formGroups: [
                 {
                     formInputs: [
                         {
-                            type: IwFormType.TEXTGROUP_TEXT,
+                            type: 'text',
                             name: 'name',
                         },
                         {
-                            type: IwFormType.TEXTGROUP_TEXT,
+                            type: 'text',
                             name: 'address',
+                        },
+                        {
+                            type: 'contact',
+                            name: 'contact',
+                            value: contact,
+                        },
+                        {
+                            type: 'text',
+                            name: 'age',
+                            value: 18,
                         }
                     ]
                 }
@@ -31,6 +44,11 @@ describe('test on useIwForm', () => {
         initFormData()
 
         expect(myFormData.value['name']).toBe(name)
+        expect(myFormData.value['address']).toBeNull()
+        expect(myFormData.value['contact']).toBe(contact)
+
+        // formDate takes priority when setting the value
+        expect(myFormData.value['age']).toBe(age)
     })
 
     it('can set the css correctly', () => {
@@ -40,14 +58,14 @@ describe('test on useIwForm', () => {
         const falseCss = 'falseCss'
         const defaultWrapper = 'default-wrapper'
         const formInput1: IwFormInput = {
-            type: IwFormType.TEXTGROUP_TEXT,
+            type: 'text',
             name: 'name',
             cssWrapper: cssWrapper,
             isVisible: () => false
         }
 
         const formInput2: IwFormInput = {
-            type: IwFormType.TEXTGROUP_EMAIL,
+            type: 'email',
             name: 'email',
         }
         const myForm: IwFormConfig = new IwFormConfig({ formGroups: [] })
@@ -72,5 +90,43 @@ describe('test on useIwForm', () => {
         const splitted2 = res2.split(' ')
         expect(splitted2).toContain(defaultWrapper)
         expect(splitted2).not.toContain(cssWrapper)
+    })
+
+    it('will skip disabled input but still send along shouldDehydrate data', () => {
+        const name = 'John Doe'
+        const age = 50
+
+        const myForm: IwFormConfig = new IwFormConfig({
+            formData: {
+                name,
+                age
+            },
+            formGroups: [
+                {
+                    formInputs: [
+                        {
+                            type: 'text',
+                            name: 'name',
+                            disabled: true,
+                        },
+                        {
+                            type: 'text',
+                            name: 'age',
+                            disabled: true,
+                            shouldDehydrate: true
+                        }
+                    ]
+                }
+            ]
+        })
+        const { initFormData, removeDisabledInputValue } = useIwForm({
+            myForm
+        });
+
+        initFormData()
+        const res = (removeDisabledInputValue()) as any
+
+        expect(res.name).toBeUndefined()
+        expect(res.age).toBe(age)
     })
 })

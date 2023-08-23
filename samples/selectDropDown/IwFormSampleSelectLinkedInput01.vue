@@ -36,8 +36,8 @@ const colorOptions = [
         value: 'blue',
     },
 ]
-const color = new IwFormInputSelectConfig(colorOptions, {
-    multiple: true,
+const color = (selected?: IwFormInputSelectedKeys) => new IwFormInputSelectConfig(colorOptions, {
+    selected,
 })
 
 
@@ -48,24 +48,27 @@ const formSelectGender: IwFormConfig = new IwFormConfig({
             {
                 name: 'gender',
                 label: 'gender',
-                type: IwFormType.SELECT,
+                type: 'select',
                 // selectIsMapOptionToLabel: true,
                 selectConfig: gender(false, 'M'),
-                onChangeUpdateInput: (item: IwFormInput, val: any, ...extra: any[]) => new Promise((resolve) => {
+                onChangeUpdateInput: (item: IwFormInput, val: any, ...extra: any[]) => {
+                    let selected = 'blue'
+                    if ('F' == val) selected = 'red'
                     const onChangedRes: IwFormOnChangeUpdateInput = {
                         linkedInputName: 'color',
-                        newSelectConfig: color
+                        newSelectConfig: color(selected)
                     }
-                    resolve(onChangedRes)
-                }),
+
+                    return onChangedRes
+                },
                 rules: [IwFormRule.gender({})],
             },
             {
                 name: 'color',
                 label: 'color (changed based on gender)',
-                type: IwFormType.SELECT,
+                type: 'select',
                 // selectIsMapOptionToLabel: true,
-                selectConfig: color,
+                selectConfig: color(),
                 rules: [],
             },
         ],

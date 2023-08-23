@@ -200,7 +200,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
         const formData = {}
         for (const group of (config.myForm.formGroups)) {
             group.formInputs.forEach((item: IwFormInputCore) => {
-                if (!item.disabled) {
+                if (!item.disabled || true === item.shouldDehydrate) {
                     const name = item.name
                     formData[name] = myFormData.value[name]
                 }
@@ -308,24 +308,21 @@ export const useIwForm = (config: IwFormUseConfig) => {
     }
 
     function initFormData() {
-        for (const group of (config.myForm.formGroups)) {
-            group.formInputs.forEach((item: IwFormInput) => {
-                if (typeof item.value != 'undefined'
-                    && !item.disabled) {
-                    const name = item.name
-                    if (name) myFormData.value[name] = item.value
-                }
-            })
-        }
-
         if (config.myForm.formData && Object.keys(config.myForm.formData).length >= 1) {
+            // clone formData to myFormData
             myFormData.value = JSON.parse(JSON.stringify(config.myForm.formData))
         }
 
+        // set value if inputX.value is defined, and myFormData is yet to be defined for inputX
         for (const group of (config.myForm.formGroups)) {
-            for (const item of group.formInputs) {
-                if (item.name && !myFormData.value[item.name]) myFormData.value[item.name] = null
-            }
+            group.formInputs.forEach((item: IwFormInput) => {
+                const name = item.name
+                if (name && null === config.myForm.formData[name]) {
+                    if (typeof item.value !== 'undefined') {
+                        myFormData.value[name] = item.value
+                    }
+                }
+            })
         }
     }
 

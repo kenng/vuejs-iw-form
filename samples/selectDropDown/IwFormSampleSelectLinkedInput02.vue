@@ -21,7 +21,6 @@ const gender = (isMultiple: boolean = false) => new IwFormInputSelectConfig([
         value: 'O',
     },
 ], {
-    multiple: isMultiple,
     selected: 'F'
 })
 

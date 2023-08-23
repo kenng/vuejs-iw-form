@@ -51,7 +51,7 @@ export default class IwFormConfig {
         cssForm?: string;
         formData?: object;
         formGroups: Array<IwFormGroup>;
-        skipFormData?: Array<IwFormType>;
+        skipFormData?: Array<IIwFormType>;
         onError?: IwFormOnError;
         onSuccess?: IwFormOnSuccess;
         rethrowErrorOnSubmit?: boolean;
