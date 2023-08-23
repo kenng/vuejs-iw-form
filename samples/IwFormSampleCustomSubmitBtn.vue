@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import IwFormConfig, { IwFormType } from '../utils/IwFormConfig';
 import IwForm from '../components/IwForm.vue'
 
+const refForm = ref()
 const isLoading = ref(false)
 const form = new IwFormConfig({
     formGroups: [{
@@ -25,14 +26,18 @@ function submit(formData: Record<string, any>) {
 </script>
 
 <template>
-    <IwForm :my-form="form"
-            :onSubmit="submit">
-        <template v-slot:submitBtn>
-            <ButtonSpinner :isLoading="isLoading"
-                           label="Start Download">
-            </ButtonSpinner>
-        </template>
-    </IwForm>
+    <FormCard title="Custom Submit Button"
+              :refForm="refForm">
+        <IwForm :myForm="form"
+                ref="refForm"
+                :onSubmit="submit">
+            <template v-slot:submitBtn>
+                <button type="submit"
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Custom Submit Button </button>
+            </template>
+        </IwForm>
+    </FormCard>
 </template>
 
 <style scoped>

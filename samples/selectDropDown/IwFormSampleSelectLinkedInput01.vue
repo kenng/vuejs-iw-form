@@ -4,10 +4,11 @@ import IwFormConfig, { IwFormType } from '../../utils/IwFormConfig';
 import IwForm from '../../components/IwForm.vue'
 import IwFormInputSelectConfig from '../../utils/IwFormInputSelectConfig';
 import IwFormRule from '../../utils/IwFormRule';
+import FormCard from '../components/FormCard.vue';
 
 const isLoading = ref(false)
 const linkedForm1 = ref(null)
-const gender = (isMultiple: boolean = false) => new IwFormInputSelectConfig([
+const gender = (isMultiple: boolean = false, selected?: IwFormInputSelectedKeys) => new IwFormInputSelectConfig([
     {
         label: 'Male',
         value: 'M',
@@ -21,10 +22,10 @@ const gender = (isMultiple: boolean = false) => new IwFormInputSelectConfig([
         value: 'O',
     },
 ], {
-    multiple: isMultiple
+    multiple: isMultiple,
+    selected,
 })
 
-let selectedColorIndex = 0
 const colorOptions = [
     {
         label: 'Red',
@@ -49,7 +50,7 @@ const formSelectGender: IwFormConfig = new IwFormConfig({
                 label: 'gender',
                 type: IwFormType.SELECT,
                 // selectIsMapOptionToLabel: true,
-                selectConfig: gender(),
+                selectConfig: gender(false, 'M'),
                 onChangeUpdateInput: (item: IwFormInput, val: any, ...extra: any[]) => new Promise((resolve) => {
                     const onChangedRes: IwFormOnChangeUpdateInput = {
                         linkedInputName: 'color',
@@ -82,20 +83,13 @@ function submit(formData: Record<string, any>) {
 </script>
 
 <template>
-    <Card title="Select Dropdown (Linked Input using onChangeUpdateInput)"
-          :refForm="linkedForm1">
-        <template #left>
-            <IwForm ref="linkedForm1"
-                    :my-form="formSelectGender"
-                    :onSubmit="submit">
-                <template v-slot:submitBtn>
-                    <ButtonSpinner :isLoading="isLoading"
-                                   label="Start Download">
-                    </ButtonSpinner>
-                </template>
-            </IwForm>
-        </template>
-    </Card>
+    <FormCard title="Select Dropdown (Linked Input using onChangeUpdateInput)"
+              :refForm="linkedForm1">
+        <IwForm ref="linkedForm1"
+                :my-form="formSelectGender"
+                :onSubmit="submit">
+        </IwForm>
+    </FormCard>
 </template>
 
 <style scoped>

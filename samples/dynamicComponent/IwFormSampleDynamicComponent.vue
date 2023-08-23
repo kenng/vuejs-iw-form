@@ -15,11 +15,8 @@ defineProps({
 
 <template>
     <div>
-        FormInput: {{ formInput }}<br>
+        <h3>This is dynamic component</h3>
         <hr><br>
-        FormData: {{ formData }}
+        Props FormData: {{ formData }}
     </div>
 </template>
-
-<style scoped>
-</style>

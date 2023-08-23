@@ -31,7 +31,7 @@ export default class IwFormConfig {
     onError: IwFormOnError | undefined;
     onSuccess: IwFormOnSuccess | undefined;
     rethrowErrorOnSubmit: boolean;
-    mySkipFormData: Array<IwFormType> = [
+    mySkipFormData: Array<IIwFormType> = [
         IwFormType.SEPARATOR,
         IwFormType.LABEL,
         IwFormType.BUTTON,
@@ -101,7 +101,10 @@ export default class IwFormConfig {
     buildFormData(formInputs: Array<IwFormInput>) {
         for (const theOption of formInputs) {
             if (typeof this.formData[theOption.name] === 'undefined') {
-                if (this.mySkipFormData.indexOf(theOption.type)) continue;
+                if (!theOption.name) {
+                    continue
+                }
+                if (this.mySkipFormData.indexOf(theOption.type) >= 0) continue;
                 this.formData[theOption.name] = null;
             }
         }

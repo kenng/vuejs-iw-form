@@ -2,6 +2,7 @@
 import { ref, defineEmits } from 'vue'
 import IwObject from '../utils/IwObject';
 import IwFormConfig, { IwFormType } from '../utils/IwFormConfig';
+import IwFormRule from '../utils/IwFormRule';
 
 export const useIwForm = (config: IwFormUseConfig) => {
 
@@ -20,7 +21,9 @@ export const useIwForm = (config: IwFormUseConfig) => {
     const myForm: IwFormConfig = config.myForm
     myForm.formGroups.forEach(group => {
         group.formInputs.forEach(formInput => {
-            keys.value[formInput.name] = `${formInput.name}-${Date.now()}-${Math.random() * 10000}`
+            if (formInput.name) {
+                keys.value[formInput.name] = `${formInput.name}-${Date.now()}-${Math.random() * 10000}`
+            }
         })
     })
 
@@ -56,13 +59,21 @@ export const useIwForm = (config: IwFormUseConfig) => {
     function validate(item: IwFormInput, data: any) {
         if (item.rules) {
             for (const rule of item.rules) {
-                const param = { value: data, myFormData: myFormData.value } as IRuleData
+                const param: IRuleData = { value: data, myFormData: myFormData.value }
                 const err = rule(param)
                 if (typeof err === 'string') {
                     errors.value[item.name] = err
                     return false
                     break
                 }
+            }
+        }
+
+        if (item.required) {
+            const err = IwFormRule.required()({ value: date })
+            if (typeof err === 'string') {
+                errors.value[item.name] = err
+                return false
             }
         }
         return true
@@ -82,7 +93,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
         return validated;
     }
 
-    function onInput(item: IwFormInput, val: any) {
+    function onInput(item: IwFormInputCore, val: any) {
         const key = item.name
         myFormData.value[key] = val
         if (errors.value[key]) {
@@ -93,7 +104,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
     }
 
 
-    function onBlur(item: IwFormInput, data: any) {
+    function onBlur(item: IwFormInputCore, data: any) {
         validate(item, data)
 
         if (typeof item.onBlur == 'function') {
@@ -106,7 +117,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
     }
 
 
-    function setLabel(item: IwFormInput) {
+    function setLabel(item: IwFormInputCore) {
         let label = item.label
         if (!label) label = item.name
 
@@ -188,7 +199,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
     function removeDisabledInputValue(): Object {
         const formData = {}
         for (const group of (config.myForm.formGroups)) {
-            group.formInputs.forEach((item: IwFormInput) => {
+            group.formInputs.forEach((item: IwFormInputCore) => {
                 if (!item.disabled) {
                     const name = item.name
                     formData[name] = myFormData.value[name]
@@ -302,7 +313,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
                 if (typeof item.value != 'undefined'
                     && !item.disabled) {
                     const name = item.name
-                    myFormData.value[name] = item.value
+                    if (name) myFormData.value[name] = item.value
                 }
             })
         }
@@ -313,7 +324,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
 
         for (const group of (config.myForm.formGroups)) {
             for (const item of group.formInputs) {
-                if (!myFormData.value[item.name]) myFormData.value[item.name] = null
+                if (item.name && !myFormData.value[item.name]) myFormData.value[item.name] = null
             }
         }
     }

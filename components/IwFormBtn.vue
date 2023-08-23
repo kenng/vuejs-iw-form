@@ -2,6 +2,7 @@
 
 ///////////////////////////////////////////////@  Import, Types & meta
 //////////////////////////////////////////////////////////////////////
+import { Icon } from '@iconify/vue'
 
 
 ///////////////////////////////////////////@  Props, Emits & Variables
@@ -16,7 +17,6 @@ const props = defineProps({
     },
     id: {
         type: String,
-        default: 'iwFormBtn',
     },
     isLoading: {
         type: Boolean,
@@ -45,6 +45,7 @@ const props = defineProps({
 
 //////////////////////////////////////////////////////@ Initialization
 //////////////////////////////////////////////////////////////////////
+const btnId = props.id ?? (new Date()).getTime() + Math.random() * 10000
 
 ////////////////////////////////////////////////////@  Export & Expose
 //////////////////////////////////////////////////////////////////////
@@ -52,9 +53,9 @@ const props = defineProps({
 
 <template>
     <div class="iwFormBtnWrapper">
-        <label :for="`${id}-submit-btn`"
+        <label :for="`${btnId}-submit-btn`"
                class="iwFormInputLabel"></label>
-        <button :id="`${id}-submit-btn`"
+        <button :id="`${btnId}-submit-btn`"
                 class="iwFormSubmitBtn"
                 :class="{ '!iwFormBtnDisabled': isLoading }"
                 :disabled="isLoading"
@@ -62,7 +63,7 @@ const props = defineProps({
                 @click="ev => !isLoading && onClick">
             <span class="iwFormBtnLabel">
                 <Icon v-if="icon"
-                      name="btn.icon"></Icon>
+                      :icon="icon"></Icon>
                 {{ label }}
             </span>
             <span class="iwFormBtnSpinner">

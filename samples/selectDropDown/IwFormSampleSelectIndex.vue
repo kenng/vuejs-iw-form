@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import IwFormSampleSelectSimple from "./IwFormSampleSelectSimple.vue";
+import IwFormSampleSelectBasic from "./IwFormSampleSelectBasic.vue";
 import IwFormSampleSelectLinkedInput02 from "./IwFormSampleSelectLinkedInput02.vue";
 </script>
 
 <template>
-    <IwFormSampleSelectSimple />
+    <IwFormSampleSelectBasic />
     <IwFormSampleSelectLinkedInput01 />
     <IwFormSampleSelectLinkedInput02 />
 </template>

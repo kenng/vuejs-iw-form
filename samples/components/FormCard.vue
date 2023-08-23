@@ -6,7 +6,7 @@ type IRefForm = InstanceType<typeof IwForm>
 
 defineProps<{
     title: string,
-    refForm: IRefForm,
+    refForm?: IRefForm,
 }>()
 
 </script>
@@ -19,7 +19,7 @@ defineProps<{
             <div class="p-10 col-span-7">
                 <div class="relative w-full max-w-xl h-full md:h-aut mx-auto">
                     <div class="relative bg-white rounded-lg shadow-slate-50 drop-shadow-xl dark:bg-gray-800 sm:p-5">
-                        <slot name="left"></slot>
+                        <slot name="default"></slot>
                     </div>
                 </div>
             </div>

@@ -1,9 +1,9 @@
 import { mount } from 'cypress/vue'
-import IwFormSampleDateTimeVue from './IwFormSampleDateTime.vue'
+import IwFormSampleDateTimeBasicVue from './IwFormSampleDateTimeBasic.vue'
 
-describe('IwFormSampleDateTime', () => {
+describe('IwFormSampleDateTimeBasic', () => {
     it('should display simple date value', () => {
-        mount(IwFormSampleDateTimeVue)
+        mount(IwFormSampleDateTimeBasicVue)
 
         cy.get('.iwFormInputCalendar').should('have.value', '2023-08-21');
     })

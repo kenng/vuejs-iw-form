@@ -78,19 +78,41 @@ interface IwFormOnChangeUpdateInput {
     newSelectConfig: IwFormInputSelectConfig
 }
 
-type IIwFormType = 'label' | 'separator' | 'text' | 'email' | 'number' | 'password' | 'textarea' | 'select' | 'autocomplete' | 'option_group' | 'checkbox' | 'switch' | 'time' | 'date' | 'button' | 'uploader' | 'component'
+/**
+ * TODO: components below is not yet ready
+ * - autocomplete
+ * - button
+ * - switch
+ * - time
+ * - uploader
+ */
+type IIwFormType = 'autocomplete' |
+    'button' |
+    'checkbox' |
+    'component' |
+    'date' |
+    'email' |
+    'label' |
+    'number' |
+    'password' |
+    'select' |
+    'separator' |
+    'switch' |
+    'text' |
+    'textarea' |
+    'time' |
+    'uploader'
 
 interface IwFormInputCore {
     // essential
     name: string;
-    type: Exclude<IIwFormType, 'checkbox' | 'component' | 'date' | 'select' | 'submit-btn' | 'textarea'>
 
     // optional
     autocomplete?: string;
     cssInput?: string;
     cssTextColor?: string;
     cssWrapper?: string;
-    disabled?: boolean;
+    disabled?: boolean;  // disabled data is not sent. see shouldDehydrate to submit disabled data
     errorText?: string;
     foldable?: boolean;
     helperText?: string;
@@ -107,17 +129,21 @@ interface IwFormInputCore {
     ref?: string;
     required?: boolean;
     rules?: Array<Function>;
+    shouldDehydrate?: boolean;
     showPrefixIcon?: boolean;
     showSuffixIcon?: boolean;
     suffixIcon?: string;
     value?: any
     visibleOnData?: string[] // visible only if the form data is set
-
 }
+
+interface iwFormInputText extends IwFormInputCore {
+    type: 'text' | 'email' | 'number' | 'password';
+}
+
 interface IwFormInputComponent extends IwFormInputCore {
     type: 'component'
-
-    component?: VueComponent;
+    component: VueComponent;
 }
 
 interface IwFormInputDate extends IwFormInputCore {
@@ -135,9 +161,19 @@ interface IwFormInputCheckbox extends IwFormInputCore {
     checkBoxFalseValue?: string;
 }
 
+interface IwFormInputLabel extends IwFormInputCore {
+    type: 'label',
+    name?: string
+}
+
 interface IwFormInputSelect extends IwFormInputCore {
     type: 'select'
     selectConfig: IwFormInputSelectConfig
+}
+
+interface IwFormInputSeparator extends IwFormInputCore {
+    type: 'separator',
+    name?: string
 }
 
 interface IwFormInputTextArea extends IwFormInputCore {
@@ -160,7 +196,7 @@ interface IwFormInputUploader extends IwFormInputCore {
     uploadFactoryFn?: Function;
 }
 
-type IwFormInput = IwFormInputCore | IwFormInputComponent | IwFormInputCheckbox | IwFormInputDate | IwFormInputSelect | IwFormInputTextArea
+type IwFormInput = IwFormInputCore & (IwFormInputComponent | IwFormInputCheckbox | IwFormInputDate | IwFormInputLabel | IwFormInputSelect | IwFormInputSeparator | IwFormInputText | IwFormInputTextArea)
 
 interface IwFormStyle {
     cssSubmitBtnWrapper?: string,

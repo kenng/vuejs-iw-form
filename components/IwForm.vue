@@ -5,7 +5,6 @@ import IwFormConfig, { IwFormType } from '../utils/IwFormConfig';
 import EasepickCalendar from './EasepickCalendar.vue';
 import VueMultiSelect from './VueMultiSelect.vue';
 import useIwForm from '../composables/useIwForm';
-import "../iw-form.css"
 import dayjs from 'dayjs';
 
 //////////////////////////////////////////////////////////////////////
@@ -168,7 +167,7 @@ const toggleFolded = () => {
 //  Functions
 //////////////////////////////////////////////////////////////////////
 
-async function onChange(item: IwFormInputCore, val: any, ...extra: any[]) {
+async function onChange(item: IwFormInput, val: any, ...extra: any[]) {
   if (item.onChange) item.onChange(item, val, ...extra)
   if (item.onChangeUpdateInput) {
     const res = await item.onChangeUpdateInput(item, val, ...extra)
@@ -196,7 +195,7 @@ function selectInputOnChange(item: IwFormInputSelect,
     delete errors.value[item.name]
   }
 
-  onChange(item as unknown as IwFormInputCore, selectedKeys, selectedRaw, justSelected, theForm)
+  onChange(item, selectedKeys, selectedRaw, justSelected, theForm)
 }
 
 /**
@@ -220,7 +219,7 @@ function dateOnChange(item: IwFormInputDate, val: Date[]) {
     delete errors.value[item.name]
   }
 
-  onChange(item as unknown as IwFormInputCore, res)
+  onChange(item, res)
 }
 
 async function myFormOnSubmit(ev: Event) {
@@ -308,7 +307,7 @@ initRenderCallback();
                 <label :for="`${formId}-${item.name}`"
                        class="iwFormInputLabel">{{ setLabel(item) }}
                   <span v-if="setRequired(item)"
-                        class="text-rose-600 text-xl"> *</span>
+                        class="iwFormInputLabelRequired"> *</span>
                 </label>
                 <div class="mb-2 relative">
                   <div v-if="item.showPrefixIcon"
@@ -333,12 +332,12 @@ initRenderCallback();
                          @change="(event) => onChange(item, (event.target as HTMLInputElement).value)"
                          @focus="(_) => onFocus(item, myFormData[item.name])"
                          @input="(event) => onInput(item, (event.target as HTMLInputElement).value)" />
-                    <div v-if="clearable">
-                      <span @click="onInput(item, '')">
-                        <Icon icon="maki:cross-11"
-                              class="w-4 h-4 right-2 top-3 absolute cursor-pointer" />
-                      </span>
-                    </div>
+                  <div v-if="clearable">
+                    <span @click="onInput(item, '')">
+                      <Icon icon="maki:cross-11"
+                            class="iwFormClearable" />
+                    </span>
+                  </div>
                   <p v-if="showHelperText"
                      class="iwFormInputHelperText">
                     <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]
@@ -356,7 +355,7 @@ initRenderCallback();
                   <label :for="`${formId}-${item.name}`"
                          class="iwFormInputLabel">{{ setLabel(item) }}
                     <span v-if="setRequired(item)"
-                          class="text-rose-600 text-xl"> *</span>
+                          class="iwFormInputLabelRequired"> *</span>
                   </label>
                   <VueMultiSelect :config="item.selectConfig"
                                   ref="inputRefs"
@@ -395,7 +394,7 @@ initRenderCallback();
                 <label :for="`${formId}-${item.name}`"
                        class="iwFormInputLabelInline">{{ setLabel(item) }}
                   <span v-if="setRequired(item)"
-                        class="text-rose-600 text-xl"> *</span>    
+                        class="iwFormInputLabelRequired"> *</span>
                 </label>
               </template>
             </template>
@@ -406,7 +405,7 @@ initRenderCallback();
                 <label :for="`${formId}-${item.name}`"
                        class="iwFormInputLabel">{{ setLabel(item) }}
                   <span v-if="setRequired(item)"
-                        class="text-rose-600 text-xl"> *</span>    
+                        class="iwFormInputLabelRequired"> *</span>
                 </label>
                 <EasepickCalendar :id="`${formId}-${item.name}`"
                                   ref="inputRefs"

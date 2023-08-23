@@ -21,10 +21,10 @@ const gender = (isMultiple: boolean = false) => new IwFormInputSelectConfig([
         value: 'O',
     },
 ], {
-    multiple: isMultiple
+    multiple: isMultiple,
+    selected: 'F'
 })
 
-let selectedColorIndex = 0
 const colorOptions = [
     {
         label: 'Red',
@@ -35,8 +35,9 @@ const colorOptions = [
         value: 'blue',
     },
 ]
-const color = new IwFormInputSelectConfig(colorOptions, {
+const colorSelectConfig = (selected?: IwFormInputSelectedKeys) => new IwFormInputSelectConfig(colorOptions, {
     multiple: true,
+    selected,
 })
 
 
@@ -61,12 +62,11 @@ const formSelectGender: IwFormConfig = new IwFormConfig({
                     console.log(justSelected)
 
                     // --- update color dropdown
-                    if ('M' === val) {
-                        selectedColorIndex = 1
-                    } else {
-                        selectedColorIndex = 0
+                    let selectedColor = 'blue'
+                    if ('F' === val) {
+                        selectedColor = 'red'
                     }
-                    theForm.updateSelectInput('color', color)
+                    theForm.updateSelectInput('color', colorSelectConfig([selectedColor]))
                 },
                 rules: [IwFormRule.gender({})],
             },
@@ -75,7 +75,7 @@ const formSelectGender: IwFormConfig = new IwFormConfig({
                 label: 'color (changed based on gender)',
                 type: IwFormType.SELECT,
                 // selectIsMapOptionToLabel: true,
-                selectConfig: color,
+                selectConfig: colorSelectConfig(),
                 rules: [],
             },
         ],
@@ -93,20 +93,15 @@ function submit(formData: Record<string, any>) {
 </script>
 
 <template>
-    <Card title="Select Dropdown (Linked Input using onChange)"
-          :refForm="linkedForm1">
-        <template #left>
+    <FormCard title="Select Dropdown (Linked Input using onChange)"
+              :refForm="linkedForm1">
+        <template #default>
             <IwForm ref="linkedForm1"
                     :my-form="formSelectGender"
                     :onSubmit="submit">
-                <template v-slot:submitBtn>
-                    <ButtonSpinner :isLoading="isLoading"
-                                   label="Start Download">
-                    </ButtonSpinner>
-                </template>
             </IwForm>
         </template>
-    </Card>
+    </FormCard>
 </template>
 
 <style scoped>

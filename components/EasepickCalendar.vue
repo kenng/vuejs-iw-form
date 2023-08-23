@@ -143,6 +143,9 @@ onMounted(() => {
                 calendar.setTime(splitted[1]);
             }
         }
+
+        // emit back just in case the value is not set to initial formData
+        emit('change', [props.options.value])
     } else if (props.options.showValueAsToday) {
         calendar.setDate(new Date());
     }

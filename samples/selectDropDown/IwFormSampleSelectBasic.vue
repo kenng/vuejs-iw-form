@@ -8,7 +8,7 @@ import IwFormRule from '../../utils/IwFormRule';
 const isLoading = ref(false)
 const demo01 = ref(null)
 
-const countries = new IwFormInputSelectConfig([
+const countries = (isMultiple: boolean, selected: IwFormInputSelectedKeys) => new IwFormInputSelectConfig([
     {
         label: 'Malaysia',
         value: 'MY',
@@ -22,8 +22,8 @@ const countries = new IwFormInputSelectConfig([
         value: 'O',
     },
 ], {
-    multiple: true,
-    selected: ['MY', 'SG'],
+    multiple: isMultiple,
+    selected,
 })
 
 const demoSelectMultiple: IwFormConfig = new IwFormConfig({
@@ -33,8 +33,15 @@ const demoSelectMultiple: IwFormConfig = new IwFormConfig({
             {
                 name: 'countries',
                 type: IwFormType.SELECT,
+                label: 'Select country',
+                selectConfig: countries(false, 'MY'),
+                rules: [IwFormRule.required]
+            },
+            {
+                name: 'countries',
+                type: IwFormType.SELECT,
                 label: 'Select all the related countries (multiple choices)',
-                selectConfig: countries,
+                selectConfig: countries(true, ['MY', 'SG']),
                 rules: [IwFormRule.required]
             }
         ],
@@ -52,20 +59,13 @@ function submit(formData: Record<string, any>) {
 </script>
 
 <template>
-    <Card title="Select Dropdown (Simple)"
-          :refForm="demo01">
-        <template #left>
-            <IwForm ref="demo01"
-                    :my-form="demoSelectMultiple"
-                    :onSubmit="submit">
-                <template v-slot:submitBtn>
-                    <ButtonSpinner :isLoading="isLoading"
-                                   label="Start Download">
-                    </ButtonSpinner>
-                </template>
-            </IwForm>
-        </template>
-    </Card>
+    <FormCard title="Select Dropdown (Simple)"
+              :refForm="demo01">
+        <IwForm ref="demo01"
+                :my-form="demoSelectMultiple"
+                :onSubmit="submit">
+        </IwForm>
+    </FormCard>
 </template>
 
 <style scoped>

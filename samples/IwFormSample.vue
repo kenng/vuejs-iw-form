@@ -7,7 +7,7 @@ import IwFormInputSelectConfig from '../utils/IwFormInputSelectConfig';
 import dayjs from 'dayjs'
 import IwFormRule from '../utils/IwFormRule';
 import IwForm from '../components/IwForm.vue';
-import IwFormSampleComponent from '../IwFormSampleComponent.vue';
+
 
 interface FormSample {
     title: string
@@ -516,25 +516,7 @@ const formSwitchWithPropData: FormSample = {
     })
 }
 
-const formWithDynamicComponent: FormSample = {
-    title: 'form with dynamic component',
-    form: new IwFormConfig({
-        formGroups: [{
-            formInputs: [
-                {
-                    name: 'name',
-                    type: IwFormType.TEXTGROUP_TEXT,
-                },
-                {
-                    name: 'formWithDynamicComponent',
-                    type: IwFormType.COMPONENT,
-                    component: IwFormSampleComponent,
-                },
-            ],
-        }
-        ]
-    })
-}
+
 
 const gridForm: FormSample = {
     title: 'Simple Grid Form',
@@ -646,7 +628,6 @@ const forms: FormSample[] = [
     formTextMoreAttribute,
     formSwitch,
     formSwitchWithPropData,
-    formWithDynamicComponent,
     multipleGroups,
 ]
 
