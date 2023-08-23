@@ -3,10 +3,15 @@
  * @param data
  * @param param1
  * @returns
+ *
+ * Sample
+ *  data: {"2":"sales1@vilor.com","3":"sales2@vilor.com"}
+ *  output: [{value: '2', label: 'sales1@vilor.com'}, ...]
  */
 export function mapToDropdownOptions(
-    data: { [key: string]: string },
+    data: Record<string, string>,
     params: IwFormSelectOptionParam = {}) {
+
     const res: IwFormInputSelectOption[] = []
     const { showAll = true, showNull = false } = params
 
@@ -18,12 +23,12 @@ export function mapToDropdownOptions(
         res.push({ value: '', label: 'All' })
     }
 
-    // example data: {"2":"sales1@vilor.com","3":"sales2@vilor.com"}
     for (const [key, val] of Object.entries(data)) {
         res.push({ value: key, label: val })
     }
 
     return res
+
 }
 
 /**
@@ -32,9 +37,9 @@ export function mapToDropdownOptions(
  * @param params
  * @returns
  *
- * Example
+ * Sample
  *  data: { SenangPay: 'SenangPay', KiplePay: 'KiplePay'}
- *  output: {{label: 'SenangPay', value: 'SenangPay'}, ...}
+ *  output: [{label: 'SenangPay', value: 'SenangPay'}, ...]
  */
 export function mapToDropdownFromObject(data: { [key: string]: string },
     params: IwFormSelectOptionParam = {}) {
@@ -64,8 +69,12 @@ export function mapToDropdownFromObject(data: { [key: string]: string },
  * @param param2
  * @returns return Object to be used by select options, e.g. {{value: 1, label: label}, ...}
  *
- * Sample data
- * { { "id": 1, "name": "COMPANY_SUPER_ADMIN", "label": "Company Super Admin" }, ...}
+ * Sample
+ *  data : {{ "id": 1, "name": "COMPANY_SUPER_ADMIN", "label": "Company Super Admin" }, ...}
+ *  arguments:
+ *      labelName = "name"
+ *      params = {keyName = "id", ... }
+ *  output: [{value: 1, label: "Company Super Admin"}, ...]
  */
 export function mapToDropdownOptionsWithKey(
     data: any, labelName: string, params: IwFormSelectOptionParamWithKey,
