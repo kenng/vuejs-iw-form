@@ -48,6 +48,22 @@ type IwFormInputSelectedKeys = number | number[] | string | string[] | undefined
 interface IwFormSelectOptionParam {
     showAll?: boolean,
     showNull?: boolean,
+    /**
+     * A function for processing each properties of the data object.
+     *
+     * Commonly used to extract labels from a nested object.
+     *
+     * See [mapToDropdownOptions](./utils/IwFormFunctions.ts) for examples.
+     */
+    mapLabel?: ((value: any, key?: string) => string) | null,
+    /**
+     * A function for processing each properties of the data object.
+     *
+     * Commonly used to extract values from a nested object.
+     *
+     * See [mapToDropdownOptions](./utils/IwFormFunctions.ts) for examples.
+     */
+    mapValue?: ((value: any, key?: string) => string | number) | null,
 }
 type IwFormSelectOptionParamWithKey = IwFormSelectOptionParam & {
     keyName?: string

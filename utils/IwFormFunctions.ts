@@ -9,11 +9,11 @@
  *  output: [{value: '2', label: 'sales1@vilor.com'}, ...]
  */
 export function mapToDropdownOptions(
-    data: Record<string, string>,
-    params: IwFormSelectOptionParam = {}) {
+    data: Record<string, string | number | { [key: string]: any }>,
+    params: IwFormSelectOptionParam = {}): Array<IwFormInputSelectOption> {
 
     const res: IwFormInputSelectOption[] = []
-    const { showAll = true, showNull = false } = params
+    const { showAll = true, showNull = false, mapLabel = null, mapValue = null } = params
 
     if (showNull) {
         res.push({ value: '', label: '(Empty Value)', operator: 'null' })
@@ -23,12 +23,17 @@ export function mapToDropdownOptions(
         res.push({ value: '', label: 'All' })
     }
 
-    for (const [key, val] of Object.entries(data)) {
-        res.push({ value: key, label: val })
+    for (const [dataKey, dataVal] of Object.entries(data)) {
+        // Extract values from the data using the inputted function,
+        // or fallback to the original values from the data.
+        // NOTE: [object Object] may show up if the extracted value isn't string.
+        const label = mapLabel?.(dataVal, dataKey) ?? dataVal.toString()
+        const value = mapValue?.(dataVal, dataKey) ?? dataKey
+
+        res.push({ value, label })
     }
 
     return res
-
 }
 
 /**
