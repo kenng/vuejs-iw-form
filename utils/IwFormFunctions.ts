@@ -1,7 +1,25 @@
 /**
  * Convert data to complete dropdown options (with optional 'All' or 'Null')
+ *
+ * ## Examples
+ * ```
+ * // Basic usage:
+ * mapToDropdownOptions({ "2": "sales1@vilor.com", "3": "sales2@vilor.com", ... })
+ * // return: [{ value: "2", label: "sales1@vilor.com" }, ...]
+ *
+ * // Extract value from data:
+ * mapToDropdownOptions(
+ *   {"Success": { label: "Successful" }, "Failed": { label: "Failed" }},
+ *   { mapLabel: (value: any) => value.label }
+ * )
+ * // return: [
+ * //   { value: "Success", label: "Successful" },
+ * //   { value: "Failed", label: "Failed" },
+ * // ]
+ * ```
+ *
  * @param data
- * @param param1
+ * @param params The options to be passed in to the function.
  * @returns
  *
  * Sample
