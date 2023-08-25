@@ -46,10 +46,10 @@ type IwFormInputSelectedOption = { value: number | string, label: string } | und
 type IwFormInputSelectedKeys = number | number[] | string | string[] | undefined
 
 interface IwFormSelectOptionParam {
-    showAll?: boolean,
-    showNull?: boolean,
     /** Extract label text using the given key from the data object */
     labelKey?: string,
+    showAll?: boolean,
+    showNull?: boolean,
     /** Extract value text using the given key from the data object */
     valueKey?: string,
 }

@@ -31,7 +31,7 @@ export function mapToDropdownOptions(
     params: IwFormSelectOptionParam = {}): Array<IwFormInputSelectOption> {
 
     const res: IwFormInputSelectOption[] = []
-    const { showAll = true, showNull = false, labelKey = null, valueKey = null } = params
+    const { labelKey = null, showAll = true, showNull = false, valueKey = null } = params
 
     if (showNull) {
         res.push({ value: '', label: '(Empty Value)', operator: 'null' })
