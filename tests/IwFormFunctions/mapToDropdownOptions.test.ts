@@ -10,17 +10,13 @@ describe("test on mapToDropdownOptions", () => {
         expect(res).toContainEqual({ value: "3", label: "sales2@vilor.com" })
     })
 
-    it("can process data with mapLabel option", () => {
+    it("can process data with labelKey option", () => {
         const data = {
             "Success": { label: "Successful" },
             "Failed": { label: "Failed" },
         }
 
-        const options = {
-            mapLabel(value: { "label": string }) {
-                return value.label
-            }
-        }
+        const options = { labelKey: "label" }
 
         const res = mapToDropdownOptions(data, options)
 
@@ -28,16 +24,13 @@ describe("test on mapToDropdownOptions", () => {
         expect(res).toContainEqual({ value: "Failed", label: "Failed" })
     })
 
-    it("can process nested data with mapLabel and mapValue option", () => {
+    it("can process data with labelKey and valueKey options", () => {
         const data = {
-            "1": { data: { text: "Label1" }, val: "Value1" },
-            "2": { data: { text: "Label2" }, val: "Value2" },
+            "1": { text: "Label1", val: "Value1" },
+            "2": { text: "Label2", val: "Value2" },
         }
 
-        const options = {
-            mapLabel: (value: { data: { text: string } }) => value.data.text,
-            mapValue: (value: { val: string }) => value.val
-        }
+        const options = { labelKey: "text", valueKey: "val" }
 
         const res = mapToDropdownOptions(data, options)
 

@@ -9,8 +9,8 @@
  *
  * // Extract value from data:
  * mapToDropdownOptions(
- *   {"Success": { label: "Successful" }, "Failed": { label: "Failed" }},
- *   { mapLabel: (value: any) => value.label }
+ *   {"Success": { text: "Successful" }, "Failed": { text: "Failed" }},
+ *   { labelKey: "text" },
  * )
  * // return: [
  * //   { value: "Success", label: "Successful" },
@@ -27,11 +27,11 @@
  *  output: [{value: '2', label: 'sales1@vilor.com'}, ...]
  */
 export function mapToDropdownOptions(
-    data: Record<string, string | number | { [key: string]: any }>,
+    data: Record<string, any>,
     params: IwFormSelectOptionParam = {}): Array<IwFormInputSelectOption> {
 
     const res: IwFormInputSelectOption[] = []
-    const { showAll = true, showNull = false, mapLabel = null, mapValue = null } = params
+    const { showAll = true, showNull = false, labelKey = null, valueKey = null } = params
 
     if (showNull) {
         res.push({ value: '', label: '(Empty Value)', operator: 'null' })
@@ -41,12 +41,9 @@ export function mapToDropdownOptions(
         res.push({ value: '', label: 'All' })
     }
 
-    for (const [dataKey, dataVal] of Object.entries(data)) {
-        // Extract values from the data using the inputted function,
-        // or fallback to the original values from the data.
-        // NOTE: [object Object] may show up if the extracted value isn't string.
-        const label = mapLabel?.(dataVal, dataKey) ?? dataVal.toString()
-        const value = mapValue?.(dataVal, dataKey) ?? dataKey
+    for (const [dataKey, dataValue] of Object.entries(data)) {
+        const label = labelKey ? dataValue[labelKey] : dataValue
+        const value = valueKey ? dataValue[valueKey] : dataKey
 
         res.push({ value, label })
     }
