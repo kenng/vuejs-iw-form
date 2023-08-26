@@ -4,18 +4,23 @@
  * ## Examples
  * ```
  * // Basic usage:
- * mapToDropdownOptions({ "2": "sales1@vilor.com", "3": "sales2@vilor.com", ... })
- * // return: [{ value: "2", label: "sales1@vilor.com" }, ...]
+ * mapToDropdownOptions({ "2": "sales1@vilor.com", "3": "sales2@vilor.com" })
+ * // return: [{ value: "2", label: "sales1@vilor.com" }]
  *
- * // Extract value from data:
+ *
+ * // Extract values from data:
  * mapToDropdownOptions(
- *   {"Success": { text: "Successful" }, "Failed": { text: "Failed" }},
+ *   {
+ *     "Success": { text: "Successful" },
+ *     "Failed": { text: "Failed" },
+ *   },
  *   { labelKey: "text" },
  * )
  * // return: [
  * //   { value: "Success", label: "Successful" },
  * //   { value: "Failed", label: "Failed" },
  * // ]
+ *
  *
  * // Extract labels and values from data:
  * mapToDropdownOptions(
