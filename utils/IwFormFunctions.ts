@@ -16,6 +16,19 @@
  * //   { value: "Success", label: "Successful" },
  * //   { value: "Failed", label: "Failed" },
  * // ]
+ *
+ * // Extract labels and values from data:
+ * mapToDropdownOptions(
+ *   [
+ *     { text: "Successful", val: "ok" },
+ *     { text: "Failed", val: "err" },
+ *   ],
+ *   { labelKey: "text", valueKey: "val" },
+ * )
+ * // return: [
+ * //   { value: "ok", label: "Successful" },
+ * //   { value: "err", label: "Failed" },
+ * // ]
  * ```
  *
  * @param data
