@@ -70,36 +70,6 @@ export function mapToDropdownOptions(
 }
 
 /**
- * Simple mapping of JSON object to dropdown options
- * @param data
- * @param params
- * @returns
- *
- * Sample
- *  data: { SenangPay: 'SenangPay', KiplePay: 'KiplePay'}
- *  output: [{label: 'SenangPay', value: 'SenangPay'}, ...]
- */
-export function mapToDropdownFromObject(data: { [key: string]: string },
-    params: IwFormSelectOptionParam = {}) {
-    const { showAll = true, showNull = false } = params
-    const res: IwFormInputSelectOption[] = []
-
-    if (showNull) {
-        res.push({ value: '', label: '(Empty Value)', operator: 'null' })
-    }
-
-    if (showAll && !data['all']) {
-        res.push({ value: '', label: 'All' })
-    }
-
-    for (const [key, val] of Object.entries(data)) {
-        res.push({ value: key, label: val })
-    }
-
-    return res
-}
-
-/**
  * same as mapToDropdownOptions, but allow user to specify the keyName
  *
  * @param data
