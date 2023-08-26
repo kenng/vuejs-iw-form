@@ -37,4 +37,18 @@ describe("test on mapToDropdownOptions", () => {
         expect(res).toContainEqual({ value: "Value1", label: "Label1" })
         expect(res).toContainEqual({ value: "Value2", label: "Label2" })
     })
+
+    it("can process array data with labelKey and valueKey option", () => {
+        const data = [
+            { text: "Successful", val: "ok" },
+            { text: "Failed", val: "err" },
+        ]
+
+        const options = { labelKey: "text", valueKey: "val" }
+
+        const res = mapToDropdownOptions(data, options)
+
+        expect(res).toContainEqual({ value: "ok", label: "Successful" })
+        expect(res).toContainEqual({ value: "err", label: "Failed" })
+    })
 })
