@@ -2,7 +2,6 @@
 import { PropType } from 'vue'
 import IwFormInputSelectConfig from '../utils/IwFormInputSelectConfig';
 import VueMultiselect from 'vue-multiselect';
-import 'vue-multiselect/dist/vue-multiselect.css'
 import useVueMultiSelect from '../composables/useVueMultiSelect';
 
 ///////////////////////////////////////////////@  Import, Types & meta
