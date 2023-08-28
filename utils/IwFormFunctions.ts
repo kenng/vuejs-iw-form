@@ -1,7 +1,43 @@
 /**
  * Convert data to complete dropdown options (with optional 'All' or 'Null')
+ *
+ * ## Examples
+ * ```
+ * // Basic usage:
+ * mapToDropdownOptions({ "2": "sales1@vilor.com", "3": "sales2@vilor.com" })
+ * // return: [{ value: "2", label: "sales1@vilor.com" }]
+ *
+ *
+ * // Extract values from data:
+ * mapToDropdownOptions(
+ *   {
+ *     "Success": { text: "Successful" },
+ *     "Failed": { text: "Failed" },
+ *   },
+ *   { labelKey: "text" },
+ * )
+ * // return: [
+ * //   { value: "Success", label: "Successful" },
+ * //   { value: "Failed", label: "Failed" },
+ * // ]
+ *
+ *
+ * // Extract labels and values from data:
+ * mapToDropdownOptions(
+ *   [
+ *     { text: "Successful", val: "ok" },
+ *     { text: "Failed", val: "err" },
+ *   ],
+ *   { labelKey: "text", valueKey: "val" },
+ * )
+ * // return: [
+ * //   { value: "ok", label: "Successful" },
+ * //   { value: "err", label: "Failed" },
+ * // ]
+ * ```
+ *
  * @param data
- * @param param1
+ * @param params The options to be passed in to the function.
  * @returns
  *
  * Sample
@@ -9,11 +45,11 @@
  *  output: [{value: '2', label: 'sales1@vilor.com'}, ...]
  */
 export function mapToDropdownOptions(
-    data: Record<string, string>,
-    params: IwFormSelectOptionParam = {}) {
+    data: Record<string, any>,
+    params: IwFormSelectOptionParam = {}): Array<IwFormInputSelectOption> {
 
     const res: IwFormInputSelectOption[] = []
-    const { showAll = true, showNull = false } = params
+    const { labelKey = null, showAll = true, showNull = false, valueKey = null } = params
 
     if (showNull) {
         res.push({ value: '', label: '(Empty Value)', operator: 'null' })
@@ -23,12 +59,14 @@ export function mapToDropdownOptions(
         res.push({ value: '', label: 'All' })
     }
 
-    for (const [key, val] of Object.entries(data)) {
-        res.push({ value: key, label: val })
+    for (const [dataKey, dataValue] of Object.entries(data)) {
+        const label = labelKey ? dataValue[labelKey] : dataValue
+        const value = valueKey ? dataValue[valueKey] : dataKey
+
+        res.push({ value, label })
     }
 
     return res
-
 }
 
 /**

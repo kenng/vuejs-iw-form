@@ -57,7 +57,7 @@ const btnId = props.id ?? (new Date()).getTime() + Math.random() * 10000
                class="iwFormInputLabel"></label>
         <button :id="`${btnId}-submit-btn`"
                 class="iwFormSubmitBtn"
-                :class="{ '!iwFormBtnDisabled': isLoading }"
+                :class="{ 'iwFormBtnDisabled': isLoading }"
                 :disabled="isLoading"
                 :type="type"
                 @click="ev => !isLoading && onClick">
