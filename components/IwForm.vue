@@ -332,7 +332,7 @@ initRenderCallback();
                          @change="(event) => onChange(item, (event.target as HTMLInputElement).value)"
                          @focus="(_) => onFocus(item, myFormData[item.name])"
                          @input="(event) => onInput(item, (event.target as HTMLInputElement).value)" />
-                  <div v-if="clearable">
+                  <div v-if="clearable && myFormData[item.name]">
                     <span @click="onInput(item, '')">
                       <Icon icon="maki:cross-11"
                             class="iwFormClearable" />
