@@ -226,3 +226,31 @@ type IwFormRuleResponse = (data: IRuleData) => boolean | string
 type IwFormMethod = (data: any) => IwFormRuleResponse
 
 type IwFormBtnType = 'button' | 'submit' | 'reset'
+
+interface IwFormEditorMenu {
+    css?: Record<'is-active', boolean>
+    disabled?: () => boolean
+    icon: string,
+    markOption?: any[]
+    label: string
+    markName?: 'blockquote' | 'bold' | 'bulletList' | 'italic' | orderedList | 'underline'
+    onClick: () => void
+    shortcutKey?: string,
+    type?: ''
+}
+
+interface IwFormEditorMenuSeparator {
+    type: 'separator'
+}
+
+interface IwFormEditorMenuInput {
+    type: 'input'
+    inputType: string,
+    label?: string
+    icon?: string
+    onInput: ($event: MouseEvent) => void
+    shortcutKey?: string
+    value?: any
+}
+
+type IwFormEditorMenus = IwFormEditorMenu | IwFormEditorMenuSeparator | IwFormEditorMenuInput

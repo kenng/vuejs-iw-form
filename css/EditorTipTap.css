@@ -1,3 +1,22 @@
+.iw-form-editor {
+    position: relative;
+    padding-left: 6px;
+}
+
+.iw-form-editor-menus {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding-bottom: 10px;
+    padding-left: 4px;
+    padding-right: 4px;
+    position: sticky;
+    top: 65px;
+    z-index: 10;
+}
+
+.iw-form-editor-content {
+    padding: 15px 8px;
+}
+
 .iw-form-editor .tiptap > * + * {
     margin-top: 0.75em;
 }
@@ -77,6 +96,5 @@
 }
 
 .iw-form-editor .is-active {
-    background: black;
-    color: #fff;
+    @apply bg-sky-100 dark:bg-sky-700 text-sky-600 dark:text-sky-50 border-sky-500 dark:border-sky-600 cursor-default pointer-events-none;
 }
