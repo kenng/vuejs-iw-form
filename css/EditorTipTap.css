@@ -1,0 +1,140 @@
+.iw-form-editor {
+    position: relative;
+    padding-left: 6px;
+}
+
+.iw-form-editor-menus {
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    /* border-bottom: 2px solid #999999; */
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    height: 40px;
+    justify-content: center;
+    margin: -20px -20px 20px -20px;
+    position: sticky;
+    top: 65px;
+    z-index: 10;
+}
+
+.dark .iw-form-editor-menus {
+}
+
+.iw-form-editor-menus.sticky {
+    /* border-top: 2px solid transparent; */
+    box-shadow: 0px 3px 5px -3px rgba(51, 51, 51, 0.5);
+}
+
+.iw-form-editor-menus .divider {
+    border: none;
+    border-left: 2px solid rgba(51, 51, 51, 0.2);
+    margin: 2px 10px;
+}
+
+.iw-form-editor-menu {
+    align-items: center;
+    border-radius: 5px;
+    color: #333333;
+    display: flex;
+    height: 24px;
+    justify-content: center;
+    margin-left: 4px;
+    width: 24px;
+}
+
+.iw-form-editor-menu > input {
+    border: none;
+    margin-left: 4px;
+}
+
+.iw-form-editor-menu > input[type='color'] {
+    width: 40px;
+    height: 20px;
+}
+
+.iw-form-editor-menu > select {
+    width: 40px;
+    font-size: 14px;
+}
+
+.iw-form-editor-menu:hover,
+.iw-form-editor-menu.is-active {
+    @apply cursor-pointer bg-sky-100 dark:bg-sky-700 text-sky-600 dark:text-sky-50 border-sky-500 dark:border-sky-600;
+}
+
+.iw-form-editor-menu.is-active:hover,
+.iw-form-editor-menu.is-active {
+    @apply cursor-default pointer-events-none;
+}
+
+.iw-form-editor-menu.disabled {
+    color: rgba(51, 51, 51, 0.5);
+    pointer-events: none;
+}
+
+.iw-form-editor-content {
+    padding: 15px 8px;
+}
+
+.iw-form-editor .tiptap > * + * {
+    margin-top: 0.75em;
+}
+
+.iw-form-editor .tiptap ul,
+.iw-form-editor .tiptap ol {
+    padding: 0 1rem;
+}
+
+.iw-form-editor .tiptap h1,
+.iw-form-editor .tiptap h2,
+.iw-form-editor .tiptap h3,
+.iw-form-editor .tiptap h4,
+.iw-form-editor .tiptap h5,
+.iw-form-editor .tiptap h6 {
+    line-height: 1.1;
+}
+
+.iw-form-editor .tiptap code {
+    background-color: rgba(97, 97, 97, 0.1);
+    color: #616161;
+}
+
+.iw-form-editor .tiptap pre {
+    background: #0d0d0d;
+    color: #fff;
+    font-family: 'JetBrainsMono', monospace;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+}
+
+.iw-form-editor .tiptap pre code {
+    color: inherit;
+    padding: 0;
+    background: none;
+    font-size: 0.8rem;
+}
+
+.iw-form-editor .tiptap img {
+    max-width: 100%;
+    height: auto;
+}
+
+.iw-form-editor .tiptap blockquote {
+    padding-left: 1rem;
+    border-left: 2px solid rgba(13, 13, 13, 0.1);
+}
+
+.iw-form-editor .tiptap hr {
+    border: none;
+    border-top: 2px solid rgba(13, 13, 13, 0.1);
+    margin: 2rem 0;
+}
+
+/** extension **/
+.iw-form-editor .tiptap p.is-editor-empty:first-child::before {
+    color: #adb5bd;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+}
