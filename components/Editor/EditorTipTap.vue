@@ -8,7 +8,8 @@ import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
 import { Color } from '@tiptap/extension-color'
 import TextStyle from '@tiptap/extension-text-style'
-import { useEditor, Editor, EditorContent } from '@tiptap/vue-3'
+import { Editor, EditorContent } from '@tiptap/vue-3'
+import FontSize from './extensions/EditorTipTapFontSize'
 
 
 ///////////////////////////////////////////@  Props, Emits & Variables
@@ -31,25 +32,27 @@ const props = defineProps({
 const theEditor = ref<Editor>()
 
 
-let textColor = ref<string>('#000000')
-let menus = ref<IwFormEditorMenus[]>()
+let fontColor = ref<string>('#000000')
+let fontSize = ref<number>(12)
+const fontSizeOptions = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 36, 48, 72]
+let menus: IwFormEditorMenus[]
 
 function initMenu(theEditor: Ref<Editor>) {
 
     const editor = theEditor.value
-    textColor.value = convertRgbColorsToHex(theEditor.value.getAttributes('textStyle').color)
-    menus.value = [
+    fontColor.value = rgbToHex(theEditor.value.getAttributes('textStyle').color)
+    menus = [
         {
             type: 'input',
             inputType: 'color',
             label: '',
             onInput: ($event) => {
-                const color = convertRgbColorsToHex(($event.target as HTMLInputElement)?.value)
+                const color = rgbToHex(($event.target as HTMLInputElement)?.value)
                 editor.chain().focus().setColor(color).run()
-                textColor.value = color
+                fontColor.value = color
             },
-            // value: textColor,
-            value: textColor
+            // value: fontColor,
+            value: fontColor
         },
         {
             onClick: () => editor.chain().focus().toggleBold().run(),
@@ -158,6 +161,7 @@ function initMenu(theEditor: Ref<Editor>) {
             onClick: () => {
                 editor.chain().focus().unsetAllMarks().run()
                 editor.chain().focus().clearNodes().run()
+                editor.commands.unsetFontSize()
             },
             label: 'clear format',
             icon: 'icon-park-outline:clear',
@@ -183,17 +187,8 @@ function initMenu(theEditor: Ref<Editor>) {
 
 //////////////////////////////////////////////////////////@  Functions
 //////////////////////////////////////////////////////////////////////
-function convertRgbColorsToHex(color: string) {
-    if (!color) return '#000000';
-
-    if (color.startsWith('#')) {
-        return color;
-    }
-
-    return color.replace(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/g, (_, r, g, b) => {
-        const toHex = (value: string) => parseInt(value).toString(16).padStart(2, '0').toUpperCase();
-        return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-    });
+function onFontSizeChange() {
+    theEditor.value.chain().focus().setFontSize(fontSize.value + 'px').run()
 }
 
 function rgbToHex(rgbColor: string) {
@@ -216,6 +211,11 @@ function rgbToHex(rgbColor: string) {
     return "#" + hexValues.join("").toUpperCase();
 }
 
+function onSelectUpdateFontSize(editor: Editor) {
+    let size = editor.getAttributes('textStyle').fontSize
+    if (!size) size = '16'
+    fontSize = size.replace('px', '')
+}
 /////////////////////////////////////////////////////////@  Lifecycles
 //////////////////////////////////////////////////////////////////////
 onMounted(() => {
@@ -227,6 +227,7 @@ onMounted(() => {
                 },
             }),
             TextStyle,
+            FontSize,
             Color,
             Image,
             Underline.configure({
@@ -240,11 +241,10 @@ onMounted(() => {
         ],
         content: props.content,
         onSelectionUpdate({ editor }: { editor: Editor }) {
-            const color = rgbToHex(editor.getAttributes('textStyle').color)
-            textColor.value = color
+            fontColor.value = rgbToHex(editor.getAttributes('textStyle').color)
+            onSelectUpdateFontSize(editor)
         },
     })
-    window.theEditor = theEditor.value
 
     initMenu(theEditor)
 })
@@ -264,23 +264,33 @@ onUnmounted(() => {
     <div class="iw-form-editor">
         <div class="iw-form-editor-menus"
              v-if="theEditor">
+
+            <span class="iw-form-editor-menu">
+                <select v-model="fontSize"
+                        @change="onFontSizeChange">
+                    <option v-for="size in fontSizeOptions">{{ size }}</option>
+                </select>
+            </span>
             <template v-for="(menu, key) in menus"
                       :key="key">
                 <template v-if="!menu.type">
-                    <button @click="() => menu.onClick()"
-                            :disabled="menu.disabled ? menu.disabled() : false"
-                            :title="menu.label + (menu.shortcutKey ? ` (${menu.shortcutKey})` : '')"
-                            :class="{ 'is-active': menu.markOption ? theEditor.isActive(...menu.markOption) : false }">
+                    <div @click="() => menu.onClick()"
+                         :disabled="menu.disabled ? menu.disabled() : false"
+                         :title="menu.label + (menu.shortcutKey ? ` (${menu.shortcutKey})` : '')"
+                         class="iw-form-editor-menu"
+                         :class="{ 'is-active': menu.markOption ? theEditor.isActive(...menu.markOption) : false }">
                         <Icon :icon="menu.icon" />
                         <span v-if="showLabel">
                             {{ menu.label }}
                         </span>
-                    </button>
+                    </div>
                 </template>
                 <template v-else-if="'input' == menu.type">
-                    <input :type="menu.inputType"
-                           @input="menu.onInput"
-                           :value="menu.value">
+                    <span class="iw-form-editor-menu">
+                        <input :type="menu.inputType"
+                               @input="menu.onInput"
+                               :value="menu.value">
+                    </span>
                 </template>
                 <template v-else>
                     <Icon icon="tabler:minus-vertical" />
