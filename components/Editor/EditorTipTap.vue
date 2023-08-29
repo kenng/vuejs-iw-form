@@ -1,15 +1,20 @@
 <script setup lang='ts'>
 ///////////////////////////////////////////////@  Import, Types & meta
 //////////////////////////////////////////////////////////////////////
+import { Editor, EditorContent } from '@tiptap/vue-3'
+import { Color } from '@tiptap/extension-color'
+import Dropcursor from '@tiptap/extension-dropcursor'
+import FontSize from './extensions/EditorTipTapFontSize'
+import Highlight from '@tiptap/extension-highlight'
 import { Icon } from '@iconify/vue'
+import Image from '@tiptap/extension-image'
 import Placeholder from '@tiptap/extension-placeholder'
 import Underline from '@tiptap/extension-underline'
 import StarterKit from '@tiptap/starter-kit'
-import Image from '@tiptap/extension-image'
-import { Color } from '@tiptap/extension-color'
+import { TextAlign } from '@tiptap/extension-text-align'
 import TextStyle from '@tiptap/extension-text-style'
-import { Editor, EditorContent } from '@tiptap/vue-3'
-import FontSize from './extensions/EditorTipTapFontSize'
+import TextStyleExtraAttributes from './extensions/TextStyleExtraAttributes'
+import Youtube from '@tiptap/extension-youtube'
 
 
 ///////////////////////////////////////////@  Props, Emits & Variables
@@ -36,6 +41,48 @@ let fontColor = ref<string>('#000000')
 let fontSize = ref<number>(12)
 const fontSizeOptions = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 36, 48, 72]
 let menus: IwFormEditorMenus[]
+
+function initEditor(): Editor {
+    return new Editor({
+        extensions: [
+            Color,
+            Dropcursor,
+            FontSize,
+            Highlight.configure({
+                HTMLAttributes: {
+                    class: 'iw-form-editor-highlight',
+                },
+            }),
+            Image.configure({
+                allowBase64: true,
+                inline: true,
+            }),
+            Placeholder.configure({ placeholder: props.placeholder, }),
+            StarterKit.configure({
+                heading: {
+                    levels: [1, 2, 3],
+                },
+                history: { newGroupDelay: 1000, }
+            }),
+            TextAlign,
+            TextStyle,
+            TextStyleExtraAttributes,
+            Underline.configure({
+                HTMLAttributes: {
+                    class: 'iw-form-editor-underline',
+                },
+            }),
+            Youtube.configure({
+                enableIFrameApi: true,
+            }),
+        ],
+        content: toRaw(props.content),
+        onSelectionUpdate({ editor }: { editor: Editor }) {
+            fontColor.value = rgbToHex(editor.getAttributes('textStyle').color)
+            onSelectUpdateFontSize(editor)
+        },
+    })
+}
 
 function initMenu(theEditor: Ref<Editor>) {
 
@@ -105,7 +152,6 @@ function initMenu(theEditor: Ref<Editor>) {
         {
             onClick: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
             // disabled: () => !editor.can().chain().focus().toggleStrike().run(),
-            css: { 'is-active': editor.isActive('heading', { level: 1 }) },
             markOption: ['heading', { level: 1 }],
             label: 'h1',
             shortcutKey: 'C-A-1',
@@ -113,7 +159,6 @@ function initMenu(theEditor: Ref<Editor>) {
         },
         {
             onClick: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
-            css: { 'is-active': editor.isActive('heading', { level: 2 }) },
             markOption: ['heading', { level: 2 }],
             label: 'h2',
             shortcutKey: 'C-A-2',
@@ -121,7 +166,6 @@ function initMenu(theEditor: Ref<Editor>) {
         },
         {
             onClick: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
-            css: { 'is-active': editor.isActive('heading', { level: 3 }) },
             label: 'h3',
             markOption: ['heading', { level: 3 }],
             shortcutKey: 'C-A-3',
@@ -132,13 +176,14 @@ function initMenu(theEditor: Ref<Editor>) {
             label: 'ordered list',
             markOption: ['orderedList'],
             shortcutKey: 'C-S-7',
+            toggleable: true,
             icon: 'material-symbols:format-list-numbered',
         },
         {
             onClick: () => editor.chain().focus().toggleBulletList().run(),
-            disabled: () => !editor.can().chain().focus().toggleBulletList().run(),
             label: 'bullet list',
             markOption: ['bulletList'],
+            toggleable: true,
             shortcutKey: 'C-S-8',
             icon: 'material-symbols:format-list-bulleted',
         },
@@ -147,6 +192,7 @@ function initMenu(theEditor: Ref<Editor>) {
             label: 'material-symbols:format-quote',
             markOption: ['blockquote'],
             shortcutKey: 'C-S-B',
+            toggleable: true,
             icon: 'material-symbols:format-quote',
         },
         {
@@ -187,6 +233,19 @@ function initMenu(theEditor: Ref<Editor>) {
 
 //////////////////////////////////////////////////////////@  Functions
 //////////////////////////////////////////////////////////////////////
+function getCss(menu: IwFormEditorMenu) {
+    let css = ''
+    if (menu.markOption) {
+        const isActive = theEditor.value.isActive(...menu.markOption)
+        css += isActive ? ' active' : ''
+
+        if (menu.toggleable) {
+            css += ' toggleable'
+        }
+    }
+    return css
+}
+
 function onFontSizeChange() {
     theEditor.value.chain().focus().setFontSize(fontSize.value + 'px').run()
 }
@@ -219,33 +278,7 @@ function onSelectUpdateFontSize(editor: Editor) {
 /////////////////////////////////////////////////////////@  Lifecycles
 //////////////////////////////////////////////////////////////////////
 onMounted(() => {
-    theEditor.value = new Editor({
-        extensions: [
-            StarterKit.configure({
-                heading: {
-                    levels: [1, 2, 3],
-                },
-            }),
-            TextStyle,
-            FontSize,
-            Color,
-            Image,
-            Underline.configure({
-                HTMLAttributes: {
-                    class: 'iw-form-editor-underline',
-                },
-            }),
-            Placeholder.configure({
-                placeholder: props.placeholder,
-            })
-        ],
-        content: props.content,
-        onSelectionUpdate({ editor }: { editor: Editor }) {
-            fontColor.value = rgbToHex(editor.getAttributes('textStyle').color)
-            onSelectUpdateFontSize(editor)
-        },
-    })
-
+    theEditor.value = initEditor()
     initMenu(theEditor)
 })
 
@@ -278,7 +311,7 @@ onUnmounted(() => {
                          :disabled="menu.disabled ? menu.disabled() : false"
                          :title="menu.label + (menu.shortcutKey ? ` (${menu.shortcutKey})` : '')"
                          class="iw-form-editor-menu"
-                         :class="{ 'is-active': menu.markOption ? theEditor.isActive(...menu.markOption) : false }">
+                         :class="getCss(menu)">
                         <Icon :icon="menu.icon" />
                         <span v-if="showLabel">
                             {{ menu.label }}
@@ -293,7 +326,7 @@ onUnmounted(() => {
                     </span>
                 </template>
                 <template v-else>
-                    <Icon icon="tabler:minus-vertical" />
+                    <span class="divider"></span>
                 </template>
             </template>
 

@@ -228,7 +228,6 @@ type IwFormMethod = (data: any) => IwFormRuleResponse
 type IwFormBtnType = 'button' | 'submit' | 'reset'
 
 interface IwFormEditorMenu {
-    css?: Record<'is-active', boolean>
     disabled?: () => boolean
     icon: string,
     markOption?: any[]
@@ -236,6 +235,7 @@ interface IwFormEditorMenu {
     markName?: 'blockquote' | 'bold' | 'bulletList' | 'italic' | orderedList | 'underline'
     onClick: () => void
     shortcutKey?: string,
+    toggleable?: boolean
     type?: ''
 }
 
