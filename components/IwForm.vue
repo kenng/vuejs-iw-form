@@ -309,7 +309,7 @@ initRenderCallback();
                   <span v-if="setRequired(item)"
                         class="iwFormInputLabelRequired"> *</span>
                 </label>
-                <div class="mb-2 relative">
+                <div class="iwFormInputContainer">
                   <div v-if="item.showPrefixIcon"
                        class="iwFormInputPrependIcon">
                     <Icon class="w-5 h-5 text-gray-500 dark:text-gray-400"
