@@ -77,68 +77,55 @@ function initEditor(): Editor {
             }),
         ],
         content: toRaw(props.content),
-        onSelectionUpdate({ editor }: { editor: Editor }) {
-            fontColor.value = rgbToHex(editor.getAttributes('textStyle').color)
-            onSelectUpdateFontSize(editor)
+        onSelectionUpdate(ev) {
+            fontColor.value = rgbToHex(ev.editor.getAttributes('textStyle').color)
+            onSelectUpdateFontSize(ev.editor as Editor)
         },
     })
 }
 
-function initMenu(theEditor: Ref<Editor>) {
+function initMenu(editor: Editor) {
 
-    const editor = theEditor.value
-    fontColor.value = rgbToHex(theEditor.value.getAttributes('textStyle').color)
+    fontColor.value = rgbToHex(editor.getAttributes('textStyle').color)
     menus = [
         {
-            type: 'input',
-            inputType: 'color',
-            label: '',
-            onInput: ($event) => {
-                const color = rgbToHex(($event.target as HTMLInputElement)?.value)
-                editor.chain().focus().setColor(color).run()
-                fontColor.value = color
-            },
-            // value: fontColor,
-            value: fontColor
-        },
-        {
             onClick: () => editor.chain().focus().toggleBold().run(),
-            disabled: () => !editor.can().chain().focus().toggleBold().run(),
             markOption: ['bold'],
             label: 'bold',
             shortcutKey: 'C-B',
+            toggleable: true,
             icon: 'material-symbols:format-bold',
         },
         {
             onClick: () => editor.chain().focus().toggleItalic().run(),
-            disabled: () => !editor.can().chain().focus().toggleItalic().run(),
             markOption: ['italic'],
             label: 'italic',
             shortcutKey: 'C-I',
+            toggleable: true,
             icon: 'material-symbols:format-italic',
         },
         {
             onClick: () => editor.chain().focus().toggleUnderline().run(),
-            disabled: () => !editor.can().chain().focus().toggleUnderline().run(),
             markOption: ['underline'],
             label: 'underline',
             shortcutKey: 'C-U',
+            toggleable: true,
             icon: 'material-symbols:format-underlined',
         },
         {
             onClick: () => editor.chain().focus().toggleStrike().run(),
-            disabled: () => !editor.can().chain().focus().toggleStrike().run(),
             markOption: ['strike'],
             label: 'strike',
             shortcutKey: 'C-S-X',
+            toggleable: true,
             icon: 'material-symbols:strikethrough-s-rounded',
         },
         {
             onClick: () => editor.chain().focus().toggleCodeBlock().run(),
-            disabled: () => !editor.can().chain().focus().toggleCodeBlock().run(),
             markOption: ['codeBlock'],
             label: 'codeBlock',
             shortcutKey: 'C-E',
+            toggleable: true,
             icon: 'material-symbols:code',
         },
 
@@ -151,10 +138,10 @@ function initMenu(theEditor: Ref<Editor>) {
         // },
         {
             onClick: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
-            // disabled: () => !editor.can().chain().focus().toggleStrike().run(),
             markOption: ['heading', { level: 1 }],
             label: 'h1',
             shortcutKey: 'C-A-1',
+            toggleable: true,
             icon: 'gridicons:heading-h1',
         },
         {
@@ -162,6 +149,7 @@ function initMenu(theEditor: Ref<Editor>) {
             markOption: ['heading', { level: 2 }],
             label: 'h2',
             shortcutKey: 'C-A-2',
+            toggleable: true,
             icon: 'gridicons:heading-h2',
         },
         {
@@ -169,6 +157,7 @@ function initMenu(theEditor: Ref<Editor>) {
             label: 'h3',
             markOption: ['heading', { level: 3 }],
             shortcutKey: 'C-A-3',
+            toggleable: true,
             icon: 'gridicons:heading-h3',
         },
         {
@@ -210,7 +199,7 @@ function initMenu(theEditor: Ref<Editor>) {
                 editor.commands.unsetFontSize()
             },
             label: 'clear format',
-            icon: 'icon-park-outline:clear',
+            icon: 'tabler:clear-formatting',
         },
         {
             onClick: () => editor.chain().focus().undo().run(),
@@ -235,8 +224,10 @@ function initMenu(theEditor: Ref<Editor>) {
 //////////////////////////////////////////////////////////////////////
 function getCss(menu: IwFormEditorMenu) {
     let css = ''
-    if (menu.markOption) {
-        const isActive = theEditor.value.isActive(...menu.markOption)
+    if (typeof menu.markOption !== 'undefined') {
+        // @ts-ignore : typescript unable to recognize menu.markOption could be
+        // resolved to "name" or "name, attributes"
+        const isActive = theEditor.value!.isActive(...menu.markOption)
         css += isActive ? ' active' : ''
 
         if (menu.toggleable) {
@@ -247,7 +238,7 @@ function getCss(menu: IwFormEditorMenu) {
 }
 
 function onFontSizeChange() {
-    theEditor.value.chain().focus().setFontSize(fontSize.value + 'px').run()
+    theEditor.value!.chain().focus().setFontSize(fontSize.value + 'px').run()
 }
 
 function rgbToHex(rgbColor: string) {
@@ -273,17 +264,23 @@ function rgbToHex(rgbColor: string) {
 function onSelectUpdateFontSize(editor: Editor) {
     let size = editor.getAttributes('textStyle').fontSize
     if (!size) size = '16'
-    fontSize = size.replace('px', '')
+    fontSize.value = size.replace('px', '')
+}
+
+function onColorInput($event: Event) {
+    const color = rgbToHex(($event.target as HTMLInputElement)?.value)
+    theEditor.value!.chain().focus().setColor(color).run()
+    fontColor.value = color
 }
 /////////////////////////////////////////////////////////@  Lifecycles
 //////////////////////////////////////////////////////////////////////
 onMounted(() => {
     theEditor.value = initEditor()
-    initMenu(theEditor)
+    initMenu(theEditor.value)
 })
 
 onUnmounted(() => {
-    theEditor.value.destroy()
+    theEditor.value?.destroy()
 })
 
 //////////////////////////////////////////////////////@ Initialization
@@ -299,6 +296,11 @@ onUnmounted(() => {
              v-if="theEditor">
 
             <span class="iw-form-editor-menu">
+                <input type="color"
+                       @input="onColorInput"
+                       :value="fontColor">
+            </span>
+            <span class="iw-form-editor-menu mr-1">
                 <select v-model="fontSize"
                         @change="onFontSizeChange">
                     <option v-for="size in fontSizeOptions">{{ size }}</option>

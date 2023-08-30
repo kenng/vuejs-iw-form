@@ -230,7 +230,7 @@ type IwFormBtnType = 'button' | 'submit' | 'reset'
 interface IwFormEditorMenu {
     disabled?: () => boolean
     icon: string,
-    markOption?: any[]
+    markOption?: [name: string, attributes?: {}] | [attributes: {}]
     label: string
     markName?: 'blockquote' | 'bold' | 'bulletList' | 'italic' | orderedList | 'underline'
     onClick: () => void

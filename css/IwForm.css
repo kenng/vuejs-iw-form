@@ -103,7 +103,7 @@
 }
 
 .iwFormResetFilterBtn {
-    @apply text-primary-600 dark:text-gray-300 bg-transparent font-bold uppercase py-1 text-xs outline-none focus:outline-none mb-1 ease-linear transition-all duration-150;
+    @apply text-primary-600 dark:text-gray-300 bg-transparent font-bold uppercase py-1 text-xs outline-none focus:outline-none mb-1 ease-linear transition-all duration-150 mt-2;
 }
 
 .iwFormResetFilterBtnWrapper {
