@@ -27,115 +27,6 @@ export const useIwForm = (config: IwFormUseConfig) => {
         })
     })
 
-    function getAriaLabel(item: IwFormInput): string {
-        if (item.disabled) return 'Input disabled';
-        return 'form input'
-    }
-
-    function getInputCss(item: IwFormInput, defaultCss?: string): string {
-        let css;
-        if (item.disabled) {
-            css = 'iwFormInputDisabled'
-        } else {
-            css = defaultCss ?? 'iwFormInputText'
-        }
-
-        if (item.showPrefixIcon) css += ' iwFormPrefixIconPadding'
-
-        return css + ' ' + item.cssInput
-    }
-
-    function getFormGroupSubmitLabel(group: IwFormGroup, defaultLabel: string) {
-        const submitBtn = group.submitBtn
-        if (submitBtn) {
-            if (submitBtn.label) {
-                return submitBtn.label
-            }
-        }
-
-        return defaultLabel
-    }
-
-    function validate(item: IwFormInput, data: any) {
-        if (item.rules) {
-            for (const rule of item.rules) {
-                const param: IRuleData = { value: data, myFormData: myFormData.value }
-                const err = rule(param)
-                if (typeof err === 'string') {
-                    errors.value[item.name] = err
-                    return false
-                    break
-                }
-            }
-        }
-
-        if (item.required) {
-            const err = IwFormRule.required()({ value: date })
-            if (typeof err === 'string') {
-                errors.value[item.name] = err
-                return false
-            }
-        }
-        return true
-    }
-
-    function validateAll(): boolean {
-        let validated = true;
-
-        for (const group of (config.myForm.formGroups)) {
-            for (const item of group.formInputs) {
-                if (!validate(item, myFormData.value[item.name])) {
-                    validated = false
-                }
-            }
-        }
-
-        return validated;
-    }
-
-    function onInput(item: IwFormInputCore, val: any) {
-        const key = item.name
-        myFormData.value[key] = val
-        if (errors.value[key]) {
-            if (validate(item, val)) {
-                delete errors.value[key]
-            }
-        }
-    }
-
-
-    function onBlur(item: IwFormInputCore, data: any) {
-        validate(item, data)
-
-        if (typeof item.onBlur == 'function') {
-            return item.onBlur(myFormData);
-        }
-    }
-
-    function onFocus(item: IwFormInput, data: any) {
-        // validate(item, data)
-    }
-
-
-    function setLabel(item: IwFormInputCore) {
-        let label = item.label
-        if (!label) label = item.name
-
-        return label.charAt(0).toUpperCase() + label.slice(1)
-    }
-
-    function setRequired(item: IwFormInput) {
-        if (item.required) return true
-        return false
-    }
-
-    function getRef(item: IwFormInput) {
-        if (item.ref) return item.ref;
-    }
-
-    function isDisabled(disabled: boolean | undefined, isReadOnly: boolean) {
-        return disabled || isReadOnly
-    }
 
     function getCss(item: IwFormInput, param?: { cssArray?: string[], cssObj?: Record<string, boolean> }) {
         let extraCss: string = ''
@@ -162,15 +53,8 @@ export const useIwForm = (config: IwFormUseConfig) => {
         return `${extraCss}`
     }
 
-    function getFormData() {
-        return myFormData.value;
-    }
-
-    function toggleReadOnly() {
-        // this.isReadOnly = !this.isReadOnly;
-        // if (this.isReadOnly) this.formTitle = `Edit ${this.title}`;
-        // else this.formTitle = this.title;
-        // this.$emit('toggleReadOnly', this.myFormData, this.formExtra);
+    function getRef(item: IwFormInput) {
+        if (item.ref) return item.ref;
     }
 
     function formOnReset() {
@@ -194,20 +78,6 @@ export const useIwForm = (config: IwFormUseConfig) => {
 
         // setCanSubmitAgain(false);
         if (config.onReset) config.onReset()
-    }
-
-    function removeDisabledInputValue(): Object {
-        const formData = {}
-        for (const group of (config.myForm.formGroups)) {
-            group.formInputs.forEach((item: IwFormInputCore) => {
-                if (!item.disabled || true === item.shouldDehydrate) {
-                    const name = item.name
-                    formData[name] = myFormData.value[name]
-                }
-            })
-        }
-
-        return formData
     }
 
     async function formOnSubmit(ev: Event) {
@@ -238,45 +108,74 @@ export const useIwForm = (config: IwFormUseConfig) => {
         }
     }
 
-    function submitConfirmed() {
-        // getMyForm()
-        //   .validate()
-        //   .then((success: boolean) => {
-        //     if (!success) {
-        //       return $store.dispatch(
-        //         'showSnackbarError',
-        //         'Missing or invalid input value',
-        //       );
-        //     }
-        //     $emit('submit', myFormData, formExtra);
-        //     // if (resetOnSubmit) reset();
-
-        //     setCanSubmitAgain(null);
-        //   })
-        //   .catch(() => {
-        //     $store.dispatch(
-        //       'showSnackbarError',
-        //       'Missing or invalid input value',
-        //       // eslint-disable-next-line @typescript-eslint/no-empty-function
-        //     );
-        //     // console.log($refs.myform);
-        //   });
+    function getAriaLabel(item: IwFormInput): string {
+        if (item.disabled) return 'Input disabled';
+        return 'form input'
     }
 
-    //   function setCanSubmitAgain(canSubmitAgainParam: boolean) {
-    //     if (canSubmitAgainParam) {
-    //       canSubmitAgain = canSubmitAgainParam
-    //     } else if (config.canSubmitAgain) {
-    //       canSubmitAgain = true;
-    //     }
-    //   }
+    function getFormData() {
+        return myFormData.value;
+    }
 
+    function getFormGroupSubmitLabel(group: IwFormGroup, defaultLabel: string) {
+        const submitBtn = group.submitBtn
+        if (submitBtn) {
+            if (submitBtn.label) {
+                return submitBtn.label
+            }
+        }
+
+        return defaultLabel
+    }
+
+    function getInputCss(item: IwFormInput, defaultCss?: string): string {
+        let css;
+        if (item.disabled) {
+            css = 'iwFormInputDisabled'
+        } else {
+            css = defaultCss ?? 'iwFormInputText'
+        }
+
+        if (item.showPrefixIcon) css += ' iwFormPrefixIconPadding'
+
+        return css + ' ' + item.cssInput
+    }
 
     function getVisibility(item: IwFormInput) {
         if (typeof item.isVisible === 'boolean') return item.isVisible
         if (typeof item.isVisible === 'function') return item.isVisible(item, myFormData)
 
         return true
+    }
+
+    function isDisabled(disabled: boolean | undefined, isReadOnly: boolean) {
+        return disabled || isReadOnly
+    }
+
+    function initFormData() {
+        if (config.myForm.formData && Object.keys(config.myForm.formData).length >= 1) {
+            // clone formData to myFormData
+            myFormData.value = JSON.parse(JSON.stringify(config.myForm.formData))
+        }
+
+        // set value if inputX.value is defined, and myFormData is yet to be defined for inputX
+        for (const group of (config.myForm.formGroups)) {
+            group.formInputs.forEach((item: IwFormInput) => {
+                const name = item.name
+                if (name && null === config.myForm.formData[name]) {
+                    if (typeof item.value !== 'undefined') {
+                        myFormData.value[name] = item.value
+                    }
+                }
+            })
+        }
+    }
+
+    function initRenderCallback() {
+        myForm.renderCallBack = (name: string) => {
+            keys.value[name] = `${name}-${Date.now()}-${Math.random() * 10000}`
+            myFormData.value[name] = null
+        }
     }
 
     function isVisible(item: IwFormInput): boolean {
@@ -300,32 +199,92 @@ export const useIwForm = (config: IwFormUseConfig) => {
         return false
     }
 
-    function initRenderCallback() {
-        myForm.renderCallBack = (name: string) => {
-            keys.value[name] = `${name}-${Date.now()}-${Math.random() * 10000}`
-            myFormData.value[name] = null
+    function onBlur(item: IwFormInputCore, data: any) {
+        validate(item, data)
+
+        if (typeof item.onBlur == 'function') {
+            return item.onBlur(myFormData);
         }
     }
 
-    function initFormData() {
-        if (config.myForm.formData && Object.keys(config.myForm.formData).length >= 1) {
-            // clone formData to myFormData
-            myFormData.value = JSON.parse(JSON.stringify(config.myForm.formData))
-        }
+    function onFocus(item: IwFormInput, data: any) {
+        // validate(item, data)
+    }
 
-        // set value if inputX.value is defined, and myFormData is yet to be defined for inputX
+    // TODO: to be replaced by onChannge, as onInput and onChange does the same thing
+    function onInput(item: IwFormInputCore, val: any) {
+        const key = item.name
+        myFormData.value[key] = val
+        if (errors.value[key]) {
+            if (validate(item, val)) {
+                delete errors.value[key]
+            }
+        }
+    }
+
+    function removeDisabledInputValue(): Object {
+        const formData = {}
         for (const group of (config.myForm.formGroups)) {
-            group.formInputs.forEach((item: IwFormInput) => {
-                const name = item.name
-                if (name && null === config.myForm.formData[name]) {
-                    if (typeof item.value !== 'undefined') {
-                        myFormData.value[name] = item.value
-                    }
+            group.formInputs.forEach((item: IwFormInputCore) => {
+                if (!item.disabled || true === item.shouldDehydrate) {
+                    const name = item.name
+                    formData[name] = myFormData.value[name]
                 }
             })
         }
+
+        return formData
     }
 
+    function setLabel(item: IwFormInputCore) {
+        let label = item.label
+        if (!label) label = item.name
+
+        return label.charAt(0).toUpperCase() + label.slice(1)
+    }
+
+    function setRequired(item: IwFormInput) {
+        if (item.required) return true
+        return false
+    }
+
+    function validate(item: IwFormInput, data: any) {
+        if (item.rules) {
+            for (const rule of item.rules) {
+                const param: IRuleData = { value: data, myFormData: myFormData.value }
+                const err = rule(param)
+                if (typeof err === 'string') {
+                    errors.value[item.name] = err
+                    return false
+                    break
+                }
+            }
+        }
+
+        if (item.required) {
+            const err = IwFormRule.required()({ value: date })
+            if (typeof err === 'string') {
+                errors.value[item.name] = err
+                return false
+            }
+        }
+        return true
+    }
+
+
+    function validateAll(): boolean {
+        let validated = true;
+
+        for (const group of (config.myForm.formGroups)) {
+            for (const item of group.formInputs) {
+                if (!validate(item, myFormData.value[item.name])) {
+                    validated = false
+                }
+            }
+        }
+
+        return validated;
+    }
 
     return {
         // variables
@@ -338,27 +297,27 @@ export const useIwForm = (config: IwFormUseConfig) => {
         totalSubmission,
 
         // functions
+        formOnReset,
+        formOnSubmit,
         getAriaLabel,
         getCss,
+        getFormData,
         getFormGroupSubmitLabel,
         getInputCss,
-        validate,
-        validateAll,
-        onInput,
+        getRef,
+        getVisibility,
+        initFormData,
+        initRenderCallback,
+        isDisabled,
+        isVisible,
         onBlur,
         onFocus,
+        onInput,
+        removeDisabledInputValue,
         setLabel,
         setRequired,
-        getRef,
-        isDisabled,
-        getFormData,
-        formOnReset,
-        removeDisabledInputValue,
-        formOnSubmit,
-        getVisibility,
-        isVisible,
-        initRenderCallback,
-        initFormData,
+        validate,
+        validateAll,
     }
 
 }
