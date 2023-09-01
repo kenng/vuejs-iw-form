@@ -4,6 +4,7 @@ import IwFormConfig, { IwFormType } from '../../utils/IwFormConfig';
 import IwForm from '../../components/IwForm.vue'
 import IwFormInputSelectConfig from '../../utils/IwFormInputSelectConfig';
 import IwFormRule from '../../utils/IwFormRule';
+import FormCard from '../components/FormCard.vue'
 
 const isLoading = ref(false)
 const demo01 = ref(null)
@@ -38,7 +39,7 @@ const demoSelectMultiple: IwFormConfig = new IwFormConfig({
                 rules: [IwFormRule.required]
             },
             {
-                name: 'countries',
+                name: 'countries_related',
                 type: IwFormType.SELECT,
                 label: 'Select all the related countries (multiple choices)',
                 selectConfig: countries(true, ['MY', 'SG']),

@@ -6,6 +6,7 @@ import EasepickCalendar from './EasepickCalendar.vue';
 import VueMultiSelect from './VueMultiSelect.vue';
 import useIwForm from '../composables/useIwForm';
 import dayjs from 'dayjs';
+import IwFormBtn from './IwFormBtn.vue';
 
 //////////////////////////////////////////////////////////////////////
 //  Emit & Props
@@ -131,25 +132,26 @@ const {
   totalSubmission,
 
   // functions
-  getAriaLabel,
-  getCss,
-  getInputCss,
-  getFormGroupSubmitLabel,
-  onInput,
-  onBlur,
-  onFocus,
-  setLabel,
-  setRequired,
-  getRef,
-  isDisabled,
-  getFormData,
+  clearErrorsIfValidated,
   formOnReset,
   formOnSubmit,
-  initRenderCallback,
+  getAriaLabel,
+  getCss,
+  getFormData,
+  getFormGroupSubmitLabel,
+  getInputCss,
+  getRef,
   initFormData,
-  validate,
+  initRenderCallback,
+  isDisabled,
   isVisible,
+  onBlur,
+  onFocus,
+  onInput,
+  setLabel,
+  setRequired,
   submitIsLoading,
+  validate,
 } = useIwForm({
   myForm: props.myForm,
   onSubmit: props.onSubmit,
@@ -190,10 +192,7 @@ function selectInputOnChange(item: IwFormInputSelect,
   theForm: IwFormConfig
 ) {
   myFormData.value[item.name] = selectedKeys
-
-  if (validate(item, selectedKeys)) {
-    delete errors.value[item.name]
-  }
+  clearErrorsIfValidated(item, selectedKeys)
 
   onChange(item, selectedKeys, selectedRaw, justSelected, theForm)
 }

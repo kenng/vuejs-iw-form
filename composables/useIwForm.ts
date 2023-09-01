@@ -27,6 +27,15 @@ export const useIwForm = (config: IwFormUseConfig) => {
         })
     })
 
+    // ------------------------------------------------------
+
+    function clearErrorsIfValidated(item: IwFormInputCore, val: any) {
+        if (errors.value[item.name]) {
+            if (validate(item, val)) {
+                delete errors.value[item.name]
+            }
+        }
+    }
 
     function getCss(item: IwFormInput, param?: { cssArray?: string[], cssObj?: Record<string, boolean> }) {
         let extraCss: string = ''
@@ -207,6 +216,18 @@ export const useIwForm = (config: IwFormUseConfig) => {
         }
     }
 
+    async function onChange(item: IwFormInput, val: any, ...extra: any[]) {
+        const key = item.name
+        myFormData.value[key] = val
+        clearErrorsIfValidated(item, val)
+
+        if (item.onChange) item.onChange(item, val, ...extra)
+        if (item.onChangeUpdateInput) {
+            const res = await item.onChangeUpdateInput(item, val, ...extra)
+            myForm.updateSelectInput(res.linkedInputName, res.newSelectConfig)
+        }
+    }
+
     function onFocus(item: IwFormInput, data: any) {
         // validate(item, data)
     }
@@ -215,11 +236,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
     function onInput(item: IwFormInputCore, val: any) {
         const key = item.name
         myFormData.value[key] = val
-        if (errors.value[key]) {
-            if (validate(item, val)) {
-                delete errors.value[key]
-            }
-        }
+        clearErrorsIfValidated(item, val)
     }
 
     function removeDisabledInputValue(): Object {
@@ -297,6 +314,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
         totalSubmission,
 
         // functions
+        clearErrorsIfValidated,
         formOnReset,
         formOnSubmit,
         getAriaLabel,
@@ -311,6 +329,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
         isDisabled,
         isVisible,
         onBlur,
+        onChange,
         onFocus,
         onInput,
         removeDisabledInputValue,
