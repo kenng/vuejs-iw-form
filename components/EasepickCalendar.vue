@@ -165,7 +165,7 @@ defineExpose({ onReset })
         <input ref="easepickRef"
                type="text"
                :class="disabled ? 'iwFormInputCalendarDisabled' : 'iwFormInputCalendar'"
-               placeholder="Select date"
+               :placeholder="options.placeholder"
                :disabled="disabled">
     </div>
 </template>
