@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import FormCard from './components/FormCard.vue';
 import IwFormConfig from '../utils/IwFormConfig';
 import IwFormRule from '../utils/IwFormRule';
+import IwForm from '../components/IwForm.vue';
 
 const refForm = ref()
 const form = new IwFormConfig({
@@ -13,7 +14,6 @@ const form = new IwFormConfig({
         password_confirmed: 'password123',
         newUser: '1',
     },
-    // config: { isStyleDark },
     formGroups: [{
         css: 'grid md:grid-cols-2',
         formInputs: [
@@ -23,6 +23,7 @@ const form = new IwFormConfig({
                 label: 'User Name',
                 cssWrapper: 'col-span-full',
                 required: true,
+                rules: [IwFormRule.minLength({ minLength: 3 })],
             },
             {
                 type: 'password',
@@ -90,13 +91,8 @@ const form = new IwFormConfig({
         <FormCard title="Basic Form"
                   :refForm="refForm">
             <IwForm ref="refForm"
+                    data-test="iw-form-basic"
                     :myForm="form"></IwForm>
         </FormCard>
-
-        <IwFormSampleSelectBasic />
-        <IwFormSampleDateTimeBasic />
-        <IwFormSampleDateTimeBasic />
-        <IwFormSampleCustomSubmitBtn />
-        <IwFormSampleDynamicComponentBasic />
     </div>
 </template>

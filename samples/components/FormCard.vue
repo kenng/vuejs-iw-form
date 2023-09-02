@@ -28,7 +28,7 @@ defineProps<{
                 <div class="bg-white rounded-lg shadow-slate-50 drop-shadow-xl dark:bg-gray-800 sm:p-5">
                     <h4 class="text-xl text-center">Output</h4>
                     <div v-if="refForm">
-                        <div class="ml-4 pt-4 italic"
+                        <div class="ml-4 pt-4 italic iwform-output"
                              v-if="refForm">
                             <div v-for="(item, key) in refForm.getFormData()">
                                 {{ `${key}: ${item}` }}

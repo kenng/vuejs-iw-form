@@ -146,6 +146,7 @@ const {
   isDisabled,
   isVisible,
   onBlur,
+  onChange: useOnChange,
   onFocus,
   onInput,
   setLabel,
@@ -170,6 +171,8 @@ const toggleFolded = () => {
 //////////////////////////////////////////////////////////////////////
 
 async function onChange(item: IwFormInput, val: any, ...extra: any[]) {
+  useOnChange(item, val)
+
   if (item.onChange) item.onChange(item, val, ...extra)
   if (item.onChangeUpdateInput) {
     const res = await item.onChangeUpdateInput(item, val, ...extra)
@@ -191,9 +194,6 @@ function selectInputOnChange(item: IwFormInputSelect,
   justSelected: IwFormInputSelectedOption,
   theForm: IwFormConfig
 ) {
-  myFormData.value[item.name] = selectedKeys
-  clearErrorsIfValidated(item, selectedKeys)
-
   onChange(item, selectedKeys, selectedRaw, justSelected, theForm)
 }
 
@@ -332,7 +332,7 @@ initRenderCallback();
                          @focus="(_) => onFocus(item, myFormData[item.name])"
                          @input="(event) => onInput(item, (event.target as HTMLInputElement).value)" />
                   <div v-if="clearable && myFormData[item.name]">
-                    <span @click="onInput(item, '')">
+                    <span @click="onChange(item, '')">
                       <Icon icon="maki:cross-11"
                             class="iwFormClearable" />
                     </span>

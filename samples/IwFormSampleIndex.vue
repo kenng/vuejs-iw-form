@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import IwFormSampleBasic from './IwFormSampleBasic.vue';
+import IwFormSampleBasicIndex from './IwFormSampleBasicIndex.vue';
 import IwFormSampleSelectIndex from './selectDropDown/IwFormSampleSelectIndex.vue';
 import IwFormSampleDateIndex from './datetime/IwFormSampleDateIndex.vue';
 
@@ -11,7 +11,7 @@ interface Choice {
 const choices: Choice[] = [
     {
         label: 'Basic Example',
-        component: IwFormSampleBasic
+        component: IwFormSampleBasicIndex
     },
     {
         label: 'Date Example',

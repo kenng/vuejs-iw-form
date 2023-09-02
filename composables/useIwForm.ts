@@ -147,7 +147,9 @@ export const useIwForm = (config: IwFormUseConfig) => {
 
         if (item.showPrefixIcon) css += ' iwFormPrefixIconPadding'
 
-        return css + ' ' + item.cssInput
+        if (item.cssInput) css = css + ' ' + item.cssInput
+
+        return css
     }
 
     function getVisibility(item: IwFormInput) {
@@ -208,8 +210,10 @@ export const useIwForm = (config: IwFormUseConfig) => {
         return false
     }
 
-    function onBlur(item: IwFormInputCore, data: any) {
-        validate(item, data)
+    function onBlur(item: IwFormInputCore, val: any) {
+        if (validate(item, val)) {
+            delete errors.value[item.name]
+        }
 
         if (typeof item.onBlur == 'function') {
             return item.onBlur(myFormData);
@@ -232,7 +236,6 @@ export const useIwForm = (config: IwFormUseConfig) => {
         // validate(item, data)
     }
 
-    // TODO: to be replaced by onChannge, as onInput and onChange does the same thing
     function onInput(item: IwFormInputCore, val: any) {
         const key = item.name
         myFormData.value[key] = val
@@ -279,7 +282,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
         }
 
         if (item.required) {
-            const err = IwFormRule.required()({ value: date })
+            const err = IwFormRule.required()({ value: data })
             if (typeof err === 'string') {
                 errors.value[item.name] = err
                 return false
@@ -287,7 +290,6 @@ export const useIwForm = (config: IwFormUseConfig) => {
         }
         return true
     }
-
 
     function validateAll(): boolean {
         let validated = true;
