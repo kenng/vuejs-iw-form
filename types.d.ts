@@ -52,9 +52,6 @@ interface IwFormSelectOptionParam {
     /** Extract value text using the given key from the data object */
     valueKey?: string,
 }
-type IwFormSelectOptionParamWithKey = IwFormSelectOptionParam & {
-    keyName?: string
-}
 
 interface IwFormSelectProps {
     config: typeof IwFormInputSelectConfig,

@@ -69,46 +69,6 @@ export function mapToDropdownOptions(
     return res
 }
 
-/**
- * same as mapToDropdownOptions, but allow user to specify the keyName
- *
- * @param data
- * @param labelName
- * @param param2
- * @returns return Object to be used by select options, e.g. {{value: 1, label: label}, ...}
- *
- * Sample
- *  data : {{ "id": 1, "name": "COMPANY_SUPER_ADMIN", "label": "Company Super Admin" }, ...}
- *  arguments:
- *      labelName = "name"
- *      params = {keyName = "id", ... }
- *  output: [{value: 1, label: "Company Super Admin"}, ...]
- */
-export function mapToDropdownOptionsWithKey(
-    data: any, labelName: string, params: IwFormSelectOptionParamWithKey,
-) {
-    const { keyName = 'id', showAll = true, showNull = false } = params
-    const res: IwFormInputSelectOption[] = []
-
-    if (showNull) {
-        res.push({ value: '', label: '(Empty Value)', operator: 'null' })
-    }
-
-    if (showAll && !data['all']) {
-        res.push({ value: '', label: 'All' })
-    }
-
-    if (Array.isArray(data)) {
-        for (const item of data) {
-            res.push({ value: item[keyName], label: item[labelName] })
-        }
-    } else {
-        res.push({ value: data[keyName], label: data[labelName] })
-    }
-
-    return res
-}
-
 export function setAppendIconOnClickFn(
     appendIconOnClickFn: Function,
     // currentValue: any,
