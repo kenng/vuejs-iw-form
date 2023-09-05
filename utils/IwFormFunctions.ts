@@ -55,11 +55,11 @@ export function mapToDropdownOptions(
         res.push({ value: '', label: '(Empty Value)', operator: 'null' })
     }
 
-    if (showAll && !data['all']) {
+    if (showAll && !data?.['all']) {
         res.push({ value: '', label: 'All' })
     }
 
-    for (const [dataKey, dataValue] of Object.entries(data)) {
+    for (const [dataKey, dataValue] of Object.entries(data ?? {})) {
         const label = labelKey ? dataValue[labelKey] : dataValue
         const value = valueKey ? dataValue[valueKey] : dataKey
 
