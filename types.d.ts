@@ -8,7 +8,6 @@ type NonFunctionPropertyNames<T> = {
 
 type NonFunctionProperties<T> = Pick<T, NonFunctionPropertyNames<T>>;
 
-
 interface IwFormUseConfig {
     myForm: IwFormConfig,
     onSubmit?: IwFormOnSubmit | undefined,
@@ -73,10 +72,6 @@ interface IwFormGroup {
     }
 }
 
-interface IwFormInputBtn {
-    type: 'submit-btn',
-}
-
 interface IwFormOnChangeUpdateInput {
     linkedInputName: string,
     newSelectConfig: IwFormInputSelectConfig
@@ -95,6 +90,7 @@ type IIwFormType = 'autocomplete' |
     'checkbox' |
     'component' |
     'date' |
+    'editor' |
     'email' |
     'label' |
     'number' |
@@ -141,8 +137,11 @@ interface IwFormInputCore {
     visibleOnData?: string[] // visible only if the form data is set
 }
 
-interface iwFormInputText extends IwFormInputCore {
-    type: 'text' | 'email' | 'number' | 'password';
+interface IwFormInputCheckbox extends IwFormInputCore {
+    type: 'checkbox'
+
+    checkBoxTrueValue?: string;
+    checkBoxFalseValue?: string;
 }
 
 interface IwFormInputComponent extends IwFormInputCore {
@@ -158,11 +157,10 @@ interface IwFormInputDate extends IwFormInputCore {
     allowedDateFn?: Function | string;
 }
 
-interface IwFormInputCheckbox extends IwFormInputCore {
-    type: 'checkbox'
+interface IwFormInputEditor extends IwFormInputCore {
+    type: 'editor'
 
-    checkBoxTrueValue?: string;
-    checkBoxFalseValue?: string;
+    config: IwFormEditorConfig
 }
 
 interface IwFormInputLabel extends IwFormInputCore {
@@ -178,6 +176,10 @@ interface IwFormInputSelect extends IwFormInputCore {
 interface IwFormInputSeparator extends IwFormInputCore {
     type: 'separator',
     name?: string
+}
+
+interface iwFormInputText extends IwFormInputCore {
+    type: 'text' | 'email' | 'number' | 'password';
 }
 
 interface IwFormInputTextArea extends IwFormInputCore {
@@ -200,7 +202,17 @@ interface IwFormInputUploader extends IwFormInputCore {
     uploadFactoryFn?: Function;
 }
 
-type IwFormInput = IwFormInputCore & (IwFormInputComponent | IwFormInputCheckbox | IwFormInputDate | IwFormInputLabel | IwFormInputSelect | IwFormInputSeparator | IwFormInputText | IwFormInputTextArea)
+type IwFormInput = IwFormInputCore & (
+    IwFormInputComponent
+    | IwFormInputCheckbox
+    | IwFormInputDate
+    | IwFormInputEditor
+    | IwFormInputLabel
+    | IwFormInputSelect
+    | IwFormInputSeparator
+    | IwFormInputText
+    | IwFormInputTextArea
+)
 
 interface IwFormStyle {
     cssSubmitBtnWrapper?: string,
@@ -237,6 +249,16 @@ interface IwFormEditorMenu {
     shortcutKey?: string,
     toggleable?: boolean
     type?: ''
+}
+
+interface IwFormEditorConfig {
+    content?: string
+    maxImageUploadPixel?: number
+    maxImageSizeInMb?: number
+    onSave?: (content?: string) => void
+    onImageUpload?: (file: File) => Promise<string>
+    placeholder?: string
+    showLabel?: boolean
 }
 
 interface IwFormEditorMenuSeparator {

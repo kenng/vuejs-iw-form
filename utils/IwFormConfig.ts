@@ -1,23 +1,24 @@
 import IwFormInputSelectConfig from "./IwFormInputSelectConfig";
 
 export enum IwFormType {
+    AUTOCOMPLETE = 'autocomplete',
+    BUTTON = 'button',
+    CHECKBOX = 'checkbox',
+    COMPONENT = 'component',
+    DATE = 'date',
+    EDITOR = 'editor',
     LABEL = 'label',
+    OPTION_GROUP = 'option_group',
+    SELECT = 'select',
     SEPARATOR = 'separator',
-    TEXTGROUP_TEXT = 'text',
+    SWITCH = 'switch',
     TEXTGROUP_EMAIL = 'email',
     TEXTGROUP_NUMBER = 'number',
     TEXTGROUP_PASSWORD = 'password',
+    TEXTGROUP_TEXT = 'text',
     TEXTGROUP_TEXTAREA = 'textarea',
-    SELECT = 'select',
-    AUTOCOMPLETE = 'autocomplete',
-    OPTION_GROUP = 'option_group',
-    CHECKBOX = 'checkbox',
-    SWITCH = 'switch',
     TIME = 'time',
-    DATE = 'date',
-    BUTTON = 'button',
     UPLOADER = 'uploader',
-    COMPONENT = 'component',
 }
 
 export default class IwFormConfig {

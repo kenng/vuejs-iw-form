@@ -421,6 +421,12 @@ initRenderCallback();
               </template>
             </template>
 
+            <template name="editor"
+                      v-else-if="IwFormTypeEnum.EDITOR === (item.type)">
+              <EditorTipTap :config="item.config"
+                            @change="(htmlData) => onChange(item, htmlData)" />
+            </template>
+
             <template name="component"
                       v-else-if="IwFormTypeEnum.COMPONENT === (item.type)">
               <component :is="item.component"

@@ -21,39 +21,24 @@ import type { Slice } from 'prosemirror-model/dist'
 
 ///////////////////////////////////////////@  Props, Emits & Variables
 //////////////////////////////////////////////////////////////////////
-type OnImageUploadFunc = (file: File) => Promise<string>
+const emit = defineEmits(['change'])
 
 const props = defineProps({
-    content: {
-        type: String
-    },
-    maxImageUploadPixel: {
-        type: Number,
-        default: 3000
-    },
-    maxImageSizeInMb: {
-        type: Number,
-        default: 2
-    },
-    onSave: {
-        type: Function as PropType<(content: string) => void>
-    },
-    onImageUpload: {
-        type: Function as PropType<OnImageUploadFunc>
-    },
-    placeholder: {
-        type: String,
-        default: 'Write something ...'
-    },
-    showLabel: {
-        type: Boolean,
-        default: false,
+    config: {
+        type: Object as PropType<IwFormEditorConfig>,
+        required: true
     },
 })
 
+const defaultConfig: IwFormEditorConfig = {
+    maxImageUploadPixel: 3000,
+    maxImageSizeInMb: 2,
+    placeholder: 'Write something ...',
+    showLabel: false
+}
+const config: IwFormEditorConfig = Object.assign({}, defaultConfig, props.config)
 
 const theEditor = ref<Editor>()
-
 
 let fontColor = ref<string>('#000000')
 let fontSize = ref<number>(12)
@@ -73,22 +58,22 @@ function handleDropOntoEditor(view: EditorView, event: DragEvent, slice: Slice, 
         let filesize = Math.floor((droppedFile.size / 1024) / 1024)
 
         if ((droppedFile.type === "image/jpeg" || droppedFile.type === "image/png")
-            && filesize < props.maxImageSizeInMb) {
+            && filesize < config.maxImageSizeInMb!) {
             let _URL = window.URL || window.webkitURL;
             let img = new Image();
             img.src = _URL.createObjectURL(droppedFile);
 
             img.onload = async function (onLoadEvent: Event) {
                 const image = onLoadEvent.target as HTMLImageElement;
-                const maxPixel = props.maxImageUploadPixel
+                const maxPixel = config.maxImageUploadPixel!
                 if (image.width > maxPixel || image.height > maxPixel) {
                     throw new Error(`images need to be less than ${maxPixel} pixels in height and width.`);
                 } else {
-                    if (!props.onImageUpload) {
+                    if (!config.onImageUpload) {
                         throw new Error('onImageUpload props is not defined.');
                     }
 
-                    const imageUrl = await props.onImageUpload(droppedFile)
+                    const imageUrl = await config.onImageUpload(droppedFile)
                     let image = new Image();
                     image.src = imageUrl;
                     // TODO: start the image loading spinner
@@ -139,7 +124,7 @@ function initEditor(): Editor {
                 allowBase64: true,
                 inline: true,
             }),
-            ExtPlaceholder.configure({ placeholder: props.placeholder, }),
+            ExtPlaceholder.configure({ placeholder: config.placeholder, }),
             ExtStarterKit.configure({
                 heading: {
                     levels: [1, 2, 3],
@@ -158,11 +143,15 @@ function initEditor(): Editor {
                 enableIFrameApi: true,
             }),
         ],
-        content: toRaw(props.content),
-        onSelectionUpdate(ev) {
-            fontColor.value = rgbToHex(ev.editor.getAttributes('textStyle').color)
-            onSelectUpdateFontSize(ev.editor as Editor)
+        content: toRaw(config.content),
+        onSelectionUpdate: ({ editor }) => {
+            fontColor.value = rgbToHex(editor.getAttributes('textStyle').color)
+            onSelectUpdateFontSize(editor as Editor)
         },
+        onUpdate: ({ editor }) => {
+            const content = editor.getHTML()
+            emit('change', content)
+        }
     })
 }
 
@@ -354,6 +343,10 @@ function onColorInput($event: Event) {
 onMounted(() => {
     theEditor.value = initEditor()
     initMenu(theEditor.value)
+
+    if (config.content) {
+        emit('change', theEditor.value.getHTML())
+    }
 })
 
 onUnmounted(() => {
@@ -386,16 +379,16 @@ onUnmounted(() => {
             <template v-for="(menu, key) in menus"
                       :key="key">
                 <template v-if="!menu.type">
-                    <div @click="() => menu.onClick()"
-                         :disabled="menu.disabled ? menu.disabled() : false"
-                         :title="menu.label + (menu.shortcutKey ? ` (${menu.shortcutKey})` : '')"
-                         class="iw-form-editor-menu"
-                         :class="getCss(menu)">
+                    <span @click="() => menu.onClick()"
+                          :disabled="menu.disabled ? menu.disabled() : false"
+                          :title="menu.label + (menu.shortcutKey ? ` (${menu.shortcutKey})` : '')"
+                          class="iw-form-editor-menu iw-form-editor-menu-btn"
+                          :class="getCss(menu)">
                         <Icon :icon="menu.icon" />
-                        <span v-if="showLabel">
+                        <span v-if="config.showLabel">
                             {{ menu.label }}
                         </span>
-                    </div>
+                    </span>
                 </template>
                 <template v-else-if="'input' == menu.type">
                     <span class="iw-form-editor-menu">
