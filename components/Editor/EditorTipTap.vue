@@ -2,26 +2,44 @@
 ///////////////////////////////////////////////@  Import, Types & meta
 //////////////////////////////////////////////////////////////////////
 import { Editor, EditorContent } from '@tiptap/vue-3'
-import { Color } from '@tiptap/extension-color'
-import Dropcursor from '@tiptap/extension-dropcursor'
-import FontSize from './extensions/EditorTipTapFontSize'
-import Highlight from '@tiptap/extension-highlight'
+import { Color as ExtColor } from '@tiptap/extension-color'
+import ExtDropcursor from '@tiptap/extension-dropcursor'
+import ExtFontSize from './extensions/EditorTipTapFontSize'
+import ExtHighlight from '@tiptap/extension-highlight'
+import ExtImage from '@tiptap/extension-image'
+import ExtPlaceholder from '@tiptap/extension-placeholder'
+import ExtUnderline from '@tiptap/extension-underline'
+import ExtStarterKit from '@tiptap/starter-kit'
+import { TextAlign as ExtTextAlign } from '@tiptap/extension-text-align'
+import ExtTextStyle from '@tiptap/extension-text-style'
+import ExtTextStyleExtraAttributes from './extensions/TextStyleExtraAttributes'
+import ExtYoutube from '@tiptap/extension-youtube'
 import { Icon } from '@iconify/vue'
-import Image from '@tiptap/extension-image'
-import Placeholder from '@tiptap/extension-placeholder'
-import Underline from '@tiptap/extension-underline'
-import StarterKit from '@tiptap/starter-kit'
-import { TextAlign } from '@tiptap/extension-text-align'
-import TextStyle from '@tiptap/extension-text-style'
-import TextStyleExtraAttributes from './extensions/TextStyleExtraAttributes'
-import Youtube from '@tiptap/extension-youtube'
+import type { EditorView } from 'prosemirror-view/dist'
+import type { Slice } from 'prosemirror-model/dist'
 
 
 ///////////////////////////////////////////@  Props, Emits & Variables
 //////////////////////////////////////////////////////////////////////
+type OnImageUploadFunc = (file: File) => Promise<string>
+
 const props = defineProps({
     content: {
         type: String
+    },
+    maxImageUploadPixel: {
+        type: Number,
+        default: 3000
+    },
+    maxImageSizeInMb: {
+        type: Number,
+        default: 2
+    },
+    onSave: {
+        type: Function as PropType<(content: string) => void>
+    },
+    onImageUpload: {
+        type: Function as PropType<OnImageUploadFunc>
     },
     placeholder: {
         type: String,
@@ -30,7 +48,7 @@ const props = defineProps({
     showLabel: {
         type: Boolean,
         default: false,
-    }
+    },
 })
 
 
@@ -42,37 +60,101 @@ let fontSize = ref<number>(12)
 const fontSizeOptions = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 36, 48, 72]
 let menus: IwFormEditorMenus[]
 
+
+/////////////////////////////////////////////////@  Computed & Watches
+//////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////@  Functions
+//////////////////////////////////////////////////////////////////////
+
+function handleDropOntoEditor(view: EditorView, event: DragEvent, slice: Slice, moved: boolean) {
+    if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
+        let droppedFile = event.dataTransfer.files[0]; // the dropped file
+        let filesize = Math.floor((droppedFile.size / 1024) / 1024)
+
+        if ((droppedFile.type === "image/jpeg" || droppedFile.type === "image/png")
+            && filesize < props.maxImageSizeInMb) {
+            let _URL = window.URL || window.webkitURL;
+            let img = new Image();
+            img.src = _URL.createObjectURL(droppedFile);
+
+            img.onload = async function (onLoadEvent: Event) {
+                const image = onLoadEvent.target as HTMLImageElement;
+                const maxPixel = props.maxImageUploadPixel
+                if (image.width > maxPixel || image.height > maxPixel) {
+                    throw new Error(`images need to be less than ${maxPixel} pixels in height and width.`);
+                } else {
+                    if (!props.onImageUpload) {
+                        throw new Error('onImageUpload props is not defined.');
+                    }
+
+                    const imageUrl = await props.onImageUpload(droppedFile)
+                    let image = new Image();
+                    image.src = imageUrl;
+                    // TODO: start the image loading spinner
+
+                    image.onload = function () {
+                        const { schema } = view.state;
+                        const coordinates = view.posAtCoords({
+                            left: event.clientX, top: event.clientY
+                        });
+                        const node = schema.nodes.image.create({ src: imageUrl });
+                        if (coordinates) {
+                            const transaction = view.state.tr.insert(coordinates.pos, node); // places it in the correct position
+                            // TODO: stop the image loading spinner
+                            return view.dispatch(transaction);
+                        } else {
+                            console.error('could not find Editor view coordinates');
+                        }
+                    }
+
+                }
+            };
+
+        } else {
+            throw new Error("Images need to be in jpg or png format and less than 10mb in size.");
+        }
+
+        return true; // handled
+    }
+
+    return false; // not handled use default behaviour
+}
+
 function initEditor(): Editor {
     return new Editor({
+        editorProps: {
+            handleDrop: handleDropOntoEditor
+        },
         extensions: [
-            Color,
-            Dropcursor,
-            FontSize,
-            Highlight.configure({
+            ExtColor,
+            ExtDropcursor,
+            ExtFontSize,
+            ExtHighlight.configure({
                 HTMLAttributes: {
                     class: 'iw-form-editor-highlight',
                 },
             }),
-            Image.configure({
+            ExtImage.configure({
                 allowBase64: true,
                 inline: true,
             }),
-            Placeholder.configure({ placeholder: props.placeholder, }),
-            StarterKit.configure({
+            ExtPlaceholder.configure({ placeholder: props.placeholder, }),
+            ExtStarterKit.configure({
                 heading: {
                     levels: [1, 2, 3],
                 },
                 history: { newGroupDelay: 1000, }
             }),
-            TextAlign,
-            TextStyle,
-            TextStyleExtraAttributes,
-            Underline.configure({
+            ExtTextAlign,
+            ExtTextStyle,
+            ExtTextStyleExtraAttributes,
+            ExtUnderline.configure({
                 HTMLAttributes: {
                     class: 'iw-form-editor-underline',
                 },
             }),
-            Youtube.configure({
+            ExtYoutube.configure({
                 enableIFrameApi: true,
             }),
         ],
@@ -217,11 +299,6 @@ function initMenu(editor: Editor) {
 
 }
 
-/////////////////////////////////////////////////@  Computed & Watches
-//////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////@  Functions
-//////////////////////////////////////////////////////////////////////
 function getCss(menu: IwFormEditorMenu) {
     let css = ''
     if (typeof menu.markOption !== 'undefined') {
