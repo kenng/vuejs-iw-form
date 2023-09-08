@@ -297,6 +297,9 @@ export const useIwForm = (config: IwFormUseConfig) => {
         for (const group of (config.myForm.formGroups)) {
             for (const item of group.formInputs) {
                 if (!validate(item, myFormData.value[item.name])) {
+                    if (myForm.onError) {
+                        myForm.onError(`value of ${item.label} is invalid`)
+                    }
                     validated = false
                 }
             }

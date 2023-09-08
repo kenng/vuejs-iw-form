@@ -278,7 +278,10 @@ initRenderCallback();
             <template name="text-group"
                       v-else-if='IwFormTypeEnum.TEXTGROUP_TEXTAREA === (item.type)'>
               <label :for="`${formId}-${item.name}`"
-                     class="iwFormInputLabel">{{ setLabel(item) }}</label>
+                     class="iwFormInputLabel">{{ setLabel(item) }}
+                <span v-if="setRequired(item)"
+                      class="iwFormInputLabelRequired"> *</span>
+              </label>
               <textarea :aria-label="getAriaLabel(item)"
                         :autocomplete="item.autocomplete ?? 'on'"
                         :class="getInputCss(item)"
