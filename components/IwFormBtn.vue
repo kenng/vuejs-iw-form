@@ -8,6 +8,10 @@ import { Icon } from '@iconify/vue'
 ///////////////////////////////////////////@  Props, Emits & Variables
 //////////////////////////////////////////////////////////////////////
 const props = defineProps({
+    disabled: {
+        type: Boolean,
+        default: false,
+    },
     helperText: {
         type: String,
         default: '',
@@ -57,8 +61,8 @@ const btnId = props.id ?? (new Date()).getTime() + Math.random() * 10000
                class="iwFormInputLabel"></label>
         <button :id="`${btnId}-submit-btn`"
                 class="iwFormSubmitBtn"
-                :class="{ 'iwFormBtnDisabled': isLoading }"
-                :disabled="isLoading"
+                :class="{ 'iwFormBtnDisabled': disabled || isLoading }"
+                :disabled="disabled || isLoading"
                 :type="type"
                 @click="ev => !isLoading && onClick">
             <span class="iwFormBtnLabel">

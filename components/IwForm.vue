@@ -166,6 +166,9 @@ const folded = ref(true); // Start with folded state as true
 const toggleFolded = () => {
   folded.value = !folded.value;
 };
+
+const isFormModified = ref(false)
+
 //////////////////////////////////////////////////////////////////////
 //  Functions
 //////////////////////////////////////////////////////////////////////
@@ -222,10 +225,24 @@ function dateOnChange(item: IwFormInputDate, val: Date[]) {
 }
 
 async function myFormOnSubmit(ev: Event) {
-  submitIsLoading.value = true
-  await formOnSubmit(ev)
-  submitIsLoading.value = false
+  try {
+    submitIsLoading.value = true
+    await formOnSubmit(ev)
+    submitIsLoading.value = false
+    isFormModified.value = false
+  } catch (e) {
+    throw e
+  }
 }
+
+//////////////////////////////////////////////////////////////////////
+// Lifecycles
+//////////////////////////////////////////////////////////////////////
+onMounted(() => {
+  watch(myFormData.value, () => {
+    isFormModified.value = true
+  })
+})
 
 //////////////////////////////////////////////////////////////////////
 // export & expose
@@ -443,6 +460,7 @@ initRenderCallback();
         <div :class="['iwFormSubmitBtnWrapper', group.submitBtn?.css ?? '']"
              v-if="group.showSubmitBtn">
           <IwFormBtn type="submit"
+                     :disabled="!isFormModified"
                      :isLoading="showSubmitLoading && submitIsLoading"
                      :label="getFormGroupSubmitLabel(group, totalSubmission > 0 ? formSubmitAgainText : submitText)" />
           <div :class="css.cssResetBtnWrapper ?? 'iwFormResetFilterBtnWrapper'">
@@ -459,6 +477,7 @@ initRenderCallback();
           <slot name='submitBtn'>
             <div class="iwFormSubmitBtnWrapper">
               <IwFormBtn type="submit"
+                         :disabled="!isFormModified"
                          :isLoading="showSubmitLoading && submitIsLoading"
                          :label="`${totalSubmission > 0 ? formSubmitAgainText : submitText}`" />
               <div :class="css.cssResetBtnWrapper ?? 'iwFormResetFilterBtnWrapper'">
