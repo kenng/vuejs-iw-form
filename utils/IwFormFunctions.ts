@@ -54,6 +54,58 @@ export function mapToDropdownOptions(
     return res
 }
 
+/**
+ * Convert data to complete dropdown options with custom label generation
+ *
+ * ### Example:
+ * ```
+ * const data = [{'Name': { 'FirstName': 'John', 'LastName': 'Doe' }}]
+ *
+ * mapToDropdownOptionsWithCustomLabel(
+ *   data,
+ *   {
+ *     customLabel: (
+ *       dataKey: string,
+ *       dataValue: Record<string, any>,
+ *     ) => `${dataValue.FirstName} ${dataValue.LastName}`,
+ *   }
+ * )
+ * ```
+ *
+ * @param data   Raw response data
+ * @param params The options to be passed in to the function.
+ * @returns Formatted dropdown options
+ */
+export function mapToDropdownOptionsWithCustomLabel(
+    data: Record<string, any>,
+    params: IwFormSelectOptionParamWithCustomLabel = {}
+): Array<IwFormInputSelectOption> {
+    const res: IwFormInputSelectOption[] = []
+    const {
+        customLabel = null,
+        showAll = true,
+        showNull = false,
+        valueKey = null,
+    } = params
+
+    if (showNull) {
+        res.push({ value: '', label: '(Empty Value)', operator: 'null' })
+    }
+
+    if (showAll && !data?.['all']) {
+        res.push({ value: '', label: 'All' })
+    }
+
+    for (const [dataKey, dataValue] of Object.entries(data ?? {})) {
+        const label = customLabel ? customLabel(dataKey, dataValue) : dataValue
+        const value = valueKey ? dataValue[valueKey] : dataKey
+
+        res.push({ value, label })
+    }
+
+    return res
+}
+
 export function setAppendIconOnClickFn(
     appendIconOnClickFn: Function,
     // currentValue: any,
