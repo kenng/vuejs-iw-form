@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////
 import { Editor, EditorContent } from '@tiptap/vue-3'
 import { Color as ExtColor } from '@tiptap/extension-color'
-import ExtDropcursor from '@tiptap/extension-dropcursor'
 import ExtFontSize from './extensions/EditorTipTapFontSize'
 import ExtHighlight from '@tiptap/extension-highlight'
 import ExtImage from '@tiptap/extension-image'
@@ -17,7 +16,6 @@ import ExtYoutube from '@tiptap/extension-youtube'
 import { Icon } from '@iconify/vue'
 import type { EditorView } from 'prosemirror-view/dist'
 import type { Slice } from 'prosemirror-model/dist'
-
 
 ///////////////////////////////////////////@  Props, Emits & Variables
 //////////////////////////////////////////////////////////////////////
@@ -113,7 +111,6 @@ function initEditor(): Editor {
         },
         extensions: [
             ExtColor,
-            ExtDropcursor,
             ExtFontSize,
             ExtHighlight.configure({
                 HTMLAttributes: {

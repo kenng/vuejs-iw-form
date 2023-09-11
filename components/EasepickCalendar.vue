@@ -18,6 +18,9 @@ export type IwCalendarInputType = 'date' | 'dateTime';
 
 const props = defineProps({
     disabled: Boolean,
+    id: {
+        type: String,
+    },
     options: {
         type: Object as PropType<IwFormCalendar>,
         required: true,
@@ -164,6 +167,7 @@ defineExpose({ onReset })
         </div>
         <input ref="easepickRef"
                type="text"
+               :id="id"
                :class="disabled ? 'iwFormInputCalendarDisabled' : 'iwFormInputCalendar'"
                :placeholder="options.placeholder"
                :disabled="disabled">

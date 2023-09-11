@@ -171,6 +171,7 @@ interface IwFormInputLabel extends IwFormInputCore {
 interface IwFormInputSelect extends IwFormInputCore {
     type: 'select'
     selectConfig: IwFormInputSelectConfig
+    useLabelForAttr?: boolean
 }
 
 interface IwFormInputSeparator extends IwFormInputCore {
@@ -178,7 +179,7 @@ interface IwFormInputSeparator extends IwFormInputCore {
     name?: string
 }
 
-interface iwFormInputText extends IwFormInputCore {
+interface IwFormInputText extends IwFormInputCore {
     type: 'text' | 'email' | 'number' | 'password';
 }
 

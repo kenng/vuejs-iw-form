@@ -17,7 +17,10 @@ const props = defineProps({
         type: Object as PropType<IwFormInputSelectConfig>,
         required: true,
     },
-    disabled: { type: Boolean, default: false }
+    disabled: { type: Boolean, default: false },
+    id: {
+        type: String,
+    },
 })
 
 
@@ -81,6 +84,7 @@ defineExpose({ onReset })
                     :closeOnSelect="props.config.closeOnSelect"
                     :disabled="props.disabled"
                     :hideOnSelect="props.config.hideOnSelect"
+                    :id="id"
                     :loading="props.config.showLoading"
                     :options="props.config.options"
                     :optionsLimit="props.config.optionsLimit"
