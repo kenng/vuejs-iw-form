@@ -38,6 +38,10 @@ const props = defineProps({
       cssResetBtnWrapper: 'iwFormResetFilterBtnWrapper',
     },
   },
+  isModified: {
+    type: Boolean,
+    default: false,
+  },
   isReadOnly: {
     type: Boolean,
     default: false,
@@ -116,7 +120,7 @@ const props = defineProps({
 });
 
 const formSubmitAgainText = props.submitAgainText ?? props.submitText
-
+let timerOfDataUpdated: ReturnType<typeof setTimeout>;
 //////////////////////////////////////////////////////////////////////
 //  Variables
 //////////////////////////////////////////////////////////////////////
@@ -160,14 +164,18 @@ const {
   resetIgnored: props.resetIgnored,
 })
 
-const emit = defineEmits(['change', 'reset-input'])
+/**
+ * change - event for single input field changes
+ * dataUpdated - event when any input field is updated
+ */
+const emit = defineEmits(['change', 'data-updated', 'input-reset'])
 const folded = ref(true); // Start with folded state as true
 
 const toggleFolded = () => {
   folded.value = !folded.value;
 };
 
-const isFormModified = ref(false)
+const isModified = ref(props.isModified || false)
 
 //////////////////////////////////////////////////////////////////////
 //  Functions
@@ -187,7 +195,7 @@ async function onChange(item: IwFormInput, val: any, ...extra: any[]) {
 
 function inputOnReset(item: IwFormInput) {
   myFormData.value[item.name] = null
-  emit('reset-input', { item })
+  emit('input-reset', { item })
 }
 
 
@@ -229,25 +237,38 @@ async function myFormOnSubmit(ev: Event) {
     submitIsLoading.value = true
     await formOnSubmit(ev)
     submitIsLoading.value = false
-    isFormModified.value = false
+    isModified.value = false
   } catch (e) {
     throw e
   }
 }
 
+function isFormDataModified(): boolean {
+  return isModified.value
+}
+
+function debounce(func: Function, delay: number) {
+  return function (this: unknown, ...args: any[]) {
+    clearTimeout(timerOfDataUpdated);
+    timerOfDataUpdated = setTimeout(() => func.apply(this, args), delay);
+  }
+}
 //////////////////////////////////////////////////////////////////////
 // Lifecycles
 //////////////////////////////////////////////////////////////////////
 onMounted(() => {
   watch(myFormData.value, () => {
-    isFormModified.value = true
+    isModified.value = true
+    debounce(() => {
+      emit('data-updated', myFormData.value)
+    }, 500)()
   })
 })
 
 //////////////////////////////////////////////////////////////////////
 // export & expose
-//////////////////////////////////////////////////////////////////////
-defineExpose({ getFormData })
+/////////////////////////////////////////////////////////////////////
+defineExpose({ getFormData, isFormDataModified })
 
 //////////////////////////////////////////////////////////////////////
 // init
@@ -370,19 +391,28 @@ initRenderCallback();
             <template name="select"
                       v-else-if="IwFormTypeEnum.SELECT === (item.type)">
               <template v-if="isVisible(item)">
-                <template v-if='!isReadOnly'>
+                <template v-if="item.useLabelForAttr || undefined === item.useLabelForAttr">
                   <label :for="`${formId}-${item.name}`"
                          class="iwFormInputLabel">{{ setLabel(item) }}
                     <span v-if="setRequired(item)"
                           class="iwFormInputLabelRequired"> *</span>
                   </label>
+                </template>
+                <template v-else>
+                  <label class="iwFormInputLabel">{{ setLabel(item) }}
+                    <span v-if="setRequired(item)"
+                          class="iwFormInputLabelRequired"> *</span>
+                  </label>
+                </template>
+                <template v-if='!isReadOnly'>
                   <VueMultiSelect :config="item.selectConfig"
+                                  :disabled="item.disabled"
+                                  :id="`${formId}-${item.name}`"
                                   ref="inputRefs"
                                   @changed="(selectedKeys, selectedRaw, justSelected) =>
                                     selectInputOnChange(item, selectedKeys, selectedRaw, justSelected, myForm)"
                                   @removed="(selectedKeys, selectedRaw, justRemoved) =>
-                                    selectInputOnChange(item, selectedKeys, selectedRaw, justRemoved, myForm)"
-                                  :disabled="item.disabled" />
+                                    selectInputOnChange(item, selectedKeys, selectedRaw, justRemoved, myForm)" />
                   <p v-if="showHelperText"
                      class="iwFormInputHelperText">
                     <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]
@@ -392,6 +422,7 @@ initRenderCallback();
                 </template>
                 <template v-else>
                   <input type="text"
+                         :id="`${formId}-${item.name}`"
                          v-model='myFormData[item.name]'
                          :label='item.label'
                          disable />
@@ -460,7 +491,7 @@ initRenderCallback();
         <div :class="['iwFormSubmitBtnWrapper', group.submitBtn?.css ?? '']"
              v-if="group.showSubmitBtn">
           <IwFormBtn type="submit"
-                     :disabled="!isFormModified"
+                     :disabled="!isModified"
                      :isLoading="showSubmitLoading && submitIsLoading"
                      :label="getFormGroupSubmitLabel(group, totalSubmission > 0 ? formSubmitAgainText : submitText)" />
           <div :class="css.cssResetBtnWrapper ?? 'iwFormResetFilterBtnWrapper'">
@@ -477,7 +508,7 @@ initRenderCallback();
           <slot name='submitBtn'>
             <div class="iwFormSubmitBtnWrapper">
               <IwFormBtn type="submit"
-                         :disabled="!isFormModified"
+                         :disabled="!isModified"
                          :isLoading="showSubmitLoading && submitIsLoading"
                          :label="`${totalSubmission > 0 ? formSubmitAgainText : submitText}`" />
               <div :class="css.cssResetBtnWrapper ?? 'iwFormResetFilterBtnWrapper'">
