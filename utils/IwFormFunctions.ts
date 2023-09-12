@@ -7,21 +7,6 @@
  * mapToDropdownOptions({ "2": "sales1@vilor.com", "3": "sales2@vilor.com" })
  * // return: [{ value: "2", label: "sales1@vilor.com" }]
  *
- *
- * // Extract values from data:
- * mapToDropdownOptions(
- *   {
- *     "Success": { text: "Successful" },
- *     "Failed": { text: "Failed" },
- *   },
- *   { labelKey: "text" },
- * )
- * // return: [
- * //   { value: "Success", label: "Successful" },
- * //   { value: "Failed", label: "Failed" },
- * // ]
- *
- *
  * // Extract labels and values from data:
  * mapToDropdownOptions(
  *   [
@@ -55,11 +40,11 @@ export function mapToDropdownOptions(
         res.push({ value: '', label: '(Empty Value)', operator: 'null' })
     }
 
-    if (showAll && !data['all']) {
+    if (showAll && !data?.['all']) {
         res.push({ value: '', label: 'All' })
     }
 
-    for (const [dataKey, dataValue] of Object.entries(data)) {
+    for (const [dataKey, dataValue] of Object.entries(data ?? {})) {
         const label = labelKey ? dataValue[labelKey] : dataValue
         const value = valueKey ? dataValue[valueKey] : dataKey
 
@@ -70,40 +55,52 @@ export function mapToDropdownOptions(
 }
 
 /**
- * same as mapToDropdownOptions, but allow user to specify the keyName
+ * Convert data to complete dropdown options with custom label generation
  *
- * @param data
- * @param labelName
- * @param param2
- * @returns return Object to be used by select options, e.g. {{value: 1, label: label}, ...}
+ * ### Example:
+ * ```
+ * const data = [{'Name': { 'FirstName': 'John', 'LastName': 'Doe' }}]
  *
- * Sample
- *  data : {{ "id": 1, "name": "COMPANY_SUPER_ADMIN", "label": "Company Super Admin" }, ...}
- *  arguments:
- *      labelName = "name"
- *      params = {keyName = "id", ... }
- *  output: [{value: 1, label: "Company Super Admin"}, ...]
+ * mapToDropdownOptionsWithCustomLabel(
+ *   data,
+ *   {
+ *     customLabel: (
+ *       dataKey: string,
+ *       dataValue: Record<string, any>,
+ *     ) => `${dataValue.FirstName} ${dataValue.LastName}`,
+ *   }
+ * )
+ * ```
+ *
+ * @param data   Raw response data
+ * @param params The options to be passed in to the function.
+ * @returns Formatted dropdown options
  */
-export function mapToDropdownOptionsWithKey(
-    data: any, labelName: string, params: IwFormSelectOptionParamWithKey,
-) {
-    const { keyName = 'id', showAll = true, showNull = false } = params
+export function mapToDropdownOptionsWithCustomLabel(
+    data: Record<string, any>,
+    params: IwFormSelectOptionParamWithCustomLabel = {}
+): Array<IwFormInputSelectOption> {
     const res: IwFormInputSelectOption[] = []
+    const {
+        customLabel = null,
+        showAll = true,
+        showNull = false,
+        valueKey = null,
+    } = params
 
     if (showNull) {
         res.push({ value: '', label: '(Empty Value)', operator: 'null' })
     }
 
-    if (showAll && !data['all']) {
+    if (showAll && !data?.['all']) {
         res.push({ value: '', label: 'All' })
     }
 
-    if (Array.isArray(data)) {
-        for (const item of data) {
-            res.push({ value: item[keyName], label: item[labelName] })
-        }
-    } else {
-        res.push({ value: data[keyName], label: data[labelName] })
+    for (const [dataKey, dataValue] of Object.entries(data ?? {})) {
+        const label = customLabel ? customLabel(dataKey, dataValue) : dataValue
+        const value = valueKey ? dataValue[valueKey] : dataKey
+
+        res.push({ value, label })
     }
 
     return res

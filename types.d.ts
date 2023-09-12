@@ -52,9 +52,21 @@ interface IwFormSelectOptionParam {
     /** Extract value text using the given key from the data object */
     valueKey?: string,
 }
-type IwFormSelectOptionParamWithKey = IwFormSelectOptionParam & {
-    keyName?: string
-}
+
+type IwFormSelectOptionParamWithCustomLabel =
+    Omit<IwFormSelectOptionParam, 'labelKey'>
+    & {
+        /**
+         * Generate a new custom label for dropdown options
+         *
+         * For usage example, see: {@link mapToDropdownOptionsWithCustomLabel}
+         *
+         * @param dataKey The key of the raw data object
+         * @param dataVal The value of the raw data object
+         * @returns A string for the new label
+         */
+        customLabel?(dataKey: string, dataVal: any): string
+    }
 
 interface IwFormSelectProps {
     config: typeof IwFormInputSelectConfig,
