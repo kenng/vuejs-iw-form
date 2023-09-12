@@ -4,6 +4,19 @@ import IwObject from '../utils/IwObject';
 import IwFormConfig, { IwFormType } from '../utils/IwFormConfig';
 import IwFormRule from '../utils/IwFormRule';
 
+export function setLabel(item: IwFormInputCore) {
+    let label = item.label
+    if (!label) label = item.name
+
+    return label.charAt(0).toUpperCase() + label.slice(1)
+}
+
+export function setRequired(item: IwFormInputCore) {
+    if (item.required) return true
+    return false
+}
+
+
 export const useIwForm = (config: IwFormUseConfig) => {
 
     let totalSubmission = 0;
@@ -267,17 +280,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
         return formData
     }
 
-    function setLabel(item: IwFormInputCore) {
-        let label = item.label
-        if (!label) label = item.name
 
-        return label.charAt(0).toUpperCase() + label.slice(1)
-    }
-
-    function setRequired(item: IwFormInputCore) {
-        if (item.required) return true
-        return false
-    }
 
     function validate(item: IwFormInputCore, data: any) {
         if (item.rules) {
@@ -349,8 +352,6 @@ export const useIwForm = (config: IwFormUseConfig) => {
         onFocus,
         onInput,
         removeDisabledInputValue,
-        setLabel,
-        setRequired,
         validate,
         validateAll,
     }

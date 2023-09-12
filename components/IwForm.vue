@@ -4,14 +4,22 @@ import { Icon } from '@iconify/vue';
 import IwFormConfig, { IwFormType } from '../utils/IwFormConfig';
 import EasepickCalendar from './EasepickCalendar.vue';
 import VueMultiSelect from './VueMultiSelect.vue';
-import useIwForm from '../composables/useIwForm';
+import useIwForm, { setRequired } from '../composables/useIwForm';
 import dayjs from 'dayjs';
 import IwFormBtn from './IwFormBtn.vue';
+import IwFormLabel from './IwFormLabel.vue';
 import Editor from './Editor/EditorTipTap.vue'
 
 //////////////////////////////////////////////////////////////////////
 //  Emit & Props
 //////////////////////////////////////////////////////////////////////
+
+/**
+ * change - event for single input field changes
+ * dataUpdated - event when any input field is updated
+ */
+const emit = defineEmits(['change', 'data-updated', 'input-reset'])
+
 const IwFormTypeTextGroup: Array<IIwFormType> = [
   IwFormType.TEXTGROUP_TEXT,
   IwFormType.TEXTGROUP_EMAIL,
@@ -117,16 +125,23 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  tooltip: {
+    type: String,
+    default: '',
+  },
 });
 
 //////////////////////////////////////////////////////////////////////
 //  Variables
 //////////////////////////////////////////////////////////////////////
-let isMounted = false
+const identifier = (new Date()).getTime() + Math.random() * 10000
 const formSubmitAgainText = props.submitAgainText ?? props.submitText
-let timerOfDataUpdated: ReturnType<typeof setTimeout>;
+const isModified = ref(props.isModified || false)
+let isMounted = false
 const IwFormTypeEnum = IwFormType
-const formId = (new Date()).getTime() + Math.random() * 10000
+let timerOfDataUpdated: ReturnType<typeof setTimeout>;
+
+
 const {
   // variables
   errors,
@@ -154,8 +169,6 @@ const {
   onChange: useOnChange,
   onFocus,
   onInput: useOnInput,
-  setLabel,
-  setRequired,
   submitIsLoading,
   validate,
 } = useIwForm({
@@ -164,19 +177,11 @@ const {
   onReset: props.onReset,
   resetIgnored: props.resetIgnored,
 })
-
-/**
- * change - event for single input field changes
- * dataUpdated - event when any input field is updated
- */
-const emit = defineEmits(['change', 'data-updated', 'input-reset'])
 const folded = ref(true); // Start with folded state as true
 
 const toggleFolded = () => {
   folded.value = !folded.value;
 };
-
-const isModified = ref(props.isModified || false)
 
 //////////////////////////////////////////////////////////////////////
 //  Functions
@@ -212,6 +217,10 @@ function debounce(func: Function, delay: number) {
     clearTimeout(timerOfDataUpdated);
     timerOfDataUpdated = setTimeout(() => func.apply(this, args), delay);
   }
+}
+
+function getId(item: IwFormInputCore) {
+  return `${identifier}-${item.name}`
 }
 
 function inputOnReset(item: IwFormInputCore) {
@@ -318,7 +327,7 @@ initRenderCallback();
            :key="groupKey"
            :class="[group.css ?? 'iwFormGroup']">
         <template v-for="(item, idx) in group.formInputs"
-                  :key="formId + idx">
+                  :key="identifier + idx">
           <div v-if="!(item as IwFormInputText).foldable || (!folded && (item as IwFormInputText).foldable)"
                :class="getCss(item, { cssArray: [item.cssWrapper ?? 'iwFormInputWrapper'], cssObj: { iwFormReadOnly: isReadOnly } })">
             <template name="label"
@@ -333,17 +342,14 @@ initRenderCallback();
 
             <template name="text-group"
                       v-else-if='IwFormTypeEnum.TEXTGROUP_TEXTAREA === ((item as IwFormInputTextArea).type)'>
-              <label :for="`${formId}-${(item as IwFormInputTextArea).name}`"
-                     class="iwFormInputLabel">{{ setLabel((item as IwFormInputCore)) }}
-                <span v-if="setRequired((item as IwFormInputCore))"
-                      class="iwFormInputLabelRequired"> *</span>
-              </label>
+              <IwFormLabel :id="getId((item as IwFormInputCore))"
+                           :item="(item as IwFormInputCore)" />
               <textarea :aria-label="getAriaLabel((item as IwFormInputCore))"
                         :autocomplete="(item as IwFormInputTextArea).autocomplete ?? 'on'"
                         :class="getInputCss((item as IwFormInputCore))"
                         :disabled="isDisabled((item as IwFormInputTextArea).disabled, isReadOnly)"
-                        :id="`${formId}-${(item as IwFormInputTextArea).name}`"
-                        :key="formId + idx"
+                        :id="getId((item as IwFormInputCore))"
+                        :key="identifier + idx"
                         :name="(item as IwFormInputTextArea).name"
                         :placeholder="(item as IwFormInputTextArea).placeholder"
                         :ref="getRef(item)"
@@ -362,11 +368,9 @@ initRenderCallback();
             <template name="text-group"
                       v-else-if='IwFormTypeTextGroup.indexOf(item.type) >= 0'>
               <template v-if="isVisible((item as IwFormInputCore))">
-                <label :for="`${formId}-${(item as IwFormInputText).name}`"
-                       class="iwFormInputLabel">{{ setLabel((item as IwFormInputText)) }}
-                  <span v-if="setRequired((item as IwFormInputCore))"
-                        class="iwFormInputLabelRequired"> *</span>
-                </label>
+                <IwFormLabel :id="getId((item as IwFormInputCore))"
+                             :item="(item as IwFormInputCore)" />
+
                 <div class="iwFormInputContainer">
                   <div v-if="(item as IwFormInputText).showPrefixIcon"
                        class="iwFormInputPrependIcon">
@@ -377,8 +381,8 @@ initRenderCallback();
                          :autocomplete="(item as IwFormInputText).autocomplete ?? 'on'"
                          :class="getInputCss((item as IwFormInputCore))"
                          :disabled="isDisabled((item as IwFormInputText).disabled, isReadOnly)"
-                         :id="`${formId}-${(item as IwFormInputText).name}`"
-                         :key="formId + idx"
+                         :id="getId((item as IwFormInputCore))"
+                         :key="identifier + idx"
                          :name="(item as IwFormInputText).name"
                          :placeholder="(item as IwFormInputText).placeholder"
                          :ref="getRef(item)"
@@ -410,23 +414,13 @@ initRenderCallback();
             <template name="select"
                       v-else-if="IwFormTypeEnum.SELECT === (item.type)">
               <template v-if="isVisible(item)">
-                <template v-if="item.useLabelForAttr || undefined === item.useLabelForAttr">
-                  <label :for="`${formId}-${item.name}`"
-                         class="iwFormInputLabel">{{ setLabel(item) }}
-                    <span v-if="setRequired(item)"
-                          class="iwFormInputLabelRequired"> *</span>
-                  </label>
-                </template>
-                <template v-else>
-                  <label class="iwFormInputLabel">{{ setLabel(item) }}
-                    <span v-if="setRequired(item)"
-                          class="iwFormInputLabelRequired"> *</span>
-                  </label>
-                </template>
+                <IwFormLabel :id="getId((item as IwFormInputCore))"
+                             :item="(item as IwFormInputCore)" />
+
                 <template v-if='!isReadOnly'>
                   <VueMultiSelect :config="item.selectConfig"
                                   :disabled="item.disabled"
-                                  :id="`${formId}-${item.name}`"
+                                  :id="getId((item as IwFormInputCore))"
                                   ref="inputRefs"
                                   @changed="(selectedKeys, selectedRaw, justSelected) =>
                                     selectInputOnChange(item, selectedKeys, selectedRaw, justSelected, myForm)"
@@ -441,7 +435,7 @@ initRenderCallback();
                 </template>
                 <template v-else>
                   <input type="text"
-                         :id="`${formId}-${item.name}`"
+                         :id="`${identifier}-${item.name}`"
                          v-model='myFormData[item.name]'
                          :label='item.label'
                          disable />
@@ -452,7 +446,7 @@ initRenderCallback();
             <template name="checkbox"
                       v-else-if='IwFormTypeEnum.CHECKBOX === (item.type)'>
               <template v-if="isVisible(item)">
-                <input :id="`${formId}-${item.name}`"
+                <input :id="getId((item as IwFormInputCore))"
                        type="checkbox"
                        v-model="myFormData[item.name]"
                        :name="item.name"
@@ -460,23 +454,17 @@ initRenderCallback();
                        class="iwFormCheckbox"
                        :true-value="item.checkBoxTrueValue ?? true"
                        :false-value="item.checkBoxFalseValue ?? false">
-                <label :for="`${formId}-${item.name}`"
-                       class="iwFormInputLabelInline">{{ setLabel(item) }}
-                  <span v-if="setRequired(item)"
-                        class="iwFormInputLabelRequired"> *</span>
-                </label>
+                <IwFormLabel :id="getId((item as IwFormInputCore))"
+                             :item="(item as IwFormInputCore)" />
               </template>
             </template>
 
             <template name="date"
                       v-else-if='IwFormTypeEnum.DATE === (item.type)'>
               <template v-if="isVisible(item)">
-                <label :for="`${formId}-${item.name}`"
-                       class="iwFormInputLabel">{{ setLabel(item) }}
-                  <span v-if="setRequired(item)"
-                        class="iwFormInputLabelRequired"> *</span>
-                </label>
-                <EasepickCalendar :id="`${formId}-${item.name}`"
+                <IwFormLabel :id="getId((item as IwFormInputCore))"
+                             :item="(item as IwFormInputCore)" />
+                <EasepickCalendar :id="getId((item as IwFormInputCore))"
                                   ref="inputRefs"
                                   :disabled="item.disabled"
                                   @change="(val) => dateOnChange(item, val)"

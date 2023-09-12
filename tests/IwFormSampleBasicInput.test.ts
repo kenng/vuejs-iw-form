@@ -22,13 +22,13 @@ describe('test on select basic', () => {
 
     it('can set the value successfully', async () => {
         // initial test
-        expect(getOutputText()).toContain('username: undefined');
+        expect(getOutputText()).toMatch('username: undefined');
 
         // find and set new value
         const name = 'John Doe';
         await wrapper.get('input[name="username"]').setValue(name)
 
-        expect(getOutputText()).toContain(`username: ${name}`);
+        expect(getOutputText()).toMatch(`username: ${name}`);
     })
 
     it('shows error on invalid input and clear the error when valid input is given', async () => {
@@ -40,19 +40,19 @@ describe('test on select basic', () => {
 
         const output = wrapper.find('.iwFormInputHelperText')
         expect(output.text())
-            .toContain('needs 3 characters');
+            .toMatch('needs 3 characters');
 
         await input.setValue(name + 'e Doe')
         await input.trigger('blur')
 
-        expect(output.text()).not.toContain('needs 3 characters');
+        expect(output.text()).not.toMatch('needs 3 characters');
     })
 
     it('show clearable x on input and able to clear input when clicking clearable x', async () => {
         // NOTE: password input already contains a value by default
-        expect(getOutputText()).toContain(`password: password123password_confirmed:`);
+        expect(getOutputText()).toMatch(`password: password123password_confirmed:`);
 
         await wrapper.find('.iwFormClearable').trigger('click')
-        expect(getOutputText()).toContain(`password: password_confirmed:`);
+        expect(getOutputText()).toMatch(`password: password_confirmed:`);
     })
 })

@@ -19,23 +19,23 @@ describe('test on select basic', () => {
 
   it('can init successfully', async () => {
     // initial test
-    expect(wrapper.html()).toContain('countries: MY');
+    expect(wrapper.html()).toMatch('countries: MY');
 
     // find and set new value
     const select1 = multiselect[0].vm
     await select1.select(select1.options[1]);
 
-    expect(wrapper.html()).toContain('countries: SG');
+    expect(wrapper.html()).toMatch('countries: SG');
 
 
   })
 
   it('can toggle multiple selected values', async () => {
-    expect(wrapper.html()).toContain('countries_related: MY,SG')
+    expect(wrapper.html()).toMatch('countries_related: MY,SG')
 
     const select2 = multiselect[0].vm
     await select2.select(select2.options[1]);
 
-    expect(wrapper.html()).toContain('countries_related: MY');
+    expect(wrapper.html()).toMatch('countries_related: MY');
   })
 })

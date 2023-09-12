@@ -14,6 +14,14 @@
     @apply viBtnLabel;
 }
 
+.iwFormBtnLabelInline {
+    @apply viBtnLabel !inline;
+}
+
+.iwFormBtnLabelInlineIcon {
+    @apply w-5 h-5 pl-1 -mt-1;
+}
+
 .iwFormBtnSpinner {
     @apply viBtnSpinner;
 }

@@ -127,6 +127,7 @@ interface IwFormInputCore {
     disabled?: boolean;  // disabled data is not sent. see shouldDehydrate to submit disabled data
     errorText?: string;
     foldable?: boolean;
+    hasLabelForAttr?: boolean
     helperText?: string;
     isVisible?: boolean | Function;
     label?: string;
@@ -145,6 +146,7 @@ interface IwFormInputCore {
     showPrefixIcon?: boolean;
     showSuffixIcon?: boolean;
     suffixIcon?: string;
+    tooltip?: string
     value?: any
     visibleOnData?: string[] // visible only if the form data is set
 }
@@ -184,7 +186,6 @@ interface IwFormInputLabel {
 interface IwFormInputSelect extends IwFormInputCore {
     type: 'select'
     selectConfig: IwFormInputSelectConfig
-    useLabelForAttr?: boolean
 }
 
 interface IwFormInputSeparator {
