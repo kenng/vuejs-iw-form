@@ -246,7 +246,7 @@ function initMenu(editor: Editor) {
         },
         {
             onClick: () => editor.chain().focus().toggleBlockquote().run(),
-            label: 'material-symbols:format-quote',
+            label: 'block quote',
             markOption: ['blockquote'],
             shortcutKey: 'C-S-B',
             toggleable: true,
