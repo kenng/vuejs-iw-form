@@ -363,6 +363,14 @@ initRenderCallback();
                         @focus="(_) => onFocus(item, myFormData[(item as IwFormInputTextArea).name])"
                         @input="(event) => onInput((item as IwFormInputCore), (event.target as HTMLInputElement).value)">
               </textarea>
+              <p v-if="showHelperText"
+                 class="iwFormInputHelperText">
+                <template v-if="errors[(item as IwFormInputTextArea).name]">
+                  <span class="iwFormInputErrorText">{{ errors[(item as IwFormInputTextArea).name] }}</span>
+                </template>
+                <template v-else> {{ (item as IwFormInputText).helperText }} </template>
+              </p>
+
             </template>
 
             <template name="text-group"
@@ -402,9 +410,9 @@ initRenderCallback();
                   </div>
                   <p v-if="showHelperText"
                      class="iwFormInputHelperText">
-                    <template v-if="errors[(item as IwFormInputText).name]"><span class="iwFormInputErrorText">{{
-                      errors[(item as IwFormInputText).name]
-                    }}</span></template>
+                    <template v-if="errors[(item as IwFormInputText).name]">
+                      <span class="iwFormInputErrorText">{{ errors[(item as IwFormInputText).name] }}</span>
+                    </template>
                     <template v-else> {{ (item as IwFormInputText).helperText }} </template>
                   </p>
                 </div>
@@ -428,8 +436,9 @@ initRenderCallback();
                                     selectInputOnChange(item, selectedKeys, selectedRaw, justRemoved, myForm)" />
                   <p v-if="showHelperText"
                      class="iwFormInputHelperText">
-                    <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]
-                    }}</span></template>
+                    <template v-if="errors[item.name]">
+                      <span class="iwFormInputErrorText">{{ errors[item.name] }}</span>
+                    </template>
                     <template v-else> {{ item.helperText }} </template>
                   </p>
                 </template>
@@ -472,8 +481,9 @@ initRenderCallback();
                                   :options="item.dateOptions!"></EasepickCalendar>
                 <p v-if="showHelperText"
                    class="iwFormInputHelperText">
-                  <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]
-                  }}</span></template>
+                  <template v-if="errors[item.name]">
+                    <span class="iwFormInputErrorText">{{ errors[item.name] }}</span>
+                  </template>
                   <template v-else> {{ item.helperText }} </template>
                 </p>
               </template>
