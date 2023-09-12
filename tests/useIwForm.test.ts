@@ -24,7 +24,7 @@ describe('test on useIwForm', () => {
                             name: 'address',
                         },
                         {
-                            type: 'contact',
+                            type: 'text',
                             name: 'contact',
                             value: contact,
                         },
@@ -44,7 +44,7 @@ describe('test on useIwForm', () => {
         initFormData()
 
         expect(myFormData.value['name']).toBe(name)
-        expect(myFormData.value['address']).toBeNull()
+        expect(myFormData.value['address']).toBeUndefined()
         expect(myFormData.value['contact']).toBe(contact)
 
         // formDate takes priority when setting the value

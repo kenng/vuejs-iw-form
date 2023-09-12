@@ -7,6 +7,7 @@ import VueMultiSelect from './VueMultiSelect.vue';
 import useIwForm from '../composables/useIwForm';
 import dayjs from 'dayjs';
 import IwFormBtn from './IwFormBtn.vue';
+import Editor from './Editor/EditorTipTap.vue'
 
 //////////////////////////////////////////////////////////////////////
 //  Emit & Props
@@ -152,7 +153,7 @@ const {
   onBlur,
   onChange: useOnChange,
   onFocus,
-  onInput,
+  onInput: useOnInput,
   setLabel,
   setRequired,
   submitIsLoading,
@@ -181,33 +182,6 @@ const isModified = ref(props.isModified || false)
 //  Functions
 //////////////////////////////////////////////////////////////////////
 
-async function onChange(item: IwFormInputCore, val: any, ...extra: any[]) {
-  useOnChange(item, val)
-
-  if (item.onChange) item.onChange(item, val, ...extra)
-  if (item.onChangeUpdateInput) {
-    const res = await item.onChangeUpdateInput(item, val, ...extra)
-    props.myForm.updateSelectInput(res.linkedInputName, res.newSelectConfig)
-  }
-
-  emit('change', { item, val, ...extra })
-}
-
-function inputOnReset(item: IwFormInputCore) {
-  myFormData.value[item.name] = null
-  emit('input-reset', { item })
-}
-
-
-function selectInputOnChange(item: IwFormInputSelect,
-  selectedKeys: IwFormInputSelectedKeys,
-  selectedRaw: IwFormInputSelectedOption | IwFormInputSelectedOption[],
-  justSelected: IwFormInputSelectedOption,
-  theForm: IwFormConfig
-) {
-  onChange(item, selectedKeys, selectedRaw, justSelected, theForm)
-}
-
 /**
  * @param item IwFormInputDate
  * @param val Date[] an array of Date objects for single date or a range of date (i.e. start date to end date)
@@ -230,6 +204,23 @@ function dateOnChange(item: IwFormInputDate, val: Date[]) {
   }
 
   onChange(item, res)
+  onFormModified()
+}
+
+function debounce(func: Function, delay: number) {
+  return function (this: unknown, ...args: any[]) {
+    clearTimeout(timerOfDataUpdated);
+    timerOfDataUpdated = setTimeout(() => func.apply(this, args), delay);
+  }
+}
+
+function inputOnReset(item: IwFormInputCore) {
+  myFormData.value[item.name] = null
+  emit('input-reset', { item })
+}
+
+function isFormDataModified(): boolean {
+  return isModified.value
 }
 
 async function myFormOnSubmit(ev: Event) {
@@ -243,27 +234,47 @@ async function myFormOnSubmit(ev: Event) {
   }
 }
 
-function isFormDataModified(): boolean {
-  return isModified.value
+/**
+ * called when any of the inputs value has changed
+ */
+function onFormModified() {
+  isModified.value = true
+  debounce(() => {
+    emit('data-updated', myFormData.value)
+  }, 500)()
 }
 
-function debounce(func: Function, delay: number) {
-  return function (this: unknown, ...args: any[]) {
-    clearTimeout(timerOfDataUpdated);
-    timerOfDataUpdated = setTimeout(() => func.apply(this, args), delay);
+async function onChange(item: IwFormInputCore, val: any, ...extra: any[]) {
+  useOnChange(item, val)
+
+  if (item.onChange) item.onChange(item, val, ...extra)
+  if (item.onChangeUpdateInput) {
+    const res = await item.onChangeUpdateInput(item, val, ...extra)
+    props.myForm.updateSelectInput(res.linkedInputName, res.newSelectConfig)
   }
+
+  emit('change', { item, val, ...extra })
+  onFormModified()
 }
+
+function onInput(item: IwFormInputCore, val: any) {
+  useOnInput(item, val)
+  onFormModified()
+}
+
+function selectInputOnChange(item: IwFormInputSelect,
+  selectedKeys: IwFormInputSelectedKeys,
+  selectedRaw: IwFormInputSelectedOption | IwFormInputSelectedOption[],
+  justSelected: IwFormInputSelectedOption,
+  theForm: IwFormConfig
+) {
+  onChange(item, selectedKeys, selectedRaw, justSelected, theForm)
+  onFormModified()
+}
+
 //////////////////////////////////////////////////////////////////////
 // Lifecycles
 //////////////////////////////////////////////////////////////////////
-onMounted(() => {
-  watch(myFormData.value, () => {
-    isModified.value = true
-    debounce(() => {
-      emit('data-updated', myFormData.value)
-    }, 500)()
-  })
-})
 
 //////////////////////////////////////////////////////////////////////
 // export & expose
@@ -275,6 +286,8 @@ defineExpose({ getFormData, isFormDataModified })
 //////////////////////////////////////////////////////////////////////
 initFormData();
 initRenderCallback();
+
+
 
 </script>
 
@@ -299,10 +312,10 @@ initRenderCallback();
       <div v-for="(group, groupKey) in myForm.formGroups"
            :key="groupKey"
            :class="[group.css ?? 'iwFormGroup']">
-        <template v-for="(item, key) in group.formInputs"
-                  :key="keys[item.name]">
+        <template v-for="(item, idx) in group.formInputs"
+                  :key="formId + idx">
           <div v-if="!(item as IwFormInputText).foldable || (!folded && (item as IwFormInputText).foldable)"
-               :class="getCss(item, { cssArray: [item.cssWrapper ?? 'iwFormInputWrapper'], cssObj: { iwFormReadOnly: props.isReadOnly } })">
+               :class="getCss(item, { cssArray: [item.cssWrapper ?? 'iwFormInputWrapper'], cssObj: { iwFormReadOnly: isReadOnly } })">
             <template name="label"
                       v-if='IwFormTypeEnum.LABEL === ((item as IwFormInputLabel).type)'>
               <div :class="getCss(item)">{{ (item as IwFormInputLabel).label }}</div>
@@ -325,7 +338,7 @@ initRenderCallback();
                         :class="getInputCss((item as IwFormInputCore))"
                         :disabled="isDisabled((item as IwFormInputTextArea).disabled, isReadOnly)"
                         :id="`${formId}-${(item as IwFormInputTextArea).name}`"
-                        :key="key"
+                        :key="formId + idx"
                         :name="(item as IwFormInputTextArea).name"
                         :placeholder="(item as IwFormInputTextArea).placeholder"
                         :ref="getRef(item)"
@@ -360,7 +373,7 @@ initRenderCallback();
                          :class="getInputCss((item as IwFormInputCore))"
                          :disabled="isDisabled((item as IwFormInputText).disabled, isReadOnly)"
                          :id="`${formId}-${(item as IwFormInputText).name}`"
-                         :key="key"
+                         :key="formId + idx"
                          :name="(item as IwFormInputText).name"
                          :placeholder="(item as IwFormInputText).placeholder"
                          :ref="getRef(item)"
@@ -475,8 +488,8 @@ initRenderCallback();
 
             <template name="editor"
                       v-else-if="IwFormTypeEnum.EDITOR === (item.type)">
-              <EditorTipTap :config="item.config"
-                            @change="(htmlData) => onChange(item, htmlData)" />
+              <Editor :config="item.config"
+                      @change="(htmlData) => onChange(item, htmlData)" />
             </template>
 
             <template name="component"

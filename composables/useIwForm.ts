@@ -42,12 +42,15 @@ export const useIwForm = (config: IwFormUseConfig) => {
         let extraCss: string = ''
 
         const isVisible = (item as IwFormInputCore).isVisible
-        if (isVisible) {
-            if (typeof isVisible === 'function') {
-                extraCss += ' ' + isVisible(myFormData)
-            } else {
+        if (typeof isVisible === 'function') {
+            const isItemVisible = isVisible(myFormData)
+            if (false === isItemVisible) {
                 extraCss += ' hidden'
+            } else {
+                extraCss += ' ' + isItemVisible
             }
+        } else if (false === isVisible) {
+            extraCss += ' hidden'
         }
 
         if (param) {

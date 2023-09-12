@@ -48,7 +48,7 @@ const form = new IwFormConfig({
                 label: 'email',
                 type: 'email',
                 required: true,
-                rules: [IwFormRule.required, IwFormRule.email({ required: true })],
+                rules: [IwFormRule.email({ required: true })],
             },
             {
                 name: 'number',

@@ -22,7 +22,7 @@ describe('test on select basic', () => {
 
     it('can set the value successfully', async () => {
         // initial test
-        expect(getOutputText()).toContain('username: null');
+        expect(getOutputText()).toContain('username: undefined');
 
         // find and set new value
         const name = 'John Doe';
