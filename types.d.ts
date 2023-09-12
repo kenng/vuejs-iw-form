@@ -120,7 +120,7 @@ interface IwFormInputCore {
     label?: string;
     onBlur?: Function;
     onChange?: Function;
-    onChangeUpdateInput?: (item: IwFormInput, value: any, ...extra: any[]) => Promise<IwFormOnChangeUpdateInput>;
+    onChangeUpdateInput?: (item: IwFormInputCore, value: any, ...extra: any[]) => Promise<IwFormOnChangeUpdateInput>;
     onClickFn?: Function;
     optionGroupInline?: boolean;
     placeholder?: string;
@@ -163,9 +163,10 @@ interface IwFormInputEditor extends IwFormInputCore {
     config: IwFormEditorConfig
 }
 
-interface IwFormInputLabel extends IwFormInputCore {
+interface IwFormInputLabel {
     type: 'label',
-    name?: string
+    label: string
+    cssWrapper?: string
 }
 
 interface IwFormInputSelect extends IwFormInputCore {
@@ -174,9 +175,9 @@ interface IwFormInputSelect extends IwFormInputCore {
     useLabelForAttr?: boolean
 }
 
-interface IwFormInputSeparator extends IwFormInputCore {
-    type: 'separator',
-    name?: string
+interface IwFormInputSeparator {
+    type: 'separator'
+    cssWrapper?: string
 }
 
 interface IwFormInputText extends IwFormInputCore {
@@ -203,8 +204,7 @@ interface IwFormInputUploader extends IwFormInputCore {
     uploadFactoryFn?: Function;
 }
 
-type IwFormInput = IwFormInputCore & (
-    IwFormInputComponent
+type IwFormInput = IwFormInputComponent
     | IwFormInputCheckbox
     | IwFormInputDate
     | IwFormInputEditor
@@ -213,7 +213,6 @@ type IwFormInput = IwFormInputCore & (
     | IwFormInputSeparator
     | IwFormInputText
     | IwFormInputTextArea
-)
 
 interface IwFormStyle {
     cssSubmitBtnWrapper?: string,

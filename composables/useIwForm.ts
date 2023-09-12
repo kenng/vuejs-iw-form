@@ -21,8 +21,9 @@ export const useIwForm = (config: IwFormUseConfig) => {
     const myForm: IwFormConfig = config.myForm
     myForm.formGroups.forEach(group => {
         group.formInputs.forEach(formInput => {
-            if (formInput.name) {
-                keys.value[formInput.name] = `${formInput.name}-${Date.now()}-${Math.random() * 10000}`
+            const name = (formInput as IwFormInputCore).name
+            if (name) {
+                keys.value[name] = `${name}-${Date.now()}-${Math.random() * 10000}`
             }
         })
     })
@@ -37,8 +38,17 @@ export const useIwForm = (config: IwFormUseConfig) => {
         }
     }
 
-    function getCss(item: IwFormInput, param?: { cssArray?: string[], cssObj?: Record<string, boolean> }) {
+    function getCss(item: IwFormInput, param?: { cssArray?: string[], cssObj?: Record<string, boolean>, default?: string }) {
         let extraCss: string = ''
+
+        const isVisible = (item as IwFormInputCore).isVisible
+        if (isVisible) {
+            if (typeof isVisible === 'function') {
+                extraCss += ' ' + isVisible(myFormData)
+            } else {
+                extraCss += ' hidden'
+            }
+        }
 
         if (param) {
             if (param.cssArray) {
@@ -52,11 +62,8 @@ export const useIwForm = (config: IwFormUseConfig) => {
                     if (isTrue) extraCss += ` ${key} `
                 }
             }
-        }
 
-        if (typeof item.isVisible == 'function') {
-            const hidden = item.isVisible(myFormData) ? '' : ' hidden'
-            extraCss += hidden
+            if (!extraCss && param.default) extraCss = param.default
         }
 
         return `${extraCss}`
@@ -117,7 +124,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
         }
     }
 
-    function getAriaLabel(item: IwFormInput): string {
+    function getAriaLabel(item: IwFormInputCore): string {
         if (item.disabled) return 'Input disabled';
         return 'form input'
     }
@@ -137,7 +144,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
         return defaultLabel
     }
 
-    function getInputCss(item: IwFormInput, defaultCss?: string): string {
+    function getInputCss(item: IwFormInputCore, defaultCss?: string): string {
         let css;
         if (item.disabled) {
             css = 'iwFormInputDisabled'
@@ -152,7 +159,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
         return css
     }
 
-    function getVisibility(item: IwFormInput) {
+    function getVisibility(item: IwFormInputCore) {
         if (typeof item.isVisible === 'boolean') return item.isVisible
         if (typeof item.isVisible === 'function') return item.isVisible(item, myFormData)
 
@@ -172,10 +179,11 @@ export const useIwForm = (config: IwFormUseConfig) => {
         // set value if inputX.value is defined, and myFormData is yet to be defined for inputX
         for (const group of (config.myForm.formGroups)) {
             group.formInputs.forEach((item: IwFormInput) => {
-                const name = item.name
+                const name = (item as IwFormInputCore).name
                 if (name && null === config.myForm.formData[name]) {
-                    if (typeof item.value !== 'undefined') {
-                        myFormData.value[name] = item.value
+                    const val = (item as IwFormInputCore).value
+                    if (val !== 'undefined') {
+                        myFormData.value[name] = val
                     }
                 }
             })
@@ -189,14 +197,14 @@ export const useIwForm = (config: IwFormUseConfig) => {
         }
     }
 
-    function isVisible(item: IwFormInput): boolean {
+    function isVisible(item: IwFormInputCore): boolean {
         if (null != item.visibleOnData) {
             return isVisibleOnData(item)
         }
         return getVisibility(item)
     }
 
-    function isVisibleOnData(item: IwFormInput): boolean {
+    function isVisibleOnData(item: IwFormInputCore): boolean {
         if (item.visibleOnData) {
             for (const dataKey of item.visibleOnData) {
                 const val = myFormData.value[dataKey]
@@ -220,7 +228,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
         }
     }
 
-    async function onChange(item: IwFormInput, val: any, ...extra: any[]) {
+    async function onChange(item: IwFormInputCore, val: any, ...extra: any[]) {
         const key = item.name
         myFormData.value[key] = val
         clearErrorsIfValidated(item, val)
@@ -263,12 +271,12 @@ export const useIwForm = (config: IwFormUseConfig) => {
         return label.charAt(0).toUpperCase() + label.slice(1)
     }
 
-    function setRequired(item: IwFormInput) {
+    function setRequired(item: IwFormInputCore) {
         if (item.required) return true
         return false
     }
 
-    function validate(item: IwFormInput, data: any) {
+    function validate(item: IwFormInputCore, data: any) {
         if (item.rules) {
             for (const rule of item.rules) {
                 const param: IRuleData = { value: data, myFormData: myFormData.value }

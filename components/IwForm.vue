@@ -31,6 +31,14 @@ const props = defineProps({
     type: String,
     default: 'Cancel',
   },
+  // canSubmitAgain: {
+  //   type: Boolean,
+  //   default: true,
+  // },
+  clearable: {
+    type: Boolean,
+    default: true,
+  },
   css: {
     type: Object as PropType<IwFormStyle>,
     default: {
@@ -62,6 +70,10 @@ const props = defineProps({
     type: Object as PropType<IwFormResetIgnored>,
     default: () => [],
   },
+  // resetOnSubmit: {
+  //   type: Boolean,
+  //   default: true,
+  // },
   resetText: {
     type: String,
     default: 'Reset',
@@ -104,18 +116,6 @@ const props = defineProps({
   title: {
     type: String,
     default: '',
-  },
-  canSubmitAgain: {
-    type: Boolean,
-    default: true,
-  },
-  resetOnSubmit: {
-    type: Boolean,
-    default: true,
-  },
-  clearable: {
-    type: Boolean,
-    default: true,
   },
 });
 
@@ -181,7 +181,7 @@ const isModified = ref(props.isModified || false)
 //  Functions
 //////////////////////////////////////////////////////////////////////
 
-async function onChange(item: IwFormInput, val: any, ...extra: any[]) {
+async function onChange(item: IwFormInputCore, val: any, ...extra: any[]) {
   useOnChange(item, val)
 
   if (item.onChange) item.onChange(item, val, ...extra)
@@ -193,7 +193,7 @@ async function onChange(item: IwFormInput, val: any, ...extra: any[]) {
   emit('change', { item, val, ...extra })
 }
 
-function inputOnReset(item: IwFormInput) {
+function inputOnReset(item: IwFormInputCore) {
   myFormData.value[item.name] = null
   emit('input-reset', { item })
 }
@@ -301,78 +301,78 @@ initRenderCallback();
            :class="[group.css ?? 'iwFormGroup']">
         <template v-for="(item, key) in group.formInputs"
                   :key="keys[item.name]">
-          <div v-if="!item.foldable || (!folded && item.foldable)"
+          <div v-if="!(item as IwFormInputText).foldable || (!folded && (item as IwFormInputText).foldable)"
                :class="getCss(item, { cssArray: [item.cssWrapper ?? 'iwFormInputWrapper'], cssObj: { iwFormReadOnly: props.isReadOnly } })">
             <template name="label"
-                      v-if='IwFormTypeEnum.LABEL === (item.type)'>
-              <div :class="getCss(item)">{{ item.label }}</div>
+                      v-if='IwFormTypeEnum.LABEL === ((item as IwFormInputLabel).type)'>
+              <div :class="getCss(item)">{{ (item as IwFormInputLabel).label }}</div>
             </template>
 
             <template name="separator"
-                      v-else-if='IwFormTypeEnum.SEPARATOR === (item.type)'>
-              <hr class="iwFormHr">
+                      v-else-if='IwFormTypeEnum.SEPARATOR === ((item as IwFormInputSeparator).type)'>
+              <hr :class="getCss(item, { default: 'iwFormHr' })">
             </template>
 
             <template name="text-group"
-                      v-else-if='IwFormTypeEnum.TEXTGROUP_TEXTAREA === (item.type)'>
-              <label :for="`${formId}-${item.name}`"
-                     class="iwFormInputLabel">{{ setLabel(item) }}
-                <span v-if="setRequired(item)"
+                      v-else-if='IwFormTypeEnum.TEXTGROUP_TEXTAREA === ((item as IwFormInputTextArea).type)'>
+              <label :for="`${formId}-${(item as IwFormInputTextArea).name}`"
+                     class="iwFormInputLabel">{{ setLabel((item as IwFormInputCore)) }}
+                <span v-if="setRequired((item as IwFormInputCore))"
                       class="iwFormInputLabelRequired"> *</span>
               </label>
-              <textarea :aria-label="getAriaLabel(item)"
-                        :autocomplete="item.autocomplete ?? 'on'"
-                        :class="getInputCss(item)"
-                        :disabled="isDisabled(item.disabled, isReadOnly)"
-                        :id="`${formId}-${item.name}`"
+              <textarea :aria-label="getAriaLabel((item as IwFormInputCore))"
+                        :autocomplete="(item as IwFormInputTextArea).autocomplete ?? 'on'"
+                        :class="getInputCss((item as IwFormInputCore))"
+                        :disabled="isDisabled((item as IwFormInputTextArea).disabled, isReadOnly)"
+                        :id="`${formId}-${(item as IwFormInputTextArea).name}`"
                         :key="key"
-                        :name="item.name"
-                        :placeholder="item.placeholder"
+                        :name="(item as IwFormInputTextArea).name"
+                        :placeholder="(item as IwFormInputTextArea).placeholder"
                         :ref="getRef(item)"
-                        :required="setRequired(item)"
-                        :rows="item.textAreaRows ?? 4"
-                        :rules="item.rules"
-                        :type="(item.type)"
-                        :value="myFormData[item.name]"
-                        @blur="(_) => onBlur(item, myFormData[item.name])"
+                        :required="setRequired((item as IwFormInputCore))"
+                        :rows="(item as IwFormInputTextArea).textAreaRows ?? 4"
+                        :rules="(item as IwFormInputTextArea).rules"
+                        :type="((item as IwFormInputTextArea).type)"
+                        :value="myFormData[(item as IwFormInputTextArea).name]"
+                        @blur="(_) => onBlur((item as IwFormInputCore), myFormData[(item as IwFormInputTextArea).name])"
                         @change="(event) => onChange(item, (event.target as HTMLInputElement).value)"
-                        @focus="(_) => onFocus(item, myFormData[item.name])"
-                        @input="(event) => onInput(item, (event.target as HTMLInputElement).value)">
+                        @focus="(_) => onFocus(item, myFormData[(item as IwFormInputTextArea).name])"
+                        @input="(event) => onInput((item as IwFormInputCore), (event.target as HTMLInputElement).value)">
               </textarea>
             </template>
 
             <template name="text-group"
                       v-else-if='IwFormTypeTextGroup.indexOf(item.type) >= 0'>
-              <template v-if="isVisible(item)">
-                <label :for="`${formId}-${item.name}`"
-                       class="iwFormInputLabel">{{ setLabel(item) }}
-                  <span v-if="setRequired(item)"
+              <template v-if="isVisible((item as IwFormInputCore))">
+                <label :for="`${formId}-${(item as IwFormInputText).name}`"
+                       class="iwFormInputLabel">{{ setLabel((item as IwFormInputText)) }}
+                  <span v-if="setRequired((item as IwFormInputCore))"
                         class="iwFormInputLabelRequired"> *</span>
                 </label>
                 <div class="iwFormInputContainer">
-                  <div v-if="item.showPrefixIcon"
+                  <div v-if="(item as IwFormInputText).showPrefixIcon"
                        class="iwFormInputPrependIcon">
                     <Icon class="w-5 h-5 text-gray-500 dark:text-gray-400"
-                          :icon="item.prefixIcon!"></Icon>
+                          :icon="(item as IwFormInputText).prefixIcon!"></Icon>
                   </div>
-                  <input :aria-label="getAriaLabel(item)"
-                         :autocomplete="item.autocomplete ?? 'on'"
-                         :class="getInputCss(item)"
-                         :disabled="isDisabled(item.disabled, isReadOnly)"
-                         :id="`${formId}-${item.name}`"
+                  <input :aria-label="getAriaLabel((item as IwFormInputCore))"
+                         :autocomplete="(item as IwFormInputText).autocomplete ?? 'on'"
+                         :class="getInputCss((item as IwFormInputCore))"
+                         :disabled="isDisabled((item as IwFormInputText).disabled, isReadOnly)"
+                         :id="`${formId}-${(item as IwFormInputText).name}`"
                          :key="key"
-                         :name="item.name"
-                         :placeholder="item.placeholder"
+                         :name="(item as IwFormInputText).name"
+                         :placeholder="(item as IwFormInputText).placeholder"
                          :ref="getRef(item)"
-                         :required="setRequired(item)"
-                         :rules="item.rules"
-                         :type="(item.type)"
-                         :value="myFormData[item.name]"
-                         @blur="(_) => onBlur(item, myFormData[item.name])"
+                         :required="setRequired((item as IwFormInputCore))"
+                         :rules="(item as IwFormInputText).rules"
+                         :type="((item as IwFormInputText).type)"
+                         :value="myFormData[(item as IwFormInputText).name]"
+                         @blur="(_) => onBlur((item as IwFormInputText), myFormData[(item as IwFormInputText).name])"
                          @change="(event) => onChange(item, (event.target as HTMLInputElement).value)"
-                         @focus="(_) => onFocus(item, myFormData[item.name])"
-                         @input="(event) => onInput(item, (event.target as HTMLInputElement).value)" />
-                  <div v-if="clearable && myFormData[item.name]">
+                         @focus="(_) => onFocus(item, myFormData[(item as IwFormInputText).name])"
+                         @input="(event) => onInput((item as IwFormInputText), (event.target as HTMLInputElement).value)" />
+                  <div v-if="clearable && myFormData[(item as IwFormInputText).name]">
                     <span @click="onChange(item, '')">
                       <Icon icon="maki:cross-11"
                             class="iwFormClearable" />
@@ -380,9 +380,10 @@ initRenderCallback();
                   </div>
                   <p v-if="showHelperText"
                      class="iwFormInputHelperText">
-                    <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]
+                    <template v-if="errors[(item as IwFormInputText).name]"><span class="iwFormInputErrorText">{{
+                      errors[(item as IwFormInputText).name]
                     }}</span></template>
-                    <template v-else> {{ item.helperText }} </template>
+                    <template v-else> {{ (item as IwFormInputText).helperText }} </template>
                   </p>
                 </div>
               </template><!-- isVisible(item) -->
