@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { PropType, ref } from 'vue'
+import { PropType, ref, onMounted } from 'vue'
 import { Icon } from '@iconify/vue';
 import IwFormConfig, { IwFormType } from '../utils/IwFormConfig';
 import EasepickCalendar from './EasepickCalendar.vue';
@@ -18,7 +18,6 @@ const IwFormTypeTextGroup: Array<IIwFormType> = [
   IwFormType.TEXTGROUP_NUMBER,
   IwFormType.TEXTGROUP_PASSWORD,
 ];
-
 
 const props = defineProps({
   // required
@@ -120,11 +119,12 @@ const props = defineProps({
   },
 });
 
-const formSubmitAgainText = props.submitAgainText ?? props.submitText
-let timerOfDataUpdated: ReturnType<typeof setTimeout>;
 //////////////////////////////////////////////////////////////////////
 //  Variables
 //////////////////////////////////////////////////////////////////////
+let isMounted = false
+const formSubmitAgainText = props.submitAgainText ?? props.submitText
+let timerOfDataUpdated: ReturnType<typeof setTimeout>;
 const IwFormTypeEnum = IwFormType
 const formId = (new Date()).getTime() + Math.random() * 10000
 const {
@@ -238,10 +238,12 @@ async function myFormOnSubmit(ev: Event) {
  * called when any of the inputs value has changed
  */
 function onFormModified() {
-  isModified.value = true
-  debounce(() => {
-    emit('data-updated', myFormData.value)
-  }, 500)()
+  if (isMounted) {
+    isModified.value = true
+    debounce(() => {
+      emit('data-updated', myFormData.value)
+    }, 500)()
+  }
 }
 
 async function onChange(item: IwFormInputCore, val: any, ...extra: any[]) {
@@ -275,6 +277,9 @@ function selectInputOnChange(item: IwFormInputSelect,
 //////////////////////////////////////////////////////////////////////
 // Lifecycles
 //////////////////////////////////////////////////////////////////////
+onMounted(() => {
+  isMounted = true
+})
 
 //////////////////////////////////////////////////////////////////////
 // export & expose
