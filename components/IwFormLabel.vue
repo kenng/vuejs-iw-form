@@ -39,14 +39,14 @@ const vTippy = tippyDirective
 </script>
 
 <template>
-    <div>
+    <div class="iwFormInputLabelInlineWrapper">
         <template v-if="item.hasLabelForAttr || undefined === item.hasLabelForAttr">
             <label :for="props.id"
-                   class="iwFormBtnLabelInline">{{ setLabel(item) }}
+                   class="iwFormInputLabelInline">{{ setLabel(item) }}
             </label>
         </template>
         <template v-else>
-            <span class="iwFormBtnLabelInline">{{ setLabel(item) }}
+            <span class="iwFormInputLabelInline">{{ setLabel(item) }}
             </span>
         </template>
 
@@ -55,7 +55,7 @@ const vTippy = tippyDirective
 
         <span v-if="(item as IwFormInputCore).tooltip">
             <Icon icon="material-symbols:contact-support-outline-rounded"
-                  class="iwFormBtnLabelInlineIcon"
+                  class="iwFormInputLabelInlineIcon"
                   v-tippy="(item as IwFormInputCore).tooltip" />
         </span>
     </div>

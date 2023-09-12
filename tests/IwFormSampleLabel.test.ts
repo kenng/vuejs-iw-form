@@ -22,7 +22,7 @@ describe('test on input label & tooltip', () => {
         // NOTE: can't find a way to get the tooltip value which is in body
         // NOTE: to study about testing library, which build on top of vue test utils
 
-        // await wrapper.find('.iwFormBtnLabelInlineIcon').trigger('mouseover')
+        // await wrapper.find('.iwFormInputLabelInlineIcon').trigger('mouseover')
         // await nextTick()
 
         // expect(expect(document.body.innerHTML)).toMatch('Type your username')

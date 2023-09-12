@@ -14,14 +14,6 @@
     @apply viBtnLabel;
 }
 
-.iwFormBtnLabelInline {
-    @apply viBtnLabel !inline;
-}
-
-.iwFormBtnLabelInlineIcon {
-    @apply w-5 h-5 pl-1 -mt-1;
-}
-
 .iwFormBtnSpinner {
     @apply viBtnSpinner;
 }
@@ -66,8 +58,16 @@
     @apply text-rose-600;
 }
 
+.iwFormInputLabelInlineWrapper {
+    @apply inline-block;
+}
+
 .iwFormInputLabelInline {
-    @apply align-middle ml-2 mb-2 text-sm font-medium text-gray-700 dark:text-white;
+    @apply align-middle ml-2 text-sm font-medium text-gray-700 dark:text-white !inline-block;
+}
+
+.iwFormInputLabelInlineIcon {
+    @apply w-5 h-5 pl-1 -mt-1;
 }
 
 .iwFormInputSelet {
