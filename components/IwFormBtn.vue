@@ -57,8 +57,10 @@ const btnId = props.id ?? (new Date()).getTime() + Math.random() * 10000
 
 <template>
     <div class="iwFormBtnWrapper">
-        <label :for="`${btnId}-submit-btn`"
-               class="iwFormInputLabel"></label>
+        <div class="iwFormInputLabelInlineWrapper iwFormSubmitBtnLabel">
+            <span class="iwFormInputLabelInline">
+            </span>
+        </div>
         <button :id="`${btnId}-submit-btn`"
                 class="iwFormSubmitBtn"
                 :class="{ 'iwFormBtnDisabled': disabled || isLoading }"

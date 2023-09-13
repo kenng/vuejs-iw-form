@@ -7,7 +7,7 @@
 }
 
 .iwFormBtnDisabled {
-    @apply viBtnDisabled;
+    @apply disabled:bg-primary-700/40  disabled:text-white disabled:dark:text-slate-100/30 disabled:pointer-events-none;
 }
 
 .iwFormBtnLabel {
@@ -31,7 +31,7 @@
 }
 
 .iwFormGroup {
-    @apply grid sm:grid-cols-2 md:grid-cols-3;
+    @apply grid gap-4 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4;
 }
 
 .iwFormInputContainer {
@@ -58,7 +58,7 @@
 }
 
 .iwFormInputLabelInlineWrapper {
-    @apply inline-block;
+    @apply inline-block mb-1;
 }
 
 .iwFormInputLabelInline {
@@ -130,7 +130,7 @@
 }
 
 .iwFormSubmitBtnWrapper {
-    @apply m-2 relative;
+    @apply relative;
 }
 
 .iwFormWrapper {

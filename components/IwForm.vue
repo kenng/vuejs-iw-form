@@ -43,10 +43,6 @@ const props = defineProps({
   //   type: Boolean,
   //   default: true,
   // },
-  clearable: {
-    type: Boolean,
-    default: true,
-  },
   css: {
     type: Object as PropType<IwFormStyle>,
     default: {
@@ -402,7 +398,7 @@ initRenderCallback();
                          @change="(event) => onChange(item, (event.target as HTMLInputElement).value)"
                          @focus="(_) => onFocus(item, myFormData[(item as IwFormInputText).name])"
                          @input="(event) => onInput((item as IwFormInputText), (event.target as HTMLInputElement).value)" />
-                  <div v-if="clearable && myFormData[(item as IwFormInputText).name]">
+                  <div v-if="(item as IwFormInputText).clearable && myFormData[(item as IwFormInputText).name]">
                     <span @click="onChange(item, '')">
                       <Icon icon="maki:cross-11"
                             class="iwFormClearable" />
@@ -491,6 +487,8 @@ initRenderCallback();
 
             <template name="editor"
                       v-else-if="IwFormTypeEnum.EDITOR === (item.type)">
+              <IwFormLabel :id="getId((item as IwFormInputCore))"
+                           :item="(item as IwFormInputCore)" />
               <Editor :config="item.config"
                       @change="(htmlData) => onChange(item, htmlData)" />
             </template>

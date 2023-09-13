@@ -146,7 +146,7 @@ interface IwFormInputCore {
     showPrefixIcon?: boolean;
     showSuffixIcon?: boolean;
     suffixIcon?: string;
-    tooltip?: string
+    tooltip?: string | Object
     value?: any
     visibleOnData?: string[] // visible only if the form data is set
 }
@@ -195,6 +195,7 @@ interface IwFormInputSeparator {
 
 interface IwFormInputText extends IwFormInputCore {
     type: 'text' | 'email' | 'number' | 'password';
+    clearable?: boolean
 }
 
 interface IwFormInputTextArea extends IwFormInputCore {
