@@ -16,6 +16,7 @@ import ExtYoutube from '@tiptap/extension-youtube'
 import { Icon } from '@iconify/vue'
 import type { EditorView } from 'prosemirror-view/dist'
 import type { Slice } from 'prosemirror-model/dist'
+import EditorColorSelector from './EditorColorSelector.vue'
 
 ///////////////////////////////////////////@  Props, Emits & Variables
 //////////////////////////////////////////////////////////////////////
@@ -41,6 +42,10 @@ const theEditor = ref<Editor>()
 let fontColor = ref<string>('#000000')
 let fontSize = ref<number>(12)
 const fontSizeOptions = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 36, 48, 72]
+
+let highlightColor = ref<string>('#fff0')
+let showHighlightDropdown = ref(false)
+
 let menus: IwFormEditorMenus[]
 
 
@@ -113,6 +118,7 @@ function initEditor(): Editor {
             ExtColor,
             ExtFontSize,
             ExtHighlight.configure({
+                multicolor: true,
                 HTMLAttributes: {
                     class: 'iw-form-editor-highlight',
                 },
@@ -147,6 +153,8 @@ function initEditor(): Editor {
         content: toRaw(config.content),
         onSelectionUpdate: ({ editor }) => {
             fontColor.value = rgbToHex(editor.getAttributes('textStyle').color)
+            highlightColor.value = rgbToHex(editor.getAttributes('highlight').color || '#FFF0')
+
             onSelectUpdateFontSize(editor as Editor)
         },
         onUpdate: ({ editor }) => {
@@ -160,6 +168,24 @@ function initMenu(editor: Editor) {
 
     fontColor.value = rgbToHex(editor.getAttributes('textStyle').color)
     menus = [
+        {
+            // TODO: auto import custom colour used
+            type: 'color',
+            onClick() {
+                showHighlightDropdown.value = !showHighlightDropdown.value
+            },
+            onChange: function (color) {
+                applyHighlight(color.toHex(), color.isTransparent())
+                showHighlightDropdown.value = false
+            },
+            colorList: [
+                { value: '#F72F35', label: 'Red' },
+                { value: '#FBF719', label: 'Yellow' },
+                { value: '#5DE23C', label: 'Green' },
+            ],
+            icon: 'material-symbols:ink-highlighter-outline',
+            label: 'highlight',
+        },
         {
             onClick: () => editor.chain().focus().toggleBold().run(),
             markOption: ['bold'],
@@ -367,6 +393,22 @@ function onColorInput($event: Event) {
     theEditor.value!.chain().focus().setColor(color).run()
     fontColor.value = color
 }
+
+/**
+ * Used for invoking editor's internal highlight module to highlight content
+ */
+function applyHighlight(color: string, isTransparent: boolean) {
+    const bgColor = color
+    const builder = theEditor.value!.chain().focus()
+
+    if (bgColor == rgbToHex(highlightColor.value) || isTransparent) {
+        builder.unsetHighlight().run()
+        highlightColor.value = "#fff0"
+    } else {
+        builder.setHighlight({ color: bgColor }).run()
+        highlightColor.value = bgColor
+    }
+}
 /////////////////////////////////////////////////////////@  Lifecycles
 //////////////////////////////////////////////////////////////////////
 onMounted(() => {
@@ -395,11 +437,12 @@ onUnmounted(() => {
              v-if="theEditor">
 
             <span class="iw-form-editor-menu">
-                <input type="color"
+                <input class="m-auto"
+                       type="color"
                        @input="onColorInput"
                        :value="fontColor">
             </span>
-            <span class="iw-form-editor-menu mr-1">
+            <span class="iw-form-editor-menu mr-2">
                 <select v-model="fontSize"
                         @change="onFontSizeChange">
                     <option v-for="size in fontSizeOptions">{{ size }}</option>
@@ -417,6 +460,28 @@ onUnmounted(() => {
                         <span v-if="config.showLabel">
                             {{ menu.label }}
                         </span>
+                    </span>
+                </template>
+                <template v-else-if="'color' == menu.type">
+                    <span class="iw-form-editor-menu iw-form-editor-menu-btn iw-form-editor-menu-highlight-indicator"
+                          :style="{
+                              'backgroundImage':
+                                  'linear-gradient('
+                                  + 'to bottom,'
+                                  + 'RGBA(255, 255, 255, 0) 85%,'
+                                  + `${highlightColor} 85%,`
+                                  + `${highlightColor} 90%,`
+                                  + 'RGBA(255, 255, 255, 0) 90%'
+                                  + ')'
+                          }"
+                          :title="menu.label + (menu.shortcutKey ? ` (${menu.shortcutKey})` : '')"
+                          @click.self="() => menu.onClick()">
+                        <Icon :icon="menu.icon"
+                              @click.self="() => menu.onClick()" />
+                        <EditorColorSelector :colorList="menu.colorList"
+                                             :hidden="showHighlightDropdown"
+                                             :extendedColorList="menu.extendedColorList"
+                                             @change="(val) => menu.onChange(val)" />
                     </span>
                 </template>
                 <template v-else-if="'input' == menu.type">

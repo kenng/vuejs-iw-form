@@ -78,6 +78,14 @@
     pointer-events: none;
 }
 
+.iw-form-editor-menu-highlight-indicator {
+    /* experimental feature */
+    /* background-image: linear-gradient(to bottom, RGBA(255, 255, 255, 0) 85%, attr(data-highlight-color) 85%, attr(data-highlight-color) 90%, RGBA(255, 255, 255, 0) 90%); */
+    background-size: 60% 100%;
+    background-repeat: no-repeat;
+    background-position-x: center;
+}
+
 .iw-form-editor-content {
     padding: 15px;
 }
