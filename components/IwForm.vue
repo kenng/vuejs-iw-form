@@ -167,6 +167,7 @@ const {
   onInput: useOnInput,
   submitIsLoading,
   validate,
+  validateAll: useValidateAll,
 } = useIwForm({
   myForm: props.myForm,
   onSubmit: props.onSubmit,
@@ -279,6 +280,9 @@ function selectInputOnChange(item: IwFormInputSelect,
   onFormModified()
 }
 
+function validateForm(): boolean {
+  return useValidateAll();
+}
 //////////////////////////////////////////////////////////////////////
 // Lifecycles
 //////////////////////////////////////////////////////////////////////
@@ -289,7 +293,7 @@ onMounted(() => {
 //////////////////////////////////////////////////////////////////////
 // export & expose
 /////////////////////////////////////////////////////////////////////
-defineExpose({ getFormData, isFormDataModified })
+defineExpose({ getFormData, isFormDataModified, validateForm })
 
 //////////////////////////////////////////////////////////////////////
 // init
