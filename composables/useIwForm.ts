@@ -6,7 +6,7 @@ import IwFormRule from '../utils/IwFormRule';
 
 export function setLabel(item: IwFormInputCore) {
     let label = item.label
-    if (!label) label = item.name
+    if (undefined === label) label = item.name
 
     return label.charAt(0).toUpperCase() + label.slice(1)
 }
