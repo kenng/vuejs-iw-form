@@ -2,6 +2,7 @@
 ///////////////////////////////////////////////@  Import, Types & meta
 //////////////////////////////////////////////////////////////////////
 import { Icon } from '@iconify/vue'
+import { Tippy } from 'vue-tippy'
 
 type ColorObj = {
     /** The colour in string form (E.g. '#fff', 'rgb(0,0,0)', 'rgba(0,0,0,0.5)') */
@@ -293,6 +294,23 @@ function convertCustomColorList(colorList: Array<ColorObj>): Color[] {
     )
 }
 /**
+ * Handles custom colour picker change. New colour will be added to the list.
+ *
+ * If a text is selected, the colour will be automatically applied.
+ */
+function insertColor(ev: Event) {
+    const color = (ev.target as HTMLInputElement).value
+    // TODO: check if a color exist before appending
+    colorListInUse.value.push(new Color(color))
+
+    if (document.getSelection()?.toString?.()) {
+        switchColor(color)
+
+        ev.preventDefault() // Prevent text selection being unselected
+    }
+}
+
+/**
  * Handles color icons click event
  */
 function switchColor(value: string) {
@@ -339,11 +357,15 @@ defineExpose({
                           :onLoad="/*todo: trim excess padding*/clearColorRef?.setAttribute?.('viewBox', '2 2 20 20')" />
                 </li>
             </ul>
-            <input class="h-4/5 max-h-10 m-auto w-3"
-                   name="Custom color"
-                   title="custom"
-                   type="color"
-                   @input="(ev: Event) => switchColor((ev.target as HTMLInputElement).value.toString())" />
+            <tippy class="h-5 m-auto !mt-2 w-8"
+                   content="Choose and press 'Enter ↵' to add colour"
+                   placement="right">
+                <input class="cursor-pointer w-full h-full"
+                       name="Custom color"
+                       type="color"
+                       value="#ffffff"
+                       @change="insertColor" />
+            </tippy>
         </div>
     </Transition>
 </template>
