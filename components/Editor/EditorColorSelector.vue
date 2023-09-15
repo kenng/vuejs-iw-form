@@ -318,6 +318,11 @@ defineExpose({
                     @click="(ev: Event) => switchColor((ev.target as HTMLLIElement).style.backgroundColor)">
                 </li>
             </ul>
+            <input class="h-4/5 max-h-10 m-auto w-3"
+                   name="Custom color"
+                   title="custom"
+                   type="color"
+                   @input="(ev: Event) => switchColor((ev.target as HTMLInputElement).value.toString())" />
         </div>
     </Transition>
 </template>
