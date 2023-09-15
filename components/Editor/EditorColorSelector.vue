@@ -344,7 +344,7 @@ defineExpose({
                 <li class="outline outline-px hover:!rounded-4 rounded-md transition-all"
                     :style="{ backgroundColor: color.toHex(), outlineColor: color.clone(0.3).toHex() }"
                     :key="key"
-                    :title="color.label ?? ''"
+                    :title="color.label ?? color.toHex()"
                     v-for="(color, key) in colorListInUse"
                     @click="(ev: Event) => switchColor((ev.target as HTMLLIElement).style.backgroundColor)">
                 </li>
