@@ -52,14 +52,14 @@ class Color {
     constructor(colorStr?: HexString | RgbString | string, label?: string)
     constructor(rgbArray?: RgbArray, label?: string)
     constructor(oldInstance?: Color, label?: string)
-    constructor(rawHex?: number, label?: string)
+    constructor(rawHex?: number | bigint, label?: string)
     constructor(value?: any, label?: string) {
         if (Color.isValidHex(value)) {
             // Convert hex string
             [this.rawValue, this.alphaValue] = Color.hexToValue(value)
         } else if (/^\s*RGB/i.test(value)) {
             // Convert RGB string
-            const parsed = value.match(/\d+/g)
+            const parsed = value.match(/[0-9.]+/g)
             if (Color.isRgbArray(parsed)) {
                 [this.rawValue, this.alphaValue] = Color.rgbToValue(parsed)
             }
@@ -71,14 +71,18 @@ class Color {
             this.alphaValue = value.alphaValue
             this.label = value.label
             this.rawValue = value.rawValue
-        } else if (typeof value == 'number' && 0 <= value && value <= 0xFFFFFF) {
+        } else if (0 <= value && value <= 0xFFFFFF) {
             // Set value only
-            this.rawValue = value
-        } else if (typeof value == 'number' && 0xFFFFFF < value && value <= 0xFF_FF_FF_FF) {
+            this.rawValue = Number(value)
+        } else if (0xFFFFFFn < value && value <= 0xFF_FF_FF_FFn) {
             // Set value and alpha
-            const channelOctet = 8
-            this.rawValue = value >> channelOctet
-            this.alphaValue = value & 0xFF
+            if (typeof value == 'number') {
+                this.rawValue = value >> 8
+                this.alphaValue = value & 0xFF
+            } else {
+                this.rawValue = Number(value >> 8n)
+                this.alphaValue = Number(value & 0xFFn)
+            }
         } else {
             console.warn(`Received invalid color value of '${value}'(type: ${typeof value})`)
         }
