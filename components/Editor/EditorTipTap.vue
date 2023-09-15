@@ -4,7 +4,7 @@
 import { Editor, EditorContent } from '@tiptap/vue-3'
 import { Color as ExtColor } from '@tiptap/extension-color'
 import ExtFontSize from './extensions/EditorTipTapFontSize'
-import ExtHighlight from '@tiptap/extension-highlight'
+import ExtHighlight from './extensions/TextStyleHighlight'
 import ExtImage from '@tiptap/extension-image'
 import ExtPlaceholder from '@tiptap/extension-placeholder'
 import ExtUnderline from '@tiptap/extension-underline'
