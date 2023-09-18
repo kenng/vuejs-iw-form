@@ -1,6 +1,8 @@
 <script setup lang='ts'>
 ///////////////////////////////////////////////@  Import, Types & meta
 //////////////////////////////////////////////////////////////////////
+import { Icon } from '@iconify/vue'
+
 type ColorObj = {
     /** The colour in string form (E.g. '#fff', 'rgb(0,0,0)', 'rgba(0,0,0,0.5)') */
     value: string,
@@ -34,6 +36,16 @@ const props = defineProps({
      * Show or hide the ColorSelector component
      */
     hidden: {
+        type: Boolean,
+        default: true,
+    },
+    /*
+     * Show a 'bx:block' icon for removing current colour
+     *
+     * An invisible colour will be returned (E.g. '#fff0').
+     * {@link Color.isTransparent} may be used to check if the colour is returned.
+     */
+    showClearColor: {
         type: Boolean,
         default: true,
     }
@@ -264,6 +276,7 @@ const defaultColorList: Color[] = [
 ]
 
 const colorListInUse: Ref<Array<Color>> = ref([])
+const clearColorRef = ref()
 /////////////////////////////////////////////////@  Computed & Watches
 //////////////////////////////////////////////////////////////////////
 
@@ -316,6 +329,14 @@ defineExpose({
                     :title="color.label ?? ''"
                     v-for="(color, key) in colorListInUse"
                     @click="(ev: Event) => switchColor((ev.target as HTMLLIElement).style.backgroundColor)">
+                </li>
+                <li title="Clear"
+                    v-if="props.showClearColor"
+                    @click="(ev: Event) => switchColor('#fff0')">
+                    <Icon class="!block !color-slate-700 h-full w-full"
+                          icon="bx:block"
+                          ref="clearColorRef"
+                          :onLoad="/*todo: trim excess padding*/clearColorRef?.setAttribute?.('viewBox', '2 2 20 20')" />
                 </li>
             </ul>
             <input class="h-4/5 max-h-10 m-auto w-3"
