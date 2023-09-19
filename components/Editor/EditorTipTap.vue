@@ -129,7 +129,7 @@ function initEditor(): Editor {
                 history: { newGroupDelay: 1000, }
             }),
             ExtTextAlign.configure({
-                alignments: ['left', 'center', 'right'],
+                alignments: ['left', 'center', 'right', 'justify'],
                 defaultAlignment: 'left',
                 types: ['heading', 'paragraph'],
             }),
@@ -249,6 +249,12 @@ function initMenu(editor: Editor) {
             label: 'align right',
             markOption: [{ textAlign: 'right' }],
             icon: 'akar-icons:text-align-right',
+        },
+        {
+            onClick: () => editor.commands.setTextAlign('justify'),
+            label: 'align justify',
+            markOption: [{ textAlign: 'justify' }],
+            icon: 'akar-icons:text-align-justified',
         },
         {
             onClick: () => editor.chain().focus().toggleOrderedList().run(),
