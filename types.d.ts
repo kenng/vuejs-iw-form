@@ -274,8 +274,8 @@ interface IwFormEditorMenuColor extends IwFormEditorMenu {
     colorList: Array<{ label?: string, value: string }>
     /** Extended colour list to extend default list if .colorList is not given */
     extendedColorList?: Array<{ label?: string, value: string }>
-    /** @param value Color class from colour selector component */
-    onChange: (value: Color) => void
+    /** @param value IwFormColor class from utils/IwFormColor.ts */
+    onChange: (value: IwFormColor) => void
 }
 
 interface IwFormEditorMenuSeparator {
