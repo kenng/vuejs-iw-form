@@ -1,6 +1,5 @@
 /** source: https://gist.github.com/gregveres/973e8d545ab40dc375b47ebc63f92846 */
 import { Extension } from "@tiptap/core";
-import "@tiptap/extension-text-style";
 
 export type TextStyleExtraAttributes = {
     types: string[];
@@ -30,13 +29,6 @@ const TextStyleExtraAttributes = Extension.create<TextStyleExtraAttributes>({
                                 style: `background-color: ${attributes.backgroundColor}`,
                             };
                         },
-                    },
-                    textAlign: {
-                        default: 'left',
-                        parseHTML: element => element.style.textAlign || 'left',
-                        renderHTML: attributes => ({
-                            style: `text-align: ${attributes.textAlign}`,
-                        }),
                     },
                 },
             },
