@@ -290,3 +290,5 @@ interface IwFormEditorMenuInput {
 }
 
 type IwFormEditorMenus = IwFormEditorMenu | IwFormEditorMenuSeparator | IwFormEditorMenuInput
+
+type IwFormUploadType = 'image' | 'file' | 'csv'
