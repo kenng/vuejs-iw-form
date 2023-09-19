@@ -228,6 +228,49 @@ class Color {
 
         return [curValue, alphaValue]
     }
+    /**
+     * Sum or subtract instances of Color class, and saturates at the boundary of the colour values
+     *
+     * @param c1 A Color instance
+     * @param c2 A Color instance
+     * @param opsType The type of operation (Add or Subtract)
+     * @returns A new Color instance
+     */
+    static saturatingOps(c1: Color, c2: Color, opsType: '-' | '+' = '+'): Color {
+        const r1 = (c1.rawValue & 0xFF0000) >> 16
+        const g1 = (c1.rawValue & 0x00FF00) >> 8
+        const b1 = c1.rawValue & 0x0000FF
+
+        const r2 = (c2.rawValue & 0xFF0000) >> 16
+        const g2 = (c2.rawValue & 0x00FF00) >> 8
+        const b2 = c2.rawValue & 0x0000FF
+
+        const clamp = (val: number, ..._: any[]) => Math.min(Math.max(0, val), 255)
+
+        const rgb: [number, number, number] = opsType == '+'
+            ? [clamp(r1 + r2), clamp(g1 + g2), clamp(b1 + b2)]
+            : [clamp(r1 - r2), clamp(g1 - g2), clamp(b1 - b2)]
+
+        return new Color(rgb)
+    }
+    /**
+     * Sum the current Color instance with another Color instance
+     *
+     * @param other Another Color instance
+     * @returns A new Color instance
+     */
+    saturatingSum(other: Color): Color {
+        return Color.saturatingOps(this, other, '+')
+    }
+    /**
+     * Subtract the current Color instance with another Color instance
+     *
+     * @param other Another Color instance
+     * @returns A new Color instance
+     */
+    saturatingSub(other: Color): Color {
+        return Color.saturatingOps(this, other, '-')
+    }
 
     /**
      * Convert hex number to hex string with '#' prefix
@@ -265,15 +308,30 @@ class Color {
 let currentSelection = ref(new Color('#ff0'))
 
 const defaultColorList: Color[] = [
-    new Color(0xDBA36D, 'Primary'),
-    new Color(0x000, 'Black'),
-    new Color(0xFF0000, 'Red'),
-    new Color(0xFFA500, 'Orange'),
-    new Color(0xFFFF00, 'Yellow'),
-    new Color(0x00FF00, 'Green'),
-    new Color(0x0000FF, 'Blue'),
-    new Color(0x00FFFF, 'Aqua'),
-    new Color(0xFF00FF, 'Magenta'),
+    new Color(0x1ABC9C, 'Strong Cyan'),
+    new Color(0x2ECC71, 'Emerald'),
+    new Color(0x3498DB, 'Bright Blue'),
+    new Color(0x9B59B6, 'Amethyst'),
+    new Color(0x4E5F70, 'Grayish Blue'),
+    new Color(0xF1C40F, 'Vivid Yellow'),
+    new Color(0x16A085, 'Dark Cyan'),
+    new Color(0x27AE60, 'Dark Emerald'),
+    new Color(0x2980B9, 'Strong Blue'),
+    new Color(0x8E44AD, 'Dark Violet'),
+    new Color(0x2C3E50, 'Desaturated Blue'),
+    new Color(0xF39C12, 'Orange'),
+    new Color(0xE67E22, 'Carrot'),
+    new Color(0xE74C3C, 'Pale Red'),
+    new Color(0xECF0F1, 'Bright Silver'),
+    new Color(0x95A5A6, 'Light Grayish Cyan'),
+    new Color(0xDDDDDD, 'Light Gray'),
+    new Color(0xFFFFFF, 'White'),
+    new Color(0xD35400, 'Pumpkin'),
+    new Color(0xC0392B, 'Strong Red'),
+    new Color(0xBDC3C7, 'Silver'),
+    new Color(0x7F8C8D, 'Grayish Cyan'),
+    new Color(0x999999, 'Dark Gray'),
+    new Color(0x000000, 'Black'),
 ]
 
 const colorListInUse: Ref<Array<Color>> = ref([])
@@ -341,8 +399,11 @@ defineExpose({
              class="absolute bg-slate-100/95 cursor-default grid mt-8 p-2 rounded-sm shadow translate-x-1/2 translate-y-1/2 w-40"
              title=""> <!-- Stop title inheritance -->
             <ul class="grid grid-cols-6 place-content-center gap-2">
-                <li class="outline outline-px hover:!rounded-4 rounded-md transition-all"
-                    :style="{ backgroundColor: color.toHex(), outlineColor: color.clone(0.3).toHex() }"
+                <li class="border border-px hover:!rounded-4 rounded-md transition-all"
+                    :style="{
+                        backgroundColor: color.toHex(),
+                        borderColor: color.saturatingSub(new Color('#222')).toHex()
+                    }"
                     :key="key"
                     :title="color.label ?? color.toHex()"
                     v-for="(color, key) in colorListInUse"

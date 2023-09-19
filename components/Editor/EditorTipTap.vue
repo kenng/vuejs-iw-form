@@ -178,10 +178,9 @@ function initMenu(editor: Editor) {
                 applyHighlight(color.toHex(), color.isTransparent())
                 showHighlightDropdown.value = false
             },
-            colorList: [
-                { value: '#F72F35', label: 'Red' },
-                { value: '#FBF719', label: 'Yellow' },
-                { value: '#5DE23C', label: 'Green' },
+            colorList: [],
+            extendedColorList: [
+                { label: 'Highlight Yellow', value: '#FF0' },
             ],
             icon: 'material-symbols:ink-highlighter-outline',
             label: 'highlight',
