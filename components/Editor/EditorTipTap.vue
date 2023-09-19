@@ -475,7 +475,7 @@ onUnmounted(() => {
                                   + ')'
                           }"
                           :title="menu.label + (menu.shortcutKey ? ` (${menu.shortcutKey})` : '')"
-                          @click.self="() => menu.onClick()">
+                          @mousedown.self.prevent="() => menu.onClick()">
                         <Icon :icon="menu.icon"
                               @mousedown.prevent="() => menu.onClick()" />
                         <EditorColorSelector :colorList="menu.colorList"
