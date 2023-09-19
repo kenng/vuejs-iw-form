@@ -145,7 +145,7 @@ class Color {
      * @param hexString The colour value in hex string form
      */
     static isValidHex(hexString: string): hexString is HexString {
-        return /^#([0-9A-F]{3,4}|[0-9A-F]{6}|[0-9A-F]{8})\s*$/i.test(hexString)
+        return /^\s*#([\dA-F]{3,4}|[\dA-F]{6}|[\dA-F]{8})\s*$/i.test(hexString)
     }
 
     /**
