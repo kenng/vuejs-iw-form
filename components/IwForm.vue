@@ -4,6 +4,7 @@ import { Icon } from '@iconify/vue';
 import IwFormConfig, { IwFormType } from '../utils/IwFormConfig';
 import EasepickCalendar from './EasepickCalendar.vue';
 import VueMultiSelect from './VueMultiSelect.vue';
+import IwFormUploader from './IwFormUploader.vue';
 import useIwForm, { setRequired } from '../composables/useIwForm';
 import dayjs from 'dayjs';
 import IwFormBtn from './IwFormBtn.vue';
@@ -487,6 +488,11 @@ initRenderCallback();
                   <template v-else> {{ item.helperText }} </template>
                 </p>
               </template>
+            </template>
+
+            <template name="uploader"
+                      v-else-if="'uploader' === item.type">
+              <IwFormUploader :config="item.config"></IwFormUploader>
             </template>
 
             <template name="editor"

@@ -133,7 +133,7 @@
     @apply relative;
 }
 
-.iwformuploadlabel {
+.iwformUploadlabel {
     @apply flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600;
 }
 
@@ -147,6 +147,18 @@
 
 .iwFormUploadLabelText {
     @apply mb-2 text-sm text-gray-500 dark:text-gray-400;
+}
+
+.iwFormUploadRemoveImageBtnWrapper {
+    @apply absolute top-0 right-0 m-1 bg-red rounded-full p-1 hover:cursor-pointer;
+}
+
+.iwFormUploadRemoveImageBtn {
+    @apply w-5 h-5 color-white;
+}
+
+.iwFormUploadWrapper {
+    @apply relative w-full m-auto;
 }
 
 .iwFormWrapper {

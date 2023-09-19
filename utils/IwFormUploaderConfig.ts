@@ -1,24 +1,28 @@
-export default class IwFormUploadConfig {
-    public acceptedFileTypes: string[] = []
+import { T } from "dist/_nuxt/entry.d70b52c7"
+
+export default class IwFormUploaderConfig {
     public _files?: FileList | null
+    public acceptedFileTypes: string[] = []
     public icon: string = 'octicon:cloud-upload'
-    public imageSrc?: string
+    public emit?: Function
     public label: string = 'Click to upload'
     public maxHeight: string = 'max-h-[500px]'
     public onDrop?: Function
     public onDragOver?: Function
+    public onImageLoaded?: (src: string) => void
     public onLoad?: ((this: FileReader, ev: ProgressEvent<FileReader>) => any) | null;
     public onError?: Function
+    public onRemoveImage?: Function
+    public onUploaded?: (res: any) => any
     public onUploadFileChange?: Function
     public sampleDownloadLink?: string
     public sampleDownloadLinkLabel?: string
-    public type?: IwFormUploadType
-    public uploadFunc?: (files?: FileList | null, base64Content?: string) => void
+    public type: IwFormUploadType = 'image'
+    public uploadFunc?: (files?: FileList | null) => any | { url: string }
 
-    constructor(options?: Partial<IwFormUploadConfig>) {
+    constructor(options?: Partial<IwFormUploaderConfig>) {
         Object.assign(this, options)
     }
-
 
     public async _onDrop(event: DragEvent) {
         const files = event.dataTransfer?.files;
@@ -43,19 +47,17 @@ export default class IwFormUploadConfig {
     }
 
 
-    public _onImageLoaded(content: string | ArrayBuffer) {
-        this.imageSrc = content as string
-    }
-
-    public _onLoad(e: ProgressEvent<FileReader>) {
+    public async _onLoad(e: ProgressEvent<FileReader>) {
         const result = e.target?.result
         if (result) {
             if ('image' == this.type) {
-                this._onImageLoaded(result)
+                if (this.onImageLoaded) this.onImageLoaded(result as string)
+
             }
 
             if (this.uploadFunc) {
-                this.uploadFunc(this._files, result)
+                const res = await this.uploadFunc(this._files) as any
+                if (this.onUploaded) this.onUploaded(res)
             }
         }
 
@@ -77,10 +79,6 @@ export default class IwFormUploadConfig {
 
     public getFiles(): FileList | null | undefined {
         return this._files
-    }
-
-    public setImageSrc(src: string) {
-        this.imageSrc = src
     }
 }
 

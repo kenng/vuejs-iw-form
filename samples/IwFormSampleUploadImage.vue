@@ -1,7 +1,9 @@
 <script setup lang='ts'>
 ///////////////////////////////////////////////@  Import, Types & meta
 //////////////////////////////////////////////////////////////////////
-import IwFormUploadConfig from '~/components/Forms/IwForm/utils/IwFormUploadConfig'
+import IwFormUploaderConfig from '../utils/IwFormUploaderConfig'
+import IwFormConfig from '../utils/IwFormConfig'
+import IwForm from '../components/IwForm.vue';
 
 
 //////////////////////////////////////////////////////@  Props & Emits
@@ -10,18 +12,31 @@ import IwFormUploadConfig from '~/components/Forms/IwForm/utils/IwFormUploadConf
 //////////////////////////////////////////////////////////@  Variables
 //////////////////////////////////////////////////////////////////////
 
-const config = ref(new IwFormUploadConfig({
+const config = ref(new IwFormUploaderConfig({
     type: 'image',
     uploadFunc: onUpload,
 }))
 
-
+const myForm: IwFormConfig = new IwFormConfig({
+    formGroups: [
+        {
+            css: 'grid',
+            formInputs: [
+                {
+                    name: 'ImgPath',
+                    type: 'uploader',
+                    config: config.value,
+                }
+            ]
+        }
+    ]
+})
 /////////////////////////////////////////////////@  Computed & Watches
 //////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////@  Functions
 //////////////////////////////////////////////////////////////////////
-async function onUpload(files?: FileList | null, content?: string) {
+async function onUpload(files?: FileList | null) {
     console.log(files);
     // const endpoint = AppUrl.API_UPLOAD_EVENT_FEATURED_IMAGE(441)
     // const data = new FormData()
@@ -43,7 +58,7 @@ async function onUpload(files?: FileList | null, content?: string) {
 </script>
 
 <template>
-    <IwFormUpload :config="config"></IwFormUpload>
+    <IwForm :myForm="myForm"></IwForm>
 </template>
 
 <style scoped>

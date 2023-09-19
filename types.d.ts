@@ -207,15 +207,7 @@ interface IwFormInputTextArea extends IwFormInputCore {
 interface IwFormInputUploader extends IwFormInputCore {
     type: 'uploader'
 
-    uploadedFilenameKey?: string; // after uploaded, this will be populate the filename
-    uploadURL?: string;
-    /** @attr uploadAccept: '.jpg, .pdf, image' */
-    uploadAccept?: string;
-    uploadHeaders?: Array<object> | Function;
-    uploadAutoUpload?: boolean;
-    uploadIsMultiple?: boolean;
-    uploadHasNoThumbnail?: boolean;
-    uploadFactoryFn?: Function;
+    config: IwFormUploaderConfig
 }
 
 type IwFormInput = IwFormInputComponent
@@ -227,6 +219,7 @@ type IwFormInput = IwFormInputComponent
     | IwFormInputSeparator
     | IwFormInputText
     | IwFormInputTextArea
+    | IwFormInputUploader
 
 interface IwFormStyle {
     cssSubmitBtnWrapper?: string,
