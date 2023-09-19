@@ -68,8 +68,8 @@
     @apply cursor-pointer bg-sky-100 dark:bg-sky-700 text-sky-600 dark:text-sky-50 border-sky-500 dark:border-sky-600;
 }
 
-.iw-form-editor-menu.active:hover,
-.iw-form-editor-menu.active {
+.iw-form-editor-menu.active:not(.toggleable):hover,
+.iw-form-editor-menu.active:not(.toggleable) {
     @apply cursor-default pointer-events-none;
 }
 
@@ -91,7 +91,7 @@
     padding-inline-start: 40px;
 }
 
-.iw-form-editor .tiptap li {
+.iw-form-editor .tiptap ul {
     list-style-type: disc;
 }
 
