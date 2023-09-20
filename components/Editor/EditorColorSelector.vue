@@ -157,7 +157,7 @@ defineExpose({
                 </li>
                 <li v-if="props.showClearColor"
                     title="Clear"
-                    @click="(ev: Event) => switchColor('#fff0')">
+                    @click="(ev: Event) => switchColor(IwFormColor.transparent.toHex())">
                     <Icon class="!block hover:!color-slate-500 !color-slate-700 h-full w-full transition-all"
                           icon="bx:block"
                           ref="clearColorRef"

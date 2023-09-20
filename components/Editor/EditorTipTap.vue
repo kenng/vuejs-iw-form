@@ -17,6 +17,7 @@ import { Icon } from '@iconify/vue'
 import type { EditorView } from 'prosemirror-view/dist'
 import type { Slice } from 'prosemirror-model/dist'
 import EditorColorSelector from './EditorColorSelector.vue'
+import { IwFormColor } from '../../utils/IwFormColor'
 
 ///////////////////////////////////////////@  Props, Emits & Variables
 //////////////////////////////////////////////////////////////////////
@@ -43,7 +44,7 @@ let fontColor = ref<string>('#000000')
 let fontSize = ref<number>(12)
 const fontSizeOptions = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 36, 48, 72]
 
-let highlightColor = ref<string>('#fff0')
+let highlightColor = ref<string>(IwFormColor.transparent.toHex())
 let showHighlightDropdown = ref(false)
 
 let menus: IwFormEditorMenus[]
@@ -401,7 +402,7 @@ function applyHighlight(color: string, isTransparent: boolean) {
 
     if (bgColor == rgbToHex(highlightColor.value) || isTransparent) {
         builder.unsetHighlight().run()
-        highlightColor.value = "#fff0"
+        highlightColor.value = IwFormColor.transparent.toHex()
     } else {
         builder.setHighlight({ color: bgColor }).run()
         highlightColor.value = bgColor

@@ -6,6 +6,10 @@ class IwFormColor {
     /** The value of the colour in number */
     rawValue = 0
 
+    // Default Colours
+    /** A completely transparent colour 'RGBA(255, 255, 255, 0)' | '#FFFFFF00' */
+    static transparent = new IwFormColor(0xFFF, 0x0, 'Transparent')
+
     /**
      * Construct an IwFormColor instance that is used for an indication of error
      *
