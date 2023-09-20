@@ -143,11 +143,10 @@ defineExpose({
 <template>
     <Transition name="fade">
         <div v-show="props.hidden"
-             class="absolute bg-slate-100/95 cursor-default grid mt-8 p-2 rounded-sm shadow translate-x-1/2 translate-y-1/2 w-40"
+             class="iw-form-editor-menu-dropdown translate-x-1/2"
              title=""> <!-- Stop title inheritance -->
-            <ul class="grid grid-cols-6 place-content-center gap-2">
+            <ul class="iw-form-editor-menu-dropdown-colorlist">
                 <li v-for="(color, key) in colorListInUse"
-                    class="border border-px hover:!rounded-4 rounded-md transition-all"
                     :style="{
                         backgroundColor: color.toHex(),
                         borderColor: color.darkenBy(IwFormColor.initFromHex('#222')).toHex()
@@ -159,16 +158,16 @@ defineExpose({
                 <li v-if="props.showClearColor"
                     title="Clear"
                     @click="(ev: Event) => switchColor('#fff0')">
-                    <Icon class="!block !color-slate-700 h-full w-full"
+                    <Icon class="!block hover:!color-slate-500 !color-slate-700 h-full w-full transition-all"
                           icon="bx:block"
                           ref="clearColorRef"
                           :onLoad="/*todo: trim excess padding*/clearColorRef?.setAttribute?.('viewBox', '2 2 20 20')" />
                 </li>
             </ul>
-            <tippy class="h-5 m-auto !mt-2 w-8"
+            <tippy class="iw-form-editor-menu-dropdown-custom-color"
                    content="Choose and press 'Enter ↵' to add colour"
                    placement="right">
-                <input class="cursor-pointer w-full h-full"
+                <input class="cursor-pointer h-full w-full"
                        name="Custom color"
                        type="color"
                        value="#ffffff"
@@ -187,11 +186,5 @@ defineExpose({
 .fade-enter-from,
 .fade-leave-to {
     opacity: 0
-}
-
-ul>* {
-    cursor: pointer;
-    width: 1rem;
-    height: 1rem;
 }
 </style>
