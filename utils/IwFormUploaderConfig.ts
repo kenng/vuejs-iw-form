@@ -4,6 +4,7 @@ export default class IwFormUploaderConfig {
     public _files?: FileList | null
     public acceptedFileTypes: string[] = []
     public icon: string = 'octicon:cloud-upload'
+    public imageSrc?: string
     public emit?: Function
     public label: string = 'Click to upload'
     public maxHeight: string = 'max-h-[500px]'

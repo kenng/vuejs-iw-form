@@ -6,7 +6,7 @@ import IwFormUploaderConfig from '../utils/IwFormUploaderConfig'
 
 //////////////////////////////////////////////////////@  Props & Emits
 //////////////////////////////////////////////////////////////////////
-
+const emit = defineEmits(['change'])
 const props = defineProps({
     id: {
         type: String,
@@ -18,7 +18,7 @@ const props = defineProps({
     },
 })
 
-const _imageSrc = ref('')
+const _imageSrc = ref(props.config.imageSrc)
 let userOnImageLoaded: Function
 let userOnUploadedFunc: Function
 
@@ -43,12 +43,14 @@ function onChange(ev: Event) {
     } else {
         props.config._onUploadFileChange(ev)
     }
+    emit('change', ev)
 }
 
 function onDragOver(ev: Event) {
     if (props.config.onDragOver) {
         props.config.onDragOver(ev)
     }
+    emit('change', ev)
 }
 
 function onDrop(ev: DragEvent) {
@@ -57,6 +59,7 @@ function onDrop(ev: DragEvent) {
     } else {
         props.config._onDrop(ev)
     }
+    emit('change', ev)
 }
 
 
@@ -77,14 +80,26 @@ async function onRemoveImage() {
     } else {
         _imageSrc.value = '';
     }
+
+    emit('change', null)
 }
 
-function onUploadeded(res: UploadResponse) {
-    if (res.url) _imageSrc.value = res.url
+function onUploadeded(res: UploadResponse | string) {
+    if (res) {
+        if ((res as UploadResponse).url) {
+            const uploadRes = res as UploadResponse
+            _imageSrc.value = uploadRes.url
+            emit('change', uploadRes.url)
+        } else {
+            if (typeof res == 'string') _imageSrc.value = res as string
+            emit('change', res)
+        }
+    }
 
     if (userOnUploadedFunc) {
         userOnUploadedFunc(res)
     }
+
 }
 
 function overrideCallerOnImageLoaded() {

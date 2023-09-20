@@ -492,7 +492,8 @@ initRenderCallback();
 
             <template name="uploader"
                       v-else-if="'uploader' === item.type">
-              <IwFormUploader :config="item.config"></IwFormUploader>
+              <IwFormUploader :config="item.config"
+                              @change="(ev: Event | DragEvent) => onChange(item, ev)" />
             </template>
 
             <template name="editor"
