@@ -175,7 +175,12 @@ function initMenu(editor: Editor) {
             onClick() {
                 showHighlightDropdown.value = !showHighlightDropdown.value
             },
-            onChange: function (color) {
+            onChange: function (color: IwFormColor) {
+                // If the same colour is being applied, remove the highlight
+                if (color.toHex() == highlightColor.value) {
+                    color = IwFormColor.transparent
+                }
+
                 applyHighlight(color.toHex(), color.isTransparent())
                 showHighlightDropdown.value = false
             },
@@ -400,7 +405,7 @@ function applyHighlight(color: string, isTransparent: boolean) {
     const bgColor = color
     const builder = theEditor.value!.chain().focus()
 
-    if (bgColor == rgbToHex(highlightColor.value) || isTransparent) {
+    if (isTransparent) {
         builder.unsetHighlight().run()
         highlightColor.value = IwFormColor.transparent.toHex()
     } else {
