@@ -49,33 +49,33 @@ const props = defineProps({
 })
 
 
-let currentSelection = ref(new IwFormColor('#ff0'))
+let currentSelection = ref(new IwFormColor(0xFFFF00))
 
 const defaultColorList: IwFormColor[] = [
-    new IwFormColor(0x1ABC9C, 'Strong Cyan'),
-    new IwFormColor(0x2ECC71, 'Emerald'),
-    new IwFormColor(0x3498DB, 'Bright Blue'),
-    new IwFormColor(0x9B59B6, 'Amethyst'),
-    new IwFormColor(0x4E5F70, 'Grayish Blue'),
-    new IwFormColor(0xF1C40F, 'Vivid Yellow'),
-    new IwFormColor(0x16A085, 'Dark Cyan'),
-    new IwFormColor(0x27AE60, 'Dark Emerald'),
-    new IwFormColor(0x2980B9, 'Strong Blue'),
-    new IwFormColor(0x8E44AD, 'Dark Violet'),
-    new IwFormColor(0x2C3E50, 'Desaturated Blue'),
-    new IwFormColor(0xF39C12, 'Orange'),
-    new IwFormColor(0xE67E22, 'Carrot'),
-    new IwFormColor(0xE74C3C, 'Pale Red'),
-    new IwFormColor(0xECF0F1, 'Bright Silver'),
-    new IwFormColor(0x95A5A6, 'Light Grayish Cyan'),
-    new IwFormColor(0xDDDDDD, 'Light Gray'),
-    new IwFormColor(0xFFFFFF, 'White'),
-    new IwFormColor(0xD35400, 'Pumpkin'),
-    new IwFormColor(0xC0392B, 'Strong Red'),
-    new IwFormColor(0xBDC3C7, 'Silver'),
-    new IwFormColor(0x7F8C8D, 'Grayish Cyan'),
-    new IwFormColor(0x999999, 'Dark Gray'),
-    new IwFormColor(0x000000, 'Black'),
+    new IwFormColor(0x1ABC9C, 0xFF, 'Strong Cyan'),
+    new IwFormColor(0x2ECC71, 0xFF, 'Emerald'),
+    new IwFormColor(0x3498DB, 0xFF, 'Bright Blue'),
+    new IwFormColor(0x9B59B6, 0xFF, 'Amethyst'),
+    new IwFormColor(0x4E5F70, 0xFF, 'Grayish Blue'),
+    new IwFormColor(0xF1C40F, 0xFF, 'Vivid Yellow'),
+    new IwFormColor(0x16A085, 0xFF, 'Dark Cyan'),
+    new IwFormColor(0x27AE60, 0xFF, 'Dark Emerald'),
+    new IwFormColor(0x2980B9, 0xFF, 'Strong Blue'),
+    new IwFormColor(0x8E44AD, 0xFF, 'Dark Violet'),
+    new IwFormColor(0x2C3E50, 0xFF, 'Desaturated Blue'),
+    new IwFormColor(0xF39C12, 0xFF, 'Orange'),
+    new IwFormColor(0xE67E22, 0xFF, 'Carrot'),
+    new IwFormColor(0xE74C3C, 0xFF, 'Pale Red'),
+    new IwFormColor(0xECF0F1, 0xFF, 'Bright Silver'),
+    new IwFormColor(0x95A5A6, 0xFF, 'Light Grayish Cyan'),
+    new IwFormColor(0xDDDDDD, 0xFF, 'Light Gray'),
+    new IwFormColor(0xFFFFFF, 0xFF, 'White'),
+    new IwFormColor(0xD35400, 0xFF, 'Pumpkin'),
+    new IwFormColor(0xC0392B, 0xFF, 'Strong Red'),
+    new IwFormColor(0xBDC3C7, 0xFF, 'Silver'),
+    new IwFormColor(0x7F8C8D, 0xFF, 'Grayish Cyan'),
+    new IwFormColor(0x999999, 0xFF, 'Dark Gray'),
+    new IwFormColor(0x000000, 0xFF, 'Black'),
 ]
 
 const colorListInUse: Ref<Array<IwFormColor>> = ref([])
@@ -92,7 +92,7 @@ const clearColorRef = ref()
  */
 function convertCustomColorList(colorList: Array<ColorObj>): IwFormColor[] {
     return colorList.map(color =>
-        new IwFormColor(color.value, color.label)
+        IwFormColor.initFromString(color.value, color.label)
     )
 }
 /**
@@ -103,7 +103,7 @@ function convertCustomColorList(colorList: Array<ColorObj>): IwFormColor[] {
 function insertColor(ev: Event) {
     const color = (ev.target as HTMLInputElement).value
     // TODO: check if a color exist before appending
-    colorListInUse.value.push(new IwFormColor(color))
+    colorListInUse.value.push(IwFormColor.initFromString(color))
 
     if (document.getSelection()?.toString?.()) {
         switchColor(color)
@@ -116,7 +116,7 @@ function insertColor(ev: Event) {
  * Handles color icons click event
  */
 function switchColor(value: string) {
-    currentSelection.value = new IwFormColor(value)
+    currentSelection.value = IwFormColor.initFromString(value)
     emit('change', currentSelection.value)
 }
 /////////////////////////////////////////////////////////@  Lifecycles
@@ -146,7 +146,7 @@ defineExpose({
                 <li class="border border-px hover:!rounded-4 rounded-md transition-all"
                     :style="{
                         backgroundColor: color.toHex(),
-                        borderColor: color.saturatingSub(new IwFormColor('#222')).toHex()
+                        borderColor: color.saturatingSub(IwFormColor.initFromHex('#222')).toHex()
                     }"
                     :key="key"
                     :title="color.label ?? color.toHex()"

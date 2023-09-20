@@ -2,83 +2,256 @@ class IwFormColor {
     /** The value of the alpha channel (opacity) (Range: [0, 255]) */
     alphaValue = 0xFF
     /** The name of the colour */
-    label?: string
+    label: string = ''
     /** The value of the colour in number */
     rawValue = 0
 
-    constructor(colorStr?: IwFormColorHexString | IwFormColorRgbString | string, label?: string)
-    constructor(rgbArray?: IwFormColorRgbArray, label?: string)
-    constructor(oldInstance?: IwFormColor, label?: string)
-    constructor(rawHex?: number | bigint, label?: string)
-    constructor(value?: any, label?: string) {
-        if (IwFormColor.isValidHex(value)) {
-            // Convert hex string
-            [this.rawValue, this.alphaValue] = IwFormColor.hexToValue(value)
-        } else if (/^\s*RGB/i.test(value)) {
-            // Convert RGB string
-            const parsed = value.match(/[0-9.]+/g)
-            if (IwFormColor.isRgbArray(parsed)) {
-                [this.rawValue, this.alphaValue] = IwFormColor.rgbToValue(parsed)
-            }
-        } else if (IwFormColor.isRgbArray(value)) {
-            // Convert RGB array
-            [this.rawValue, this.alphaValue] = IwFormColor.rgbToValue(value)
-        } else if (value instanceof IwFormColor) {
-            // Convert from IwFormColor instance
-            this.alphaValue = value.alphaValue
-            this.label = value.label
-            this.rawValue = value.rawValue
-        } else if (0 <= value && value <= 0xFFFFFF) {
-            // Set value only
-            this.rawValue = Number(value)
-        } else if (0xFFFFFFn < value && value <= 0xFF_FF_FF_FFn) {
-            // Set value and alpha
-            if (typeof value == 'number') {
-                this.rawValue = value >> 8
-                this.alphaValue = value & 0xFF
-            } else {
-                this.rawValue = Number(value >> 8n)
-                this.alphaValue = Number(value & 0xFFn)
-            }
-        } else {
-            console.warn(`Received invalid color value of '${value}'(type: ${typeof value})`)
+    /**
+     * Construct an IwFormColor instance that is used for an indication of error
+     *
+     * @returns an IwFormColor instance
+     */
+    static #initError(): IwFormColor {
+        return new IwFormColor(
+            0xFF00FF,
+            0xFF,
+            'ERR_COLOR'
+        )
+    }
+
+    /**
+     * Construct an IwFormColor instance from an array of values for each channel
+     *
+     * ### Example
+     * ```
+     * IwFormColor.initFromArray([0, 0, 0])
+     * IwFormColor.initFromArray([255, 255, 255])
+     * IwFormColor.initFromArray([0, 0, 0, 0.5])
+     * IwFormColor.initFromArray([255, 255, 255, 1])
+     *
+     * IwFormColor.initFromArray([255, 255, 255], 'White')
+     * ```
+     *
+     * @param values The colour in array format [Red, Blue, Green, Alpha?]
+     * @param label The name of the colour
+     */
+    static initFromArray(rgbArray: IwFormColorRgbArray, label?: string): IwFormColor {
+        const rgbPartsLength = 3
+        const rgbWithAlphaPartsLength = 4
+        const channelBitWidth = 8
+        let curRawValue = 0
+
+        for (let i = 0; i < rgbPartsLength; ++i) {
+            const valueClamped = Math.min(
+                Math.max(0, rgbArray[i]) // Clamp value to 0 or above
+                , 255) // Clamp value to 255 or below
+                || 0 // Fallback to 0, if NaN
+
+            /**
+             * Shift colour octet for each iteration
+             *
+             * Example for rgbArray = [0xDB, 0xA3, 0x6D]
+             * ---
+             * Initial value: 0x00
+             *
+             * i = 0:
+             * value after SHL, 0x00
+             * value after ADD, 0xDB
+             *
+             * i = 1:
+             * value after SHL, 0xDB00
+             * value after ADD, 0xDBA3
+             *
+             * i = 2:
+             * value after SHL, 0xDBA300
+             * value after ADD, 0xDBA36D
+             */
+            curRawValue <<= channelBitWidth
+            curRawValue += valueClamped
         }
 
-        this.label = label?.trim?.()
+        // Get alpha channel value
+        let alphaValue = 0xFF // Default value
+        if (rgbArray.length == rgbWithAlphaPartsLength) {
+            const opacityGiven = rgbArray[rgbWithAlphaPartsLength - 1]
+
+            if (opacityGiven > 1) {
+                console.warn(
+                    `Invalid RGBA opacity value of ${opacityGiven} (Range: [0, 1]), from ${opacityGiven}.`
+                    + '\nAlpha channel clamped to 1.'
+                )
+            }
+
+            const alphaClamped = Math.min(
+                Math.max(0, opacityGiven),
+                1
+            )
+            alphaValue = Math.round(alphaClamped * 255)
+        }
+
+        return new IwFormColor(
+            curRawValue,
+            alphaValue,
+            label
+        )
     }
 
-    clone(opacity = 1): IwFormColor {
-        return new IwFormColor(this.toHexNoOpacity() + (Math.round(opacity * 0xFF)).toString(16))
-    }
     /**
-     * Convert hex string value to number form
+     * Construct an IwFormColor instance from a BigInt with optional opacity format
      *
-     * Example:
+     * ### Example
      * ```
-     * IwFormColor.hexToValue('#fba')      // returns: [0xffbbaa, 0xFF]
-     * IwFormColor.hexToValue('#ffbbaa')   // returns: [0xffbbaa, 0xFF]
-     * IwFormColor.hexToValue('#ffbbaa88') // returns: [0xffbbaa, 0x88]
+     * IwFormColor.initFromBigInt(0xFFFn)
+     * IwFormColor.initFromBigInt(0xFFF8n)
+     * IwFormColor.initFromBigInt(0xFFFFFFn)
+     * IwFormColor.initFromBigInt(0xFFFFFF88n)
+     *
+     * IwFormColor.initFromBigInt(0xFFFn, 'White')
      * ```
      *
-     * @param hexString Hex in string form
-     *
-     * @returns [rawColourValue, alphaValue] The colour in number form and the opacity
+     * @param hexString The colour in BigInt number format
+     * @param label The name of the colour
      */
-    static hexToValue(hexString: string): [number, number] {
+    static initFromBigInt(rawValue: bigint, label?: string): IwFormColor {
+        if (0n <= rawValue && rawValue <= 0xFFFFFFn) {
+            return new IwFormColor(
+                Number(rawValue),
+                0xFF,
+                label
+            )
+        } else if (0xFFFFFFn <= rawValue && rawValue <= 0xFF_FF_FF_FFn) {
+            return new IwFormColor(
+                Number(rawValue >> 8n),
+                Number(rawValue & 0xFFn),
+                label
+            )
+        } else {
+            return IwFormColor.#initError()
+        }
+    }
+
+    /**
+     * Construct an IwFormColor instance from a hex string format
+     *
+     * ### Example
+     * ```
+     * IwFormColor.initFromHex('#FFF')
+     * IwFormColor.initFromHex('#FFF8')
+     * IwFormColor.initFromHex('#FFFFFF')
+     * IwFormColor.initFromHex('#FFFFFF88')
+     *
+     * IwFormColor.initFromHex('#FFF', 'White')
+     * ```
+     *
+     * @param hexString The colour in hex string format
+     * @param label The name of the colour
+     */
+    static initFromHex(hexString: IwFormColorHexString, label?: string): IwFormColor {
+        // Remove any non-hex characters (E.g. ' #0ff ' -> '0ff')
         let hex = hexString.replace(/[^0-9A-F]/gi, '')
 
+        // Duplicate shortened hex syntax to full form
         if (hex.length == 3 || hex.length == 4) {
             hex = hex.replace(/./g, (c) => c + c)
         }
 
         if (hex.length == 6 || hex.length == 8) {
-            return [
+            return new IwFormColor(
                 Number.parseInt(hex.substring(0, 6), 16),
-                Number.parseInt(hex.substring(6) || 'FF', 16)
-            ]
+                Number.parseInt(hex.substring(6) || 'FF', 16),
+                label
+            )
+        } else {
+            return IwFormColor.#initError()
         }
+    }
 
-        return [0x000000, 0xFF]
+    /**
+     * Construct an IwFormColor instance from a RGB and optional Alpha string format
+     *
+     * ### Example
+     * ```
+     * IwFormColor.initFromRgb('rgb(0, 0, 0)')
+     * IwFormColor.initFromRgb('RGB(255, 255, 255)')
+     * IwFormColor.initFromRgb('rgba(0, 0, 0, 0.5)')
+     * IwFormColor.initFromRgb('RGBA(255, 255, 255, 1)')
+     *
+     * IwFormColor.initFromRgb('rgb(255, 255, 255)', 'White')
+     * ```
+     *
+     * @param rgbString The colour in RGB(A) string format
+     * @param label The name of the colour
+     */
+    static initFromRgb(rgbString: IwFormColorRgbString, label?: string): IwFormColor {
+        // Extract each consecutive digits out.
+        let rgbArray = rgbString.match(/[\d.]+/g)
+
+        if (rgbArray && IwFormColor.isRgbArray(rgbArray)) {
+            return IwFormColor.initFromArray(rgbArray, label)
+        } else {
+            return IwFormColor.#initError()
+        }
+    }
+
+    /**
+     * Construct an IwFormColor instance from a non-literal string
+     *
+     * The purpose of this method is for handling string values that is
+     * not acceptable by {@link IwFormColor.initFromHex} or
+     * {@link IwFormColor.initFromRgb}.
+     *
+     * This is because those init methods only accepts string literals (E.g.
+     * `IwFormColor.initFromHex('#fff')` but not
+     * `const hexVar: string = '#fff'; IwFormColor.initFromHex(hexVar)`)
+     *
+     * ### Example
+     * ```
+     * const hex: string = '#fff'
+     * IwFormColor.initFromString(hex)
+     * IwFormColor.initFromString(hex, 'White')
+     *
+     * const rgb: string = 'rgb(0,0,0)'
+     * IwFormColor.initFromString(rgb)
+     * IwFormColor.initFromString(rgb, 'Black')
+     * ```
+     *
+     * @see {@link IwFormColor.initFromHex} for valid hex values
+     * @see {@link IwFormColor.initFromRgb} for valid RGB values
+     *
+     * @param genericString The colour in any acceptable string format
+     * @param label The name of the colour
+     */
+    static initFromString(genericString: string, label?: string): IwFormColor {
+        if (IwFormColor.isValidHex(genericString)) {
+            return IwFormColor.initFromHex(genericString)
+        } else if (/^\s*RGB/i.test(genericString)) {
+            // Use .initFromRgb() to further process it
+            return IwFormColor.initFromRgb(genericString as IwFormColorRgbString, label)
+        } else {
+            return IwFormColor.#initError()
+        }
+    }
+
+    /**
+     * Construct an IwFormColor instance with processed values
+     *
+     * @param rawValue The raw colour value in number form
+     * @param alphaValue The alpha channel value in number form
+     * @param label The name of the colour
+     */
+    constructor(rawValue: number, alphaValue: number = 0xFF, label: string = '') {
+        if (
+            0 <= this.rawValue && this.rawValue <= 0xFF
+            && 0 <= this.alphaValue && this.alphaValue <= 0xFF
+        ) {
+            this.rawValue = rawValue
+            this.alphaValue = alphaValue
+            this.label = label
+        }
+    }
+
+    clone(opacity = 1): IwFormColor {
+        return IwFormColor.initFromString(this.toHexNoOpacity() + (Math.round(opacity * 0xFF)).toString(16))
     }
 
     /**
@@ -118,61 +291,6 @@ class IwFormColor {
     }
 
     /**
-     * Convert RGB(A) array values to hex value in number form
-     *
-     * @param rgbArray An array of values for [Red, Green, Blue, Alpha?]
-     *
-     * @returns [rawColourValue, alphaValue] The colour in number form and the opacity
-     */
-    static rgbToValue(rgbArray: IwFormColorRgbArray): [number, number] {
-        const rgbPartsLength = 3
-        const rgbWithAlphaPartsLength = 4
-        const octet = 8
-        let curValue = 0
-
-        for (let i = 0; i < rgbPartsLength; ++i) {
-            const valueClamped = Math.min(
-                Math.max(0, rgbArray[i]) // Clamp value to 0 or above
-                , 255) // Clamp value to 255 or below
-                || 0 // Fallback to 0
-
-            /**
-             * Shift colour octet for each iteration
-             *
-             * Example for rgbArray = [0xDB, 0xA3, 0x6D]
-             * ---
-             * i = 0:
-             * value after SHL, 0x00
-             * value after ADD, 0xDB
-             *
-             * i = 1:
-             * value after SHL, 0xDB00
-             * value after ADD, 0xDBA3
-             *
-             * i = 2:
-             * value after SHL, 0xDBA300
-             * value after ADD, 0xDBA36D
-             */
-            curValue <<= octet
-            curValue += valueClamped
-        }
-
-        // Get alpha channel value
-        let alphaValue = 0xFF
-        if (rgbArray.length == rgbWithAlphaPartsLength) {
-            const alphaClamped = Math.min(
-                Math.max(
-                    0,
-                    rgbArray[rgbWithAlphaPartsLength - 1]
-                ),
-                1
-            )
-            alphaValue = Math.round(alphaClamped * 255)
-        }
-
-        return [curValue, alphaValue]
-    }
-    /**
      * Sum or subtract instances of IwFormColor class, and saturates at the boundary of the colour values
      *
      * @param c1 A IwFormColor instance
@@ -195,7 +313,7 @@ class IwFormColor {
             ? [clamp(r1 + r2), clamp(g1 + g2), clamp(b1 + b2)]
             : [clamp(r1 - r2), clamp(g1 - g2), clamp(b1 - b2)]
 
-        return new IwFormColor(rgb)
+        return IwFormColor.initFromArray(rgb as IwFormColorRgbArray)
     }
     /**
      * Sum the current IwFormColor instance with another IwFormColor instance
@@ -227,12 +345,17 @@ class IwFormColor {
      *
      * @returns '#'-prefixed hex with opacity
      */
-    toHex(): string {
-        return this.toHexNoOpacity() + (
-            this.alphaValue == 0xFF
-                ? ''
-                : this.alphaValue.toString(16).toUpperCase().padStart(2, '0')
-        )
+    toHex(): IwFormColorHexString {
+        return (
+            this.toHexNoOpacity() + (
+                this.alphaValue == 0xFF
+                    ? ''
+                    : this.alphaValue
+                        .toString(16)
+                        .toUpperCase()
+                        .padStart(2, '0')
+            )
+        ) as IwFormColorHexString
     }
 
     /**
@@ -244,8 +367,13 @@ class IwFormColor {
      * ```
      * @returns '#'-prefixed hex without opacity
      */
-    toHexNoOpacity(): string {
-        return '#' + this.rawValue.toString(16).toUpperCase().padStart(6, '0')
+    toHexNoOpacity(): IwFormColorHexString {
+        return (
+            '#' + this.rawValue
+                .toString(16)
+                .toUpperCase()
+                .padStart(6, '0')
+        ) as IwFormColorHexString
     }
 }
 
