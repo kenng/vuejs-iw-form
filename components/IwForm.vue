@@ -457,13 +457,14 @@ initRenderCallback();
                       v-else-if='IwFormTypeEnum.CHECKBOX === (item.type)'>
               <template v-if="isVisible(item)">
                 <input :id="getId((item as IwFormInputCore))"
+                       class="iwFormCheckbox"
                        type="checkbox"
                        v-model="myFormData[item.name]"
-                       :name="item.name"
                        :disable="item.disabled"
-                       class="iwFormCheckbox"
+                       :name="item.name"
                        :true-value="item.checkBoxTrueValue ?? true"
-                       :false-value="item.checkBoxFalseValue ?? false">
+                       :false-value="item.checkBoxFalseValue ?? false"
+                       @change="(ev) => onChange(item, myFormData[item.name])">
                 <IwFormLabel :id="getId((item as IwFormInputCore))"
                              :item="(item as IwFormInputCore)" />
               </template>
@@ -492,7 +493,10 @@ initRenderCallback();
 
             <template name="uploader"
                       v-else-if="'uploader' === item.type">
-              <IwFormUploader :config="item.config"
+              <IwFormLabel :id="getId((item as IwFormInputCore))"
+                           :item="(item as IwFormInputCore)" />
+              <IwFormUploader :id="getId((item as IwFormInputCore))"
+                              :config="item.config"
                               @change="(ev: Event | DragEvent) => onChange(item, ev)" />
             </template>
 
