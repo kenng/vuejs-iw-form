@@ -272,8 +272,8 @@ interface IwFormEditorMenuColor extends IwFormEditorMenu {
     type: 'color'
     /** An array of colour names and values in hex or RGB string */
     colorList: Array<{ label?: string, value: string }>
-    /** Extended colour list to extend default list if .colorList is not given */
-    extendedColorList?: Array<{ label?: string, value: string }>
+    /* Whether to replace the default colour list with the supplied colorList */
+    replaceDefault?: boolean,
     /** @param value IwFormColor class from utils/IwFormColor.ts */
     onChange: (value: IwFormColor) => void
 }

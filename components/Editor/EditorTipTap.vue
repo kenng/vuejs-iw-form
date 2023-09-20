@@ -178,8 +178,7 @@ function initMenu(editor: Editor) {
                 applyHighlight(color.toHex(), color.isTransparent())
                 showHighlightDropdown.value = false
             },
-            colorList: [],
-            extendedColorList: [
+            colorList: [
                 { label: 'Highlight Yellow', value: '#FF0' },
             ],
             icon: 'material-symbols:ink-highlighter-outline',
@@ -479,7 +478,7 @@ onUnmounted(() => {
                               @mousedown.prevent="() => menu.onClick()" />
                         <EditorColorSelector :colorList="menu.colorList"
                                              :hidden="showHighlightDropdown"
-                                             :extendedColorList="menu.extendedColorList"
+                                             :replaceDefault="menu.replaceDefault"
                                              @change="(val) => menu.onChange(val)" />
                     </span>
                 </template>

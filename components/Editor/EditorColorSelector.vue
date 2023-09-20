@@ -19,14 +19,6 @@ const props = defineProps({
     /** A list of color to be displayed. (E.g. colorList: ['#fff', 'rgb(0,0,0)', '#ffffff88']) */
     colorList: {
         type: Array as PropType<Array<ColorObj>>,
-    },
-    /**
-     * Extended color list
-     *
-     * Used for extending the default colour list
-     */
-    extendedColorList: {
-        type: Array as PropType<Array<ColorObj>>,
         default: [],
     },
     /**
@@ -36,8 +28,17 @@ const props = defineProps({
         type: Boolean,
         default: true,
     },
-    /*
-     * Show a 'bx:block' icon for removing current colour
+    /**
+     * Whether to replace the default colour list with the supplied colorList
+     *
+     * Default: `false`
+     */
+    replaceDefault: {
+        type: Boolean,
+        default: false,
+    },
+    /**
+     * Show a 'bx:block' icon for removing the currently applied colour
      *
      * An invisible colour will be returned (E.g. '#fff0').
      * {@link Color.isTransparent} may be used to check if the colour is returned.
@@ -125,10 +126,12 @@ function switchColor(value: string) {
 //////////////////////////////////////////////////////@ Initialization
 //////////////////////////////////////////////////////////////////////
 onMounted(() => {
-    // Select a colour list to use
-    colorListInUse.value = props.colorList?.length
-        ? convertCustomColorList(props.colorList)
-        : defaultColorList.concat(convertCustomColorList(props.extendedColorList))
+    const customColorList = convertCustomColorList(props.colorList)
+
+    // Check to replace or join the colour lists
+    colorListInUse.value = props.replaceDefault
+        ? customColorList
+        : defaultColorList.concat(customColorList)
 })
 ////////////////////////////////////////////////////@  Export & Expose
 //////////////////////////////////////////////////////////////////////
