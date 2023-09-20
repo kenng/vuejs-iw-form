@@ -128,7 +128,11 @@ function initEditor(): Editor {
                 },
                 history: { newGroupDelay: 1000, }
             }),
-            ExtTextAlign,
+            ExtTextAlign.configure({
+                alignments: ['left', 'center', 'right', 'justify'],
+                defaultAlignment: 'left',
+                types: ['heading', 'paragraph'],
+            }),
             ExtTextStyle,
             ExtTextStyleExtraAttributes,
             ExtUnderline.configure({
@@ -227,6 +231,34 @@ function initMenu(editor: Editor) {
             shortcutKey: 'C-A-3',
             toggleable: true,
             icon: 'gridicons:heading-h3',
+        },
+        {
+            onClick: () => editor.commands.setTextAlign('left'),
+            label: 'align left',
+            markOption: [{ textAlign: 'left' }],
+            shortcutKey: 'C-S-L',
+            icon: 'akar-icons:text-align-left',
+        },
+        {
+            onClick: () => editor.commands.setTextAlign('center'),
+            label: 'align center',
+            markOption: [{ textAlign: 'center' }],
+            shortcutKey: 'C-S-E',
+            icon: 'akar-icons:text-align-center',
+        },
+        {
+            onClick: () => editor.commands.setTextAlign('right'),
+            label: 'align right',
+            markOption: [{ textAlign: 'right' }],
+            shortcutKey: 'C-S-R',
+            icon: 'akar-icons:text-align-right',
+        },
+        {
+            onClick: () => editor.commands.setTextAlign('justify'),
+            label: 'align justify',
+            markOption: [{ textAlign: 'justify' }],
+            shortcutKey: 'C-S-J',
+            icon: 'akar-icons:text-align-justified',
         },
         {
             onClick: () => editor.chain().focus().toggleOrderedList().run(),
