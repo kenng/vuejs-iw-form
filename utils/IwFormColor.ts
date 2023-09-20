@@ -375,7 +375,7 @@ class IwFormColor {
      * ### Example
      * ```ts
      * new IwFormColor('#FBA8').toHex() // returns: '#FFBBAA88' (with opacity)
-     * new IwFormColor('#FBA').toHex()  // returns: '#FFBBAA' (opacity omittedd)
+     * new IwFormColor('#FBA').toHex()  // returns: '#FFBBAA' (opacity omitted)
      * ```
      *
      * @returns '#'-prefixed hex with opacity
