@@ -254,7 +254,12 @@ class IwFormColor {
         }
     }
 
-    clone(opacity = 1): IwFormColor {
+    /**
+     * Clone the colour instance and apply a new opacity
+     *
+     * @param opacity Opacity value of range from 0 to 1
+     */
+    opacity(opacity = 1): IwFormColor {
         return IwFormColor.initFromString(this.toHexNoOpacity() + (Math.round(opacity * 0xFF)).toString(16))
     }
 
