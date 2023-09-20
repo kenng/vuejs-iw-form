@@ -143,18 +143,18 @@ defineExpose({
              class="absolute bg-slate-100/95 cursor-default grid mt-8 p-2 rounded-sm shadow translate-x-1/2 translate-y-1/2 w-40"
              title=""> <!-- Stop title inheritance -->
             <ul class="grid grid-cols-6 place-content-center gap-2">
-                <li class="border border-px hover:!rounded-4 rounded-md transition-all"
+                <li v-for="(color, key) in colorListInUse"
+                    class="border border-px hover:!rounded-4 rounded-md transition-all"
                     :style="{
                         backgroundColor: color.toHex(),
                         borderColor: color.saturatingSub(IwFormColor.initFromHex('#222')).toHex()
                     }"
                     :key="key"
                     :title="color.label ?? color.toHex()"
-                    v-for="(color, key) in colorListInUse"
                     @click="(ev: Event) => switchColor((ev.target as HTMLLIElement).style.backgroundColor)">
                 </li>
-                <li title="Clear"
-                    v-if="props.showClearColor"
+                <li v-if="props.showClearColor"
+                    title="Clear"
                     @click="(ev: Event) => switchColor('#fff0')">
                     <Icon class="!block !color-slate-700 h-full w-full"
                           icon="bx:block"
