@@ -108,8 +108,6 @@ function insertColor(ev: Event) {
 
     if (document.getSelection()?.toString?.()) {
         switchColor(color)
-
-        ev.preventDefault() // Prevent text selection being unselected
     }
 }
 
