@@ -150,7 +150,7 @@ defineExpose({
                     class="border border-px hover:!rounded-4 rounded-md transition-all"
                     :style="{
                         backgroundColor: color.toHex(),
-                        borderColor: color.saturatingSub(IwFormColor.initFromHex('#222')).toHex()
+                        borderColor: color.darkenBy(IwFormColor.initFromHex('#222')).toHex()
                     }"
                     :key="key"
                     :title="color.label ?? color.toHex()"

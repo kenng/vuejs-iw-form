@@ -293,12 +293,27 @@ class IwFormColor {
     /**
      * Sum or subtract instances of IwFormColor class, and saturates at the boundary of the colour values
      *
-     * @param c1 A IwFormColor instance
-     * @param c2 A IwFormColor instance
-     * @param opsType The type of operation (Add or Subtract)
+     * ### Example
+     * ```
+     * const c1 = IwFormColor.initFromHex('#888')
+     * const c2 = IwFormColor.initFromHex('#222')
+     * const c3 = IwFormColor.initFromHex('#E27')
+     *
+     * IwFormColor.#saturatingMix(c1, c2) // returns IwFormColor('#AAA')
+     * IwFormColor.#saturatingMix(c1, c2, '+') // returns IwFormColor('#AAA')
+     * IwFormColor.#saturatingMix(c1, c2, '-') // returns IwFormColor('#666')
+     *
+     * // Saturating examples
+     * IwFormColor.#saturatingMix(c1, c3) // returns IwFormColor('#FAF')
+     * IwFormColor.#saturatingMix(c1, c3, '-') // returns IwFormColor('#061')
+     * ```
+     *
+     * @param c1 An IwFormColor instance
+     * @param c2 An IwFormColor instance
+     * @param opsType The type of operation (Add '+', or Subtract '-')
      * @returns A new IwFormColor instance
      */
-    static saturatingOps(c1: IwFormColor, c2: IwFormColor, opsType: '-' | '+' = '+'): IwFormColor {
+    static #saturatingMix(c1: IwFormColor, c2: IwFormColor, opsType: '-' | '+' = '+'): IwFormColor {
         const r1 = (c1.rawValue & 0xFF0000) >> 16
         const g1 = (c1.rawValue & 0x00FF00) >> 8
         const b1 = c1.rawValue & 0x0000FF
@@ -315,23 +330,43 @@ class IwFormColor {
 
         return IwFormColor.initFromArray(rgb as IwFormColorRgbArray)
     }
+
     /**
      * Sum the current IwFormColor instance with another IwFormColor instance
+     * and return a new IwFormColor instance
+     *
+     * ### Example
+     * ```
+     * const c1 = new IwFormColor('#222')
+     * const c2 = new IwFormColor('#111')
+     *
+     * c1.lightenBy(c2) // returns: IwFormColor('#333')
+     * ```
      *
      * @param other Another IwFormColor instance
      * @returns A new IwFormColor instance
      */
-    saturatingSum(other: IwFormColor): IwFormColor {
-        return IwFormColor.saturatingOps(this, other, '+')
+    lightenBy(other: IwFormColor): IwFormColor {
+        return IwFormColor.#saturatingMix(this, other, '+')
     }
+
     /**
      * Subtract the current IwFormColor instance with another IwFormColor instance
+     * and return a new IwFormColor instance
+     *
+     * ### Example
+     * ```
+     * const c1 = new IwFormColor('#FFF')
+     * const c2 = new IwFormColor('#111')
+     *
+     * c1.darkenBy(c2) // returns: IwFormColor('#EEE')
+     * ```
      *
      * @param other Another IwFormColor instance
      * @returns A new IwFormColor instance
      */
-    saturatingSub(other: IwFormColor): IwFormColor {
-        return IwFormColor.saturatingOps(this, other, '-')
+    darkenBy(other: IwFormColor): IwFormColor {
+        return IwFormColor.#saturatingMix(this, other, '-')
     }
 
     /**
