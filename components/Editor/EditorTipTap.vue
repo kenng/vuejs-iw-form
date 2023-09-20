@@ -11,7 +11,6 @@ import ExtUnderline from '@tiptap/extension-underline'
 import ExtStarterKit from '@tiptap/starter-kit'
 import { TextAlign as ExtTextAlign } from '@tiptap/extension-text-align'
 import ExtTextStyle from '@tiptap/extension-text-style'
-import ExtTextStyleExtraAttributes from './extensions/TextStyleExtraAttributes'
 import ExtYoutube from '@tiptap/extension-youtube'
 import { Icon } from '@iconify/vue'
 import type { EditorView } from 'prosemirror-view/dist'
@@ -141,7 +140,6 @@ function initEditor(): Editor {
                 types: ['heading', 'paragraph'],
             }),
             ExtTextStyle,
-            ExtTextStyleExtraAttributes,
             ExtUnderline.configure({
                 HTMLAttributes: {
                     class: 'iw-form-editor-underline',
