@@ -51,7 +51,10 @@ const props = defineProps({
       cssResetBtnWrapper: 'iwFormResetFilterBtnWrapper',
     },
   },
-
+  isModified: {
+    type: Boolean,
+    default: false,
+  },
   isReadOnly: {
     type: Boolean,
     default: false,
@@ -134,7 +137,7 @@ const props = defineProps({
 //////////////////////////////////////////////////////////////////////
 const identifier = (new Date()).getTime() + Math.random() * 10000
 const formSubmitAgainText = props.submitAgainText ?? props.submitText
-const isModified = ref(props.submitBtnAlwaysEnabled || false)
+const _isModified = ref(props.submitBtnAlwaysEnabled || props.isModified)
 let isMounted = false
 const IwFormTypeEnum = IwFormType
 let timerOfDataUpdated: ReturnType<typeof setTimeout>;
@@ -228,7 +231,7 @@ function inputOnReset(item: IwFormInputCore) {
 }
 
 function isFormDataModified(): boolean {
-  return isModified.value
+  return _isModified.value
 }
 
 async function myFormOnSubmit(ev: Event) {
@@ -236,7 +239,7 @@ async function myFormOnSubmit(ev: Event) {
     submitIsLoading.value = true
     await formOnSubmit(ev)
     submitIsLoading.value = false
-    isModified.value = false
+    _isModified.value = false
   } catch (e) {
     throw e
   }
@@ -247,7 +250,7 @@ async function myFormOnSubmit(ev: Event) {
  */
 function onFormModified() {
   if (isMounted) {
-    isModified.value = true
+    _isModified.value = true
     debounce(() => {
       emit('data-updated', myFormData.value)
     }, 500)()
