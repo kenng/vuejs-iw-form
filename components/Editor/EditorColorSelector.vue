@@ -59,7 +59,7 @@ const props = defineProps({
 })
 
 
-let currentSelection = ref<IwFormColor>(IwFormColor.transparent)
+const currentSelection = ref<IwFormColor>(IwFormColor.transparent)
 
 const defaultColorList: IwFormColor[] = [
     new IwFormColor(0x1ABC9C, 0xFF, 'Strong Cyan'),

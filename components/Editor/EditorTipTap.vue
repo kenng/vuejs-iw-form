@@ -44,8 +44,8 @@ let fontSize = ref<number>(12)
 const fontSizeOptions = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 36, 48, 72]
 
 /** Used for indicating the current highlight colour on the cursor */
-let highlightColorObj = ref<IwFormColor>(IwFormColor.transparent)
-let showHighlightDropdown = ref(false)
+const highlightColorObj = ref<IwFormColor>(IwFormColor.transparent)
+const showHighlightDropdown = ref(false)
 
 let menus: IwFormEditorMenus[]
 
