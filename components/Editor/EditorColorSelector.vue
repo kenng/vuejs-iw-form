@@ -2,7 +2,7 @@
 ///////////////////////////////////////////////@  Import, Types & meta
 //////////////////////////////////////////////////////////////////////
 import { Icon } from '@iconify/vue'
-import { Tippy } from 'vue-tippy'
+import { Tippy, directive as vTippy } from 'vue-tippy'
 import { IwFormColor } from '../../utils/IwFormColor'
 
 type ColorObj = {
@@ -167,7 +167,7 @@ defineExpose({
                         borderColor: color.darkenBy(IwFormColor.initFromHex('#222')).toHex()
                     }"
                     :key="key"
-                    :title="color.label ?? color.toHex()"
+                    v-tippy="color.label ?? color.toHex()"
                     @click="(ev: Event) => switchColor((ev.target as HTMLLIElement).style.backgroundColor)">
                 </li>
                 <li v-if="props.showClearColor"
@@ -179,15 +179,15 @@ defineExpose({
                           :onLoad="/*todo: trim excess padding*/clearColorRef?.setAttribute?.('viewBox', '2 2 20 20')" />
                 </li>
             </ul>
-            <tippy class="iw-form-editor-menu-dropdown-custom-color"
-                   content="Choose and press 'Enter ↵' to add colour"
-                   placement="right">
-                <input class="cursor-pointer h-full w-full"
-                       name="Custom color"
-                       type="color"
-                       value="#ffffff"
-                       @change="insertColor" />
-            </tippy>
+            <input class="iw-form-editor-menu-dropdown-custom-color cursor-pointer h-full w-full"
+                   name="Custom color"
+                   type="color"
+                   value="#ffffff"
+                   v-tippy="{
+                       content: 'Choose and press \'Enter ↵\' to add colour',
+                       placement: 'right',
+                   }"
+                   @change="insertColor" />
         </div>
     </Transition>
 </template>
