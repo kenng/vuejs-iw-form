@@ -55,6 +55,19 @@ let menus: IwFormEditorMenus[]
 
 //////////////////////////////////////////////////////////@  Functions
 //////////////////////////////////////////////////////////////////////
+/**
+ * Used for invoking editor's internal highlight module to highlight content
+ */
+function applyHighlightToContent() {
+    const bgColor = highlightColorObj.value
+    const builder = theEditor.value!.chain().focus()
+
+    if (bgColor.isTransparent()) {
+        builder.unsetHighlight().run()
+    } else {
+        builder.setHighlight({ color: bgColor.toHex() }).run()
+    }
+}
 
 function handleDropOntoEditor(view: EditorView, event: DragEvent, slice: Slice, moved: boolean) {
     if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
@@ -399,20 +412,6 @@ function onColorInput($event: Event) {
     const color = rgbToHex(($event.target as HTMLInputElement)?.value)
     theEditor.value!.chain().focus().setColor(color).run()
     fontColor.value = color
-}
-
-/**
- * Used for invoking editor's internal highlight module to highlight content
- */
-function applyHighlightToContent() {
-    const bgColor = highlightColorObj.value
-    const builder = theEditor.value!.chain().focus()
-
-    if (bgColor.isTransparent()) {
-        builder.unsetHighlight().run()
-    } else {
-        builder.setHighlight({ color: bgColor.toHex() }).run()
-    }
 }
 /////////////////////////////////////////////////////////@  Lifecycles
 //////////////////////////////////////////////////////////////////////
