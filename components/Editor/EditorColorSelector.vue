@@ -28,6 +28,15 @@ const props = defineProps({
         type: Boolean,
         default: true,
     },
+    /*
+     * A IwFormColor readable string to indicate which colour is being selected
+     *
+     * This value will be matched against the current colour list and will be marked
+     */
+    hintSelectedColor: {
+        type: String,
+        default: '',
+    },
     /**
      * Whether to replace the default colour list with the supplied colorList
      *
@@ -50,7 +59,7 @@ const props = defineProps({
 })
 
 
-let currentSelection = ref(new IwFormColor(0xFFFF00))
+let currentSelection = ref<IwFormColor>(IwFormColor.transparent)
 
 const defaultColorList: IwFormColor[] = [
     new IwFormColor(0x1ABC9C, 0xFF, 'Strong Cyan'),
@@ -83,7 +92,11 @@ const colorListInUse: Ref<Array<IwFormColor>> = ref([])
 const clearColorRef = ref()
 /////////////////////////////////////////////////@  Computed & Watches
 //////////////////////////////////////////////////////////////////////
-
+watch(() => props.hintSelectedColor, (color) => {
+    if (color) {
+        currentSelection.value = IwFormColor.initFromString(color)
+    }
+})
 //////////////////////////////////////////////////////////@  Functions
 //////////////////////////////////////////////////////////////////////
 /**
@@ -145,6 +158,10 @@ defineExpose({
              title=""> <!-- Stop title inheritance -->
             <ul class="iw-form-editor-menu-dropdown-colorlist">
                 <li v-for="(color, key) in colorListInUse"
+                    :class="{
+                        'active':
+                            color.toHex() == currentSelection.toHex()
+                    }"
                     :style="{
                         backgroundColor: color.toHex(),
                         borderColor: color.darkenBy(IwFormColor.initFromHex('#222')).toHex()

@@ -95,6 +95,11 @@
     width: 1rem;
 }
 
+.iw-form-editor-menu-dropdown-colorlist > li.active {
+    border-color: #555 !important;
+    border-width: 2px !important;
+}
+
 .iw-form-editor-menu-dropdown-colorlist > li:hover {
     border-radius: 1rem;
 }

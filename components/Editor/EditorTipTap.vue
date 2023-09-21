@@ -43,7 +43,8 @@ let fontColor = ref<string>('#000000')
 let fontSize = ref<number>(12)
 const fontSizeOptions = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 36, 48, 72]
 
-let highlightColor = ref<string>(IwFormColor.transparent.toHex())
+/** Used for indicating the current highlight colour on the cursor */
+let highlightColorObj = ref<IwFormColor>(IwFormColor.transparent)
 let showHighlightDropdown = ref(false)
 
 let menus: IwFormEditorMenus[]
@@ -152,7 +153,10 @@ function initEditor(): Editor {
         content: toRaw(config.content),
         onSelectionUpdate: ({ editor }) => {
             fontColor.value = rgbToHex(editor.getAttributes('textStyle').color)
-            highlightColor.value = rgbToHex(editor.getAttributes('highlight').color || '#FFF0')
+            highlightColorObj.value = IwFormColor.initFromString(
+                editor.getAttributes('highlight').color
+                || IwFormColor.transparent.toHex()
+            )
 
             onSelectUpdateFontSize(editor as Editor)
         },
@@ -175,11 +179,12 @@ function initMenu(editor: Editor) {
             },
             onChange: function (color: IwFormColor) {
                 // If the same colour is being applied, remove the highlight
-                if (color.toHex() == highlightColor.value) {
+                if (color.toHex() == highlightColorObj.value.toHex()) {
                     color = IwFormColor.transparent
                 }
+                highlightColorObj.value = color
 
-                applyHighlight(color.toHex(), color.isTransparent())
+                applyHighlightToContent()
                 showHighlightDropdown.value = false
             },
             colorList: [
@@ -399,16 +404,14 @@ function onColorInput($event: Event) {
 /**
  * Used for invoking editor's internal highlight module to highlight content
  */
-function applyHighlight(color: string, isTransparent: boolean) {
-    const bgColor = color
+function applyHighlightToContent() {
+    const bgColor = highlightColorObj.value
     const builder = theEditor.value!.chain().focus()
 
-    if (isTransparent) {
+    if (bgColor.isTransparent()) {
         builder.unsetHighlight().run()
-        highlightColor.value = IwFormColor.transparent.toHex()
     } else {
-        builder.setHighlight({ color: bgColor }).run()
-        highlightColor.value = bgColor
+        builder.setHighlight({ color: bgColor.toHex() }).run()
     }
 }
 /////////////////////////////////////////////////////////@  Lifecycles
@@ -471,8 +474,8 @@ onUnmounted(() => {
                                   'linear-gradient('
                                   + 'to bottom,'
                                   + 'RGBA(255, 255, 255, 0) 85%,'
-                                  + `${highlightColor} 85%,`
-                                  + `${highlightColor} 90%,`
+                                  + `${highlightColorObj.toHex()} 85%,`
+                                  + `${highlightColorObj.toHex()} 90%,`
                                   + 'RGBA(255, 255, 255, 0) 90%'
                                   + ')'
                           }"
@@ -482,6 +485,7 @@ onUnmounted(() => {
                               @mousedown.prevent="() => menu.onClick()" />
                         <EditorColorSelector :colorList="menu.colorList"
                                              :hidden="showHighlightDropdown"
+                                             :hintSelectedColor="highlightColorObj.toHex()"
                                              :replaceDefault="menu.replaceDefault"
                                              @change="(val) => menu.onChange(val)" />
                     </span>
