@@ -525,7 +525,7 @@ initRenderCallback();
         <div :class="['iwFormSubmitBtnWrapper', group.submitBtn?.css ?? '']"
              v-if="group.showSubmitBtn">
           <IwFormBtn type="submit"
-                     :disabled="!submitBtnAlwaysEnabled && !isModified"
+                     :disabled="!_isModified"
                      :isLoading="showSubmitLoading && submitIsLoading"
                      :label="getFormGroupSubmitLabel(group, totalSubmission > 0 ? formSubmitAgainText : submitText)" />
           <div :class="css.cssResetBtnWrapper ?? 'iwFormResetFilterBtnWrapper'">
@@ -542,7 +542,7 @@ initRenderCallback();
           <slot name='submitBtn'>
             <div class="iwFormSubmitBtnWrapper">
               <IwFormBtn type="submit"
-                         :disabled="!submitBtnAlwaysEnabled && !isModified"
+                         :disabled="!_isModified"
                          :isLoading="showSubmitLoading && submitIsLoading"
                          :label="`${totalSubmission > 0 ? formSubmitAgainText : submitText}`" />
               <div :class="css.cssResetBtnWrapper ?? 'iwFormResetFilterBtnWrapper'">
