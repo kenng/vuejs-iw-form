@@ -58,8 +58,7 @@ const btnId = props.id ?? (new Date()).getTime() + Math.random() * 10000
 <template>
     <div class="iwFormBtnWrapper">
         <div class="iwFormInputLabelInlineWrapper iwFormSubmitBtnLabel">
-            <span class="iwFormInputLabelInline">
-            </span>
+            <span class="iwFormInputLabelInline">&nbsp;</span>
         </div>
         <button :id="`${btnId}-submit-btn`"
                 class="iwFormSubmitBtn"
