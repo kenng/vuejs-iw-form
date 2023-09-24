@@ -63,12 +63,12 @@
     border-radius: 5px;
 }
 
-.iw-form-editor-menu-btn:hover,
+/* Cancel :hover if a div (dropdown) is hovered */
+.iw-form-editor-menu-btn:hover:not(:has(div:hover)),
 .iw-form-editor-menu-btn.active {
     @apply cursor-pointer bg-sky-100 dark:bg-sky-700 text-sky-600 dark:text-sky-50 border-sky-500 dark:border-sky-600;
 }
 
-.iw-form-editor-menu.active:not(.toggleable):hover,
 .iw-form-editor-menu.active:not(.toggleable) {
     @apply cursor-default pointer-events-none;
 }
@@ -76,6 +76,48 @@
 .iw-form-editor-menu.disabled {
     color: rgba(51, 51, 51, 0.5);
     pointer-events: none;
+}
+
+.iw-form-editor-menu-dropdown {
+    @apply absolute bg-slate-100/95 cursor-default mt-8 p-2 rounded-sm shadow translate-y-1/2 w-40
+}
+
+.iw-form-editor-menu-dropdown-colorlist {
+    @apply grid grid-cols-6 place-content-center gap-2
+}
+
+.iw-form-editor-menu-dropdown-colorlist > li {
+    border-radius: 0.35rem;
+    border-width: 1px;
+    cursor: pointer;
+    height: 1rem;
+    transition: border-color 0.1s, border-radius 0.2s;
+    width: 1rem;
+}
+
+.iw-form-editor-menu-dropdown-colorlist > li.active {
+    border-color: #555 !important;
+    border-width: 2px !important;
+}
+
+.iw-form-editor-menu-dropdown-colorlist > li:hover {
+    border-radius: 1rem;
+}
+
+.iw-form-editor-menu-dropdown-custom-color {
+    display: block;
+    height: 1.25rem;
+    margin: auto;
+    margin-top: 0.5rem;
+    width: 2rem;
+}
+
+.iw-form-editor-menu-highlight-indicator {
+    /* experimental feature */
+    /* background-image: linear-gradient(to bottom, RGBA(255, 255, 255, 0) 85%, attr(data-highlight-color) 85%, attr(data-highlight-color) 90%, RGBA(255, 255, 255, 0) 90%); */
+    background-size: 60% 100%;
+    background-repeat: no-repeat;
+    background-position-x: center;
 }
 
 .iw-form-editor-content {
