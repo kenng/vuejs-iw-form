@@ -4,18 +4,19 @@
 import { Editor, EditorContent } from '@tiptap/vue-3'
 import { Color as ExtColor } from '@tiptap/extension-color'
 import ExtFontSize from './extensions/EditorTipTapFontSize'
-import ExtHighlight from '@tiptap/extension-highlight'
+import { highlightList as extractedHighlightList, default as ExtHighlight } from './extensions/TextStyleHighlight'
 import ExtImage from '@tiptap/extension-image'
 import ExtPlaceholder from '@tiptap/extension-placeholder'
 import ExtUnderline from '@tiptap/extension-underline'
 import ExtStarterKit from '@tiptap/starter-kit'
 import { TextAlign as ExtTextAlign } from '@tiptap/extension-text-align'
 import ExtTextStyle from '@tiptap/extension-text-style'
-import ExtTextStyleExtraAttributes from './extensions/TextStyleExtraAttributes'
 import ExtYoutube from '@tiptap/extension-youtube'
 import { Icon } from '@iconify/vue'
 import type { EditorView } from 'prosemirror-view/dist'
 import type { Slice } from 'prosemirror-model/dist'
+import EditorColorSelector from './EditorColorSelector.vue'
+import { IwFormColor } from '../../utils/IwFormColor'
 
 ///////////////////////////////////////////@  Props, Emits & Variables
 //////////////////////////////////////////////////////////////////////
@@ -41,6 +42,17 @@ const theEditor = ref<Editor>()
 let fontColor = ref<string>('#000000')
 let fontSize = ref<number>(12)
 const fontSizeOptions = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 36, 48, 72]
+
+/** Used for indicating the current highlight colour on the cursor */
+const highlightIndicatorStyle = computed(() => {
+    const transparent = IwFormColor.transparent.toHex()
+    const color = highlightColorObj.value.toHex()
+
+    return `linear-gradient(to bottom, ${transparent} 80%, ${color} 80%, ${color} 90%, ${transparent} 90%)`
+})
+const highlightColorObj = ref<IwFormColor>(IwFormColor.transparent)
+const showHighlightDropdown = ref(false)
+
 let menus: IwFormEditorMenus[]
 
 
@@ -49,6 +61,19 @@ let menus: IwFormEditorMenus[]
 
 //////////////////////////////////////////////////////////@  Functions
 //////////////////////////////////////////////////////////////////////
+/**
+ * Used for invoking editor's internal highlight module to highlight content
+ */
+function applyHighlightToContent() {
+    const bgColor = highlightColorObj.value
+    const builder = theEditor.value!.chain().focus()
+
+    if (bgColor.isTransparent()) {
+        builder.unsetHighlight().run()
+    } else {
+        builder.setHighlight({ color: bgColor.toHex() }).run()
+    }
+}
 
 function handleDropOntoEditor(view: EditorView, event: DragEvent, slice: Slice, moved: boolean) {
     if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
@@ -113,6 +138,7 @@ function initEditor(): Editor {
             ExtColor,
             ExtFontSize,
             ExtHighlight.configure({
+                multicolor: true,
                 HTMLAttributes: {
                     class: 'iw-form-editor-highlight',
                 },
@@ -134,7 +160,6 @@ function initEditor(): Editor {
                 types: ['heading', 'paragraph'],
             }),
             ExtTextStyle,
-            ExtTextStyleExtraAttributes,
             ExtUnderline.configure({
                 HTMLAttributes: {
                     class: 'iw-form-editor-underline',
@@ -147,6 +172,11 @@ function initEditor(): Editor {
         content: toRaw(config.content),
         onSelectionUpdate: ({ editor }) => {
             fontColor.value = rgbToHex(editor.getAttributes('textStyle').color)
+            highlightColorObj.value = IwFormColor.initFromString(
+                editor.getAttributes('highlight').color
+                || IwFormColor.transparent.toHex()
+            )
+
             onSelectUpdateFontSize(editor as Editor)
         },
         onUpdate: ({ editor }) => {
@@ -160,6 +190,25 @@ function initMenu(editor: Editor) {
 
     fontColor.value = rgbToHex(editor.getAttributes('textStyle').color)
     menus = [
+        {
+            type: 'color',
+            onClick() {
+                showHighlightDropdown.value = !showHighlightDropdown.value
+            },
+            onChange: function (color: IwFormColor) {
+                // If the same colour is being applied, remove the highlight
+                if (color.toHex() == highlightColorObj.value.toHex()) {
+                    color = IwFormColor.transparent
+                }
+                highlightColorObj.value = color
+
+                applyHighlightToContent()
+                showHighlightDropdown.value = false
+            },
+            colorList: extractedHighlightList,
+            icon: 'material-symbols:ink-highlighter-outline',
+            label: 'highlight',
+        },
         {
             onClick: () => editor.chain().focus().toggleBold().run(),
             markOption: ['bold'],
@@ -345,7 +394,9 @@ function rgbToHex(rgbColor: string) {
 
     const values = rgbColor.match(/\d+/g);
     if (!values || values.length !== 3) {
-        throw new Error("Invalid RGB color format");
+        console.warn("Invalid RGB color format. Using IwFormColor...")
+
+        return IwFormColor.initFromString(rgbColor).toHex()
     }
 
     const hexValues = values.map(value => {
@@ -395,11 +446,12 @@ onUnmounted(() => {
              v-if="theEditor">
 
             <span class="iw-form-editor-menu">
-                <input type="color"
+                <input class="m-auto"
+                       type="color"
                        @input="onColorInput"
                        :value="fontColor">
             </span>
-            <span class="iw-form-editor-menu mr-1">
+            <span class="iw-form-editor-menu mr-2">
                 <select v-model="fontSize"
                         @change="onFontSizeChange">
                     <option v-for="size in fontSizeOptions">{{ size }}</option>
@@ -417,6 +469,21 @@ onUnmounted(() => {
                         <span v-if="config.showLabel">
                             {{ menu.label }}
                         </span>
+                    </span>
+                </template>
+                <template v-else-if="'color' == menu.type">
+                    <span class="iw-form-editor-menu iw-form-editor-menu-btn iw-form-editor-menu-highlight-indicator toggleable"
+                          :class="{ 'active': !highlightColorObj.isTransparent() }"
+                          :style="{ 'backgroundImage': highlightIndicatorStyle }"
+                          :title="menu.label + (menu.shortcutKey ? ` (${menu.shortcutKey})` : '')"
+                          @mousedown.self.prevent="() => menu.onClick()">
+                        <Icon :icon="menu.icon"
+                              @mousedown.prevent="() => menu.onClick()" />
+                        <EditorColorSelector :colorList="menu.colorList"
+                                             :hidden="showHighlightDropdown"
+                                             :hintSelectedColor="highlightColorObj.toHex()"
+                                             :replaceDefault="menu.replaceDefault"
+                                             @change="(val) => menu.onChange(val)" />
                     </span>
                 </template>
                 <template v-else-if="'input' == menu.type">

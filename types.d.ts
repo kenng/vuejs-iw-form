@@ -268,6 +268,16 @@ interface IwFormEditorConfig {
     showLabel?: boolean
 }
 
+interface IwFormEditorMenuColor extends IwFormEditorMenu {
+    type: 'color'
+    /** An array of colour names and values in hex or RGB string */
+    colorList: Array<{ label?: string, value: string } | string>
+    /* Whether to replace the default colour list with the supplied colorList */
+    replaceDefault?: boolean,
+    /** @param value IwFormColor class from utils/IwFormColor.ts */
+    onChange: (value: IwFormColor) => void
+}
+
 interface IwFormEditorMenuSeparator {
     type: 'separator'
 }
@@ -282,6 +292,6 @@ interface IwFormEditorMenuInput {
     value?: any
 }
 
-type IwFormEditorMenus = IwFormEditorMenu | IwFormEditorMenuSeparator | IwFormEditorMenuInput
+type IwFormEditorMenus = IwFormEditorMenu | IwFormEditorMenuColor | IwFormEditorMenuSeparator | IwFormEditorMenuInput
 
 type IwFormUploadType = 'image' | 'file' | 'csv'
