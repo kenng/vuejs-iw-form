@@ -79,7 +79,27 @@
 }
 
 .iw-form-editor-menu-dropdown {
-    @apply absolute bg-slate-100/95 cursor-default mt-8 p-2 rounded-sm shadow translate-y-1/2 w-40
+    @apply absolute bg-slate-100/95 color-black cursor-default mt-8 p-2 rounded-sm shadow translate-y-1/2 min-w-40
+}
+
+.iw-form-editor-menu-dropdown-aspect-ratio-lock {
+    @apply color-slate-500 hover:color-slate-800 cursor-pointer transition-colors outline-none
+}
+
+.iw-form-editor-menu-dropdown-aspect-ratio-lock.active {
+    color: #000;
+}
+
+.iw-form-editor-menu-dropdown-btn {
+    @apply block bg-slate-300/90 !color-slate-600 cursor-pointer p-1 rounded-md select-none w-fit transition-colors
+}
+
+.iw-form-editor-menu-dropdown-btn:disabled {
+    @apply color-gray-900 cursor-default opacity-50
+}
+
+.iw-form-editor-menu-dropdown-btn:hover:not(:disabled) {
+    @apply bg-slate-400/90 !color-white
 }
 
 .iw-form-editor-menu-dropdown-colorlist {
@@ -110,6 +130,14 @@
     margin: auto;
     margin-top: 0.5rem;
     width: 2rem;
+}
+
+.iw-form-editor-menu-dropdown-input-url {
+    @apply mb-2 rounded-sm text-blue-900 text-center underline w-full
+}
+
+.iw-form-editor-menu-dropdown-input {
+    @apply mx-1 px-1 rounded-sm text-center w-12
 }
 
 .iw-form-editor-menu-highlight-indicator {

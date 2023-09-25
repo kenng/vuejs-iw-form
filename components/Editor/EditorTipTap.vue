@@ -16,6 +16,7 @@ import { Icon } from '@iconify/vue'
 import type { EditorView } from 'prosemirror-view/dist'
 import type { Slice } from 'prosemirror-model/dist'
 import EditorColorSelector from './EditorColorSelector.vue'
+import EditorVideoEmbed from './EditorVideoEmbed.vue'
 import { IwFormColor } from '../../utils/IwFormColor'
 
 ///////////////////////////////////////////@  Props, Emits & Variables
@@ -55,7 +56,8 @@ const showHighlightDropdown = ref(false)
 
 let menus: IwFormEditorMenus[]
 
-
+const youtubePreview = ref()
+const showEmbedDropdown = ref(false)
 /////////////////////////////////////////////////@  Computed & Watches
 //////////////////////////////////////////////////////////////////////
 
@@ -165,7 +167,15 @@ function initEditor(): Editor {
                     class: 'iw-form-editor-underline',
                 },
             }),
-            ExtYoutube.configure({
+            ExtYoutube.extend({
+                parseHTML() {
+                    return [
+                        {
+                            tag: 'iframe'
+                        }
+                    ]
+                }
+            }).configure({
                 enableIFrameApi: true,
             }),
         ],
@@ -334,6 +344,24 @@ function initMenu(editor: Editor) {
             icon: 'material-symbols:format-quote',
         },
         {
+            type: 'video',
+            onClick: () => {
+                showEmbedDropdown.value = !showEmbedDropdown.value
+            },
+            onInsert() {
+                editor.commands.setYoutubeVideo({
+                    src: youtubePreview.value!.src,
+                    width: +youtubePreview.value!.width,
+                    height: +youtubePreview.value!.height,
+                })
+
+                showEmbedDropdown.value = false
+            },
+            label: 'embed YouTube video',
+            markOption: ['youtube'],
+            icon: 'mingcute:youtube-line',
+        },
+        {
             onClick: () => editor.chain().focus().setHorizontalRule().run(),
             label: 'horizontal rule',
             icon: 'material-symbols:horizontal-rule',
@@ -491,6 +519,18 @@ onUnmounted(() => {
                         <input :type="menu.inputType"
                                @input="menu.onInput"
                                :value="menu.value">
+                    </span>
+                </template>
+                <template v-else-if="'video' == menu.type">
+                    <span class="iw-form-editor-menu iw-form-editor-menu-btn toggleable"
+                          :class="getCss(menu as unknown as IwFormEditorMenu)"
+                          :title="menu.label + (menu.shortcutKey ? ` (${menu.shortcutKey})` : '')"
+                          @mousedown.self.prevent="() => menu.onClick()">
+                        <Icon :icon="menu.icon"
+                              @mousedown.prevent="() => menu.onClick()" />
+                        <EditorVideoEmbed :hidden="!showEmbedDropdown"
+                                          :ref="(el) => youtubePreview = el"
+                                          @insert="menu.onInsert" />
                     </span>
                 </template>
                 <template v-else>
