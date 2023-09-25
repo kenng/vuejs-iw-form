@@ -292,6 +292,11 @@ interface IwFormEditorMenuInput {
     value?: any
 }
 
-type IwFormEditorMenus = IwFormEditorMenu | IwFormEditorMenuColor | IwFormEditorMenuSeparator | IwFormEditorMenuInput
+interface IwFormEditorMenuVideo extends IwFormEditorMenu {
+    type: 'video',
+    onInsert: () => void,
+}
+
+type IwFormEditorMenus = IwFormEditorMenu | IwFormEditorMenuColor | IwFormEditorMenuSeparator | IwFormEditorMenuInput | IwFormEditorMenuVideo
 
 type IwFormUploadType = 'image' | 'file' | 'csv'
