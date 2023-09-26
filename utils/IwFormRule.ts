@@ -118,6 +118,30 @@ export class IwFormRule {
         };
     }
 
+    /**
+     * Limit the size of data to the size of UTF-8 bytes
+     */
+    static maxSizeInBytes({
+        max = 1,
+        required = false,
+        errMsg = `value reached the maximum size of ${max}`,
+    }: {
+        max: number;
+        required?: boolean;
+        errMsg?: string;
+    }): IwFormRuleResponse {
+        return function (data: IRuleData) {
+            if (data.value) {
+                const bytes = new TextEncoder().encode(data.value)
+                return (bytes.length <= max) || errMsg
+            } else if (required) {
+                return 'Required'
+            } else {
+                return true
+            }
+        };
+    }
+
     // untested
     // static sum_not_exceed({
     //     valueA,

@@ -1,10 +1,33 @@
-.iw-form-editor {
+.iwFormEditor {
     position: relative;
     border: 1px solid #c1c1c157;
     border-radius: 10px;
 }
 
-.iw-form-editor-menus {
+.iwFormEditorLengthInfo {
+    @apply hover:bg-white/70 hover:dark:bg-slate-800/70 color-black dark:color-white rounded-md;
+    bottom: 1rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-left: auto;
+    margin-right: 1rem;
+    opacity: 0.5;
+    padding: 0.25rem;
+    position: sticky;
+    transition: color 0.25s, opacity 0.25s;
+    width: fit-content;
+}
+
+.iwFormEditorLengthInfo.error {
+    color: red !important;
+    opacity: 1;
+}
+
+.iwFormEditorLengthInfo:hover {
+    opacity: 1;
+}
+
+.iwFormEditorMenus {
     align-items: center;
     background-color: rgba(255, 255, 255, 0.9);
     /* border-bottom: 2px solid #999999; */
@@ -18,23 +41,23 @@
     z-index: 10;
 }
 
-.iw-form-editor-menus.sticky {
+.iwFormEditorMenus.sticky {
     /* border-top: 2px solid transparent; */
     box-shadow: 0px 3px 5px -3px rgba(51, 51, 51, 0.5);
 }
 
-.iw-form-editor-menus .divider {
+.iwFormEditorMenus .divider {
     border: none;
     border-right: 2px solid rgba(51, 51, 51, 0.5);
     margin: 2px 10px;
     height: 15px;
 }
 
-.iw-form-editor-menus .toggleable {
+.iwFormEditorMenus .toggleable {
     @apply !pointer-events-auto cursor-pointer;
 }
 
-.iw-form-editor-menu {
+.iwFormEditorMenu {
     display: flex;
     color: #333333;
     height: 24px;
@@ -43,70 +66,70 @@
     width: 24px;
 }
 
-.iw-form-editor-menu > input {
+.iwFormEditorMenu > input {
     border: none;
     margin-left: 4px;
 }
 
-.iw-form-editor-menu > input[type='color'] {
+.iwFormEditorMenu > input[type='color'] {
     width: 40px;
     height: 20px;
 }
 
-.iw-form-editor-menu > select {
+.iwFormEditorMenu > select {
     width: 40px;
     font-size: 14px;
 }
 
-.iw-form-editor-menu-btn {
+.iwFormEditorMenuBtn {
     align-items: center;
     border-radius: 5px;
 }
 
 /* Cancel :hover if a div (dropdown) is hovered */
-.iw-form-editor-menu-btn:hover:not(:has(div:hover)),
-.iw-form-editor-menu-btn.active {
+.iwFormEditorMenuBtn:hover:not(:has(div:hover)),
+.iwFormEditorMenuBtn.active {
     @apply cursor-pointer bg-sky-100 dark:bg-sky-700 text-sky-600 dark:text-sky-50 border-sky-500 dark:border-sky-600;
 }
 
-.iw-form-editor-menu.active:not(.toggleable) {
+.iwFormEditorMenu.active:not(.toggleable) {
     @apply cursor-default pointer-events-none;
 }
 
-.iw-form-editor-menu.disabled {
+.iwFormEditorMenu.disabled {
     color: rgba(51, 51, 51, 0.5);
     pointer-events: none;
 }
 
-.iw-form-editor-menu-dropdown {
+.iwFormEditorMenuDropdown {
     @apply absolute bg-slate-100/95 color-black cursor-default mt-8 p-2 rounded-sm shadow translate-y-1/2 min-w-40
 }
 
-.iw-form-editor-menu-dropdown-aspect-ratio-lock {
+.iwFormEditorMenuDropdownAspectRatioLock {
     @apply color-slate-500 hover:color-slate-800 cursor-pointer transition-colors outline-none
 }
 
-.iw-form-editor-menu-dropdown-aspect-ratio-lock.active {
+.iwFormEditorMenuDropdownAspectRatioLock.active {
     color: #000;
 }
 
-.iw-form-editor-menu-dropdown-btn {
+.iwFormEditorMenuDropdownBtn {
     @apply block bg-slate-300/90 !color-slate-600 cursor-pointer p-1 rounded-md select-none w-fit transition-colors
 }
 
-.iw-form-editor-menu-dropdown-btn:disabled {
+.iwFormEditorMenuDropdownBtn:disabled {
     @apply color-gray-900 cursor-default opacity-50
 }
 
-.iw-form-editor-menu-dropdown-btn:hover:not(:disabled) {
+.iwFormEditorMenuDropdownBtn:hover:not(:disabled) {
     @apply bg-slate-400/90 !color-white
 }
 
-.iw-form-editor-menu-dropdown-colorlist {
+.iwFormEditorMenuDropdownColorList {
     @apply grid grid-cols-6 place-content-center gap-2
 }
 
-.iw-form-editor-menu-dropdown-colorlist > li {
+.iwFormEditorMenuDropdownColorList > li {
     border-radius: 0.35rem;
     border-width: 1px;
     cursor: pointer;
@@ -115,16 +138,16 @@
     width: 1rem;
 }
 
-.iw-form-editor-menu-dropdown-colorlist > li.active {
+.iwFormEditorMenuDropdownColorList > li.active {
     border-color: #555 !important;
     border-width: 2px !important;
 }
 
-.iw-form-editor-menu-dropdown-colorlist > li:hover {
+.iwFormEditorMenuDropdownColorList > li:hover {
     border-radius: 1rem;
 }
 
-.iw-form-editor-menu-dropdown-custom-color {
+.iwFormEditorMenuDropdownCustomColor {
     display: block;
     height: 1.25rem;
     margin: auto;
@@ -132,15 +155,15 @@
     width: 2rem;
 }
 
-.iw-form-editor-menu-dropdown-input-url {
+.iwFormEditorMenuDropdownInputUrl {
     @apply mb-2 rounded-sm text-blue-900 text-center underline w-full
 }
 
-.iw-form-editor-menu-dropdown-input {
+.iwFormEditorMenuDropdownInput {
     @apply mx-1 px-1 rounded-sm text-center w-12
 }
 
-.iw-form-editor-menu-highlight-indicator {
+.iwFormEditorMenuHighlightIndicator {
     /* experimental feature */
     /* background-image: linear-gradient(to bottom, RGBA(255, 255, 255, 0) 85%, attr(data-highlight-color) 85%, attr(data-highlight-color) 90%, RGBA(255, 255, 255, 0) 90%); */
     background-size: 60% 100%;
@@ -148,42 +171,42 @@
     background-position-x: center;
 }
 
-.iw-form-editor-content {
+.iwFormEditorContent {
     padding: 15px;
 }
 
-.iw-form-editor .tiptap > * + * {
+.iwFormEditor .tiptap > * + * {
     margin-top: 0.75em;
 }
 
-.iw-form-editor .tiptap ul,
-.iw-form-editor .tiptap ol {
+.iwFormEditor .tiptap ul,
+.iwFormEditor .tiptap ol {
     padding-inline-start: 40px;
 }
 
-.iw-form-editor .tiptap ul {
+.iwFormEditor .tiptap ul {
     list-style-type: disc;
 }
 
-.iw-form-editor .tiptap ol {
+.iwFormEditor .tiptap ol {
     list-style-type: decimal;
 }
 
-.iw-form-editor .tiptap h1,
-.iw-form-editor .tiptap h2,
-.iw-form-editor .tiptap h3,
-.iw-form-editor .tiptap h4,
-.iw-form-editor .tiptap h5,
-.iw-form-editor .tiptap h6 {
+.iwFormEditor .tiptap h1,
+.iwFormEditor .tiptap h2,
+.iwFormEditor .tiptap h3,
+.iwFormEditor .tiptap h4,
+.iwFormEditor .tiptap h5,
+.iwFormEditor .tiptap h6 {
     line-height: 1.1;
 }
 
-.iw-form-editor .tiptap code {
+.iwFormEditor .tiptap code {
     background-color: rgba(97, 97, 97, 0.1);
     color: #616161;
 }
 
-.iw-form-editor .tiptap pre {
+.iwFormEditor .tiptap pre {
     background: #0d0d0d;
     color: #fff;
     font-family: 'JetBrainsMono', monospace;
@@ -191,31 +214,31 @@
     border-radius: 0.5rem;
 }
 
-.iw-form-editor .tiptap pre code {
+.iwFormEditor .tiptap pre code {
     color: inherit;
     padding: 0;
     background: none;
     font-size: 0.8rem;
 }
 
-.iw-form-editor .tiptap img {
+.iwFormEditor .tiptap img {
     max-width: 100%;
     height: auto;
 }
 
-.iw-form-editor .tiptap blockquote {
+.iwFormEditor .tiptap blockquote {
     padding-left: 1rem;
     border-left: 2px solid rgba(13, 13, 13, 0.1);
 }
 
-.iw-form-editor .tiptap hr {
+.iwFormEditor .tiptap hr {
     border: none;
     border-top: 2px solid rgba(13, 13, 13, 0.1);
     margin: 2rem 0;
 }
 
 /** extension **/
-.iw-form-editor .tiptap p.is-editor-empty:first-child::before {
+.iwFormEditor .tiptap p.is-editor-empty:first-child::before {
     color: #adb5bd;
     content: attr(data-placeholder);
     float: left;

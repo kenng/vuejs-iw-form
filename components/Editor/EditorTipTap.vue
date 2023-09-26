@@ -18,6 +18,8 @@ import type { Slice } from 'prosemirror-model/dist'
 import EditorColorSelector from './EditorColorSelector.vue'
 import EditorVideoEmbed from './EditorVideoEmbed.vue'
 import { IwFormColor } from '../../utils/IwFormColor'
+import { IwFormRule } from '../../utils/IwFormRule'
+import { directive as vTippy } from 'vue-tippy'
 
 ///////////////////////////////////////////@  Props, Emits & Variables
 //////////////////////////////////////////////////////////////////////
@@ -27,6 +29,10 @@ const props = defineProps({
     config: {
         type: Object as PropType<IwFormEditorConfig>,
         required: true
+    },
+    formInput: {
+        type: Object as PropType<IwFormInputEditor>,
+        required: true,
     },
 })
 
@@ -39,6 +45,31 @@ const defaultConfig: IwFormEditorConfig = {
 const config: IwFormEditorConfig = Object.assign({}, defaultConfig, props.config)
 
 const theEditor = ref<Editor>()
+/** Indicates the current size of the content */
+const contentLength = ref<number>(0)
+const contentLimit = computed(() => props.config.maxContentSizeInBytes)
+/**
+ * Indicates the remaining size of the content before reaching the limit
+ *
+ * - Positive values if the limit is not reached.
+ * - Negative values if the limit has been surpassed.
+ * - `Infinity` if the limit is not defined.
+ */
+const contentRemaining = computed(() =>
+    contentLimit.value != null
+        ? contentLimit.value - contentLength.value
+        : Infinity
+)
+const contentInfoTooltip = computed(() => {
+    if (contentRemaining.value < Infinity) {
+        const absNum = Math.abs(contentRemaining.value)
+        const nounSuffix = absNum == 1 ? '' : 's'
+        const status = contentRemaining.value < 0 ? 'over limit' : 'remaining'
+
+        return `${absNum} byte${nounSuffix} ${status}. (${contentLength.value} / ${contentLimit.value})`
+    }
+    return ''
+})
 
 let fontColor = ref<string>('#000000')
 let fontSize = ref<number>(12)
@@ -75,6 +106,13 @@ function applyHighlightToContent() {
     } else {
         builder.setHighlight({ color: bgColor.toHex() }).run()
     }
+}
+
+/**
+ * Return the number of bytes occupied by a string of text converted to UTF-8
+ */
+function calculateTextUtf8Length(content: string): number {
+    return new TextEncoder().encode(content).length
 }
 
 function handleDropOntoEditor(view: EditorView, event: DragEvent, slice: Slice, moved: boolean) {
@@ -142,7 +180,7 @@ function initEditor(): Editor {
             ExtHighlight.configure({
                 multicolor: true,
                 HTMLAttributes: {
-                    class: 'iw-form-editor-highlight',
+                    class: 'iwFormEditorHighlight',
                 },
             }),
             ExtImage
@@ -178,7 +216,7 @@ function initEditor(): Editor {
             ExtTextStyle,
             ExtUnderline.configure({
                 HTMLAttributes: {
-                    class: 'iw-form-editor-underline',
+                    class: 'iwFormEditorUnderline',
                 },
             }),
             ExtYoutube.extend({
@@ -205,6 +243,11 @@ function initEditor(): Editor {
         },
         onUpdate: ({ editor }) => {
             const content = editor.getHTML()
+
+            if (config.maxContentSizeInBytes) {
+                contentLength.value = calculateTextUtf8Length(content)
+            }
+
             emit('change', content)
         }
     })
@@ -460,6 +503,40 @@ function onColorInput($event: Event) {
     theEditor.value!.chain().focus().setColor(color).run()
     fontColor.value = color
 }
+
+/**
+ * Shorten bytes value by approximating to their decimal Metric (SI) prefix
+ *
+ * ### Example
+ * ```
+ * shortenBytesToStr(123) // returns: '123B'
+ * shortenBytesToStr(12345) // returns: '12KB'
+ * shortenBytesToStr(12345, 1) // returns: '12.3KB'
+ *
+ * shortenBytesToStr(-1_000_000) // returns: '-1MB'
+ * ```
+ */
+function shortenBytesToStr(num: number, decimalPoints = 0): string {
+    const kilo = 1e3
+    const mega = 1e6
+    const giga = 1e9
+    const tera = 1e12
+    const absNum = num < 0 ? -num : num
+
+    const convert = (exp: number) => (num / exp).toFixed(decimalPoints)
+
+    if (absNum >= tera) {
+        return `${convert(tera)}TB`
+    } else if (absNum >= giga) {
+        return `${convert(giga)}GB`
+    } else if (absNum >= mega) {
+        return `${convert(mega)}MB`
+    } else if (absNum >= kilo) {
+        return `${convert(kilo)}kB`
+    } else {
+        return `${convert(1)}B`
+    }
+}
 /////////////////////////////////////////////////////////@  Lifecycles
 //////////////////////////////////////////////////////////////////////
 onMounted(() => {
@@ -469,6 +546,22 @@ onMounted(() => {
     if (config.content) {
         emit('change', theEditor.value.getHTML())
     }
+
+    if (config.maxContentSizeInBytes != null) {
+        const lengthRule = IwFormRule.maxSizeInBytes({
+            max: config.maxContentSizeInBytes,
+            errMsg: 'The size of content exceeds the size limit'
+        })
+
+        if (props.formInput.rules) {
+            props.formInput.rules.push(lengthRule)
+        } else {
+            props.formInput.rules = [lengthRule]
+        }
+    }
+
+    // Populate content's length
+    contentLength.value = calculateTextUtf8Length(theEditor.value.getHTML())
 })
 
 onUnmounted(() => {
@@ -483,17 +576,17 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="iw-form-editor">
-        <div class="iw-form-editor-menus"
+    <div class="iwFormEditor">
+        <div class="iwFormEditorMenus"
              v-if="theEditor">
 
-            <span class="iw-form-editor-menu">
+            <span class="iwFormEditorMenu">
                 <input class="m-auto"
                        type="color"
                        @input="onColorInput"
                        :value="fontColor">
             </span>
-            <span class="iw-form-editor-menu mr-2">
+            <span class="iwFormEditorMenu mr-2">
                 <select v-model="fontSize"
                         @change="onFontSizeChange">
                     <option v-for="size in fontSizeOptions">{{ size }}</option>
@@ -505,7 +598,7 @@ onUnmounted(() => {
                     <span @click="() => menu.onClick()"
                           :disabled="menu.disabled ? menu.disabled() : false"
                           :title="menu.label + (menu.shortcutKey ? ` (${menu.shortcutKey})` : '')"
-                          class="iw-form-editor-menu iw-form-editor-menu-btn"
+                          class="iwFormEditorMenu iwFormEditorMenuBtn"
                           :class="getCss(menu)">
                         <Icon :icon="menu.icon" />
                         <span v-if="config.showLabel">
@@ -514,7 +607,7 @@ onUnmounted(() => {
                     </span>
                 </template>
                 <template v-else-if="'color' == menu.type">
-                    <span class="iw-form-editor-menu iw-form-editor-menu-btn iw-form-editor-menu-highlight-indicator toggleable"
+                    <span class="iwFormEditorMenu iwFormEditorMenuBtn iwFormEditorMenuHighlightIndicator toggleable"
                           :class="{ 'active': !highlightColorObj.isTransparent() }"
                           :style="{ 'backgroundImage': highlightIndicatorStyle }"
                           :title="menu.label + (menu.shortcutKey ? ` (${menu.shortcutKey})` : '')"
@@ -529,14 +622,14 @@ onUnmounted(() => {
                     </span>
                 </template>
                 <template v-else-if="'input' == menu.type">
-                    <span class="iw-form-editor-menu">
+                    <span class="iwFormEditorMenu">
                         <input :type="menu.inputType"
                                @input="menu.onInput"
                                :value="menu.value">
                     </span>
                 </template>
                 <template v-else-if="'video' == menu.type">
-                    <span class="iw-form-editor-menu iw-form-editor-menu-btn toggleable"
+                    <span class="iwFormEditorMenu iwFormEditorMenuBtn toggleable"
                           :class="getCss(menu as unknown as IwFormEditorMenu)"
                           :title="menu.label + (menu.shortcutKey ? ` (${menu.shortcutKey})` : '')"
                           @mousedown.self.prevent="() => menu.onClick()">
@@ -554,6 +647,12 @@ onUnmounted(() => {
 
         </div>
         <editor-content :editor="theEditor"
-                        class="iw-form-editor-content" />
+                        class="iwFormEditorContent" />
+
+    </div>
+    <div class="iwFormEditorLengthInfo"
+         :class="{ 'error': contentRemaining < 0 }"
+         v-tippy="contentInfoTooltip">
+        {{ shortenBytesToStr(contentLength, 1) }}
     </div>
 </template>

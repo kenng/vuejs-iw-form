@@ -116,7 +116,7 @@ defineExpose({
 <template>
     <Transition name="fade">
         <div v-show="!props.hidden"
-             class="iw-form-editor-menu-dropdown text-xs"
+             class="iwFormEditorMenuDropdown text-xs"
              title=""> <!-- Stop title inheritance -->
             <label class="block my-1"
                    for="youtubeLink">
@@ -124,7 +124,7 @@ defineExpose({
             </label>
             <input type="text"
                    autocomplete="off"
-                   class="iw-form-editor-menu-dropdown-input-url"
+                   class="iwFormEditorMenuDropdownInputUrl"
                    name="youtubeLink"
                    placeholder="www.youtube.com  |  <iframe>...</iframe>"
                    size="43"
@@ -144,13 +144,13 @@ defineExpose({
                 <span class="inline-block">
                     <label for="width">Width:</label>
                     <input type="number"
-                           class="iw-form-editor-menu-dropdown-input"
+                           class="iwFormEditorMenuDropdownInput"
                            min="0"
                            name="width"
                            v-model="width" />
                 </span>
                 <Icon v-if="false"
-                      class="iw-form-editor-menu-dropdown-aspect-ratio-lock"
+                      class="iwFormEditorMenuDropdownAspectRatioLock"
                       height="1rem"
                       :class="{ 'active': aspectRatioLocked }"
                       icon="ic:twotone-link"
@@ -159,7 +159,7 @@ defineExpose({
                 <span>
                     <label for="height">Height:</label>
                     <input type="number"
-                           class="iw-form-editor-menu-dropdown-input"
+                           class="iwFormEditorMenuDropdownInput"
                            min="0"
                            name="height"
                            v-model="height" />
@@ -167,7 +167,7 @@ defineExpose({
             </section>
 
             <input type="button"
-                   class="iw-form-editor-menu-dropdown-btn mx-auto mt-2"
+                   class="iwFormEditorMenuDropdownBtn mx-auto mt-2"
                    :disabled="insertButtonDisabled"
                    value="Insert"
                    @mousedown.prevent="emit('insert')">

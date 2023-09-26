@@ -509,6 +509,7 @@ initRenderCallback();
               <IwFormLabel :id="getId((item as IwFormInputCore))"
                            :item="(item as IwFormInputCore)" />
               <Editor :config="item.config"
+                      :formInput="item"
                       @change="(htmlData) => onChange(item, htmlData)" />
             </template>
 
