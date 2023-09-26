@@ -189,9 +189,9 @@ function switchColor(value: string) {
 <template>
     <Transition name="fade">
         <div v-show="props.hidden"
-             class="iw-form-editor-menu-dropdown translate-x-1/2"
+             class="iwFormEditorMenuDropdown translate-x-1/2"
              title=""> <!-- Stop title inheritance -->
-            <ul class="iw-form-editor-menu-dropdown-colorlist">
+            <ul class="iwFormEditorMenuDropdownColorList">
                 <li v-for="(color, key) in colorListInUse"
                     :class="{
                         'active':
@@ -213,7 +213,7 @@ function switchColor(value: string) {
                           ref="clearColorRef" />
                 </li>
             </ul>
-            <input class="iw-form-editor-menu-dropdown-custom-color cursor-pointer h-full w-full"
+            <input class="iwFormEditorMenuDropdownCustomColor cursor-pointer h-full w-full"
                    name="Custom color"
                    type="color"
                    value="#ffffff"

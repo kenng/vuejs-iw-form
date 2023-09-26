@@ -260,6 +260,7 @@ interface IwFormEditorMenu {
 
 interface IwFormEditorConfig {
     content?: string
+    maxContentSizeInBytes?: number
     maxImageUploadPixel?: number
     maxImageSizeInMb?: number
     onSave?: (content?: string) => void
