@@ -145,10 +145,24 @@ function initEditor(): Editor {
                     class: 'iw-form-editor-highlight',
                 },
             }),
-            ExtImage.configure({
-                allowBase64: true,
-                inline: true,
-            }),
+            ExtImage
+                .extend({
+                    addAttributes() {
+                        return {
+                            ...this.parent?.(),
+                            style: {
+                                default: null
+                            }
+                        }
+                    },
+                })
+                .configure({
+                    allowBase64: true,
+                    HTMLAttributes: {
+                        class: 'iwFormEditorPreviewImg'
+                    },
+                    inline: true,
+                }),
             ExtPlaceholder.configure({ placeholder: config.placeholder, }),
             ExtStarterKit.configure({
                 heading: {
