@@ -237,11 +237,13 @@ function isFormDataModified(): boolean {
 async function myFormOnSubmit(ev: Event) {
   try {
     submitIsLoading.value = true
+    _isModified.value = false
     await formOnSubmit(ev)
     submitIsLoading.value = false
-    _isModified.value = false
   } catch (e) {
     throw e
+  } finally {
+    _isModified.value = true
   }
 }
 

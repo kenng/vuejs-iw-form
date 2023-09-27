@@ -18,9 +18,9 @@ const emit = defineEmits(['insert'])
 const preview = ref<HTMLIFrameElement>()
 
 const aspectRatioLocked = ref(false)
-const height = ref(180)
+const height = ref(320)
 const insertButtonDisabled = ref(true)
-const width = ref(320)
+const width = ref(640)
 /////////////////////////////////////////////////@  Computed & Watches
 //////////////////////////////////////////////////////////////////////
 
