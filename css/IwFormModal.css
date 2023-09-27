@@ -1,9 +1,9 @@
 .iwFormModal {
-    @apply rounded-3xl flex-1 min-w-9/12 shadow bg-white dark:bg-gray-800 dark:border-gray-700;
+    @apply cursor-default rounded-3xl flex-1 min-w-9/12 shadow bg-white dark:bg-gray-800 dark:border-gray-700;
 }
 
 .iwFormModalBackdrop {
-    @apply fixed flex top-0 left-0 right-0 z-40 p-6 w-full h-full overflow-auto bg-slate-900/95 align-middle items-center;
+    @apply cursor-pointer fixed flex top-0 left-0 right-0 z-40 p-6 w-full h-full overflow-auto bg-slate-900/95 align-middle items-center;
 }
 
 .iwFormModalBody {
