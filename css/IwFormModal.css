@@ -1,0 +1,55 @@
+.iwFormModal {
+    @apply rounded-3xl flex-1 min-w-9/12 shadow bg-white dark:bg-gray-800 dark:border-gray-700;
+}
+
+.iwFormModalBackdrop {
+    @apply fixed flex top-0 left-0 right-0 z-40 p-6 w-full h-full overflow-auto bg-slate-900/95 align-middle items-center;
+}
+
+.iwFormModalBody {
+    @apply pb-6 space-y-6;
+}
+
+.iwFormModalBodyIcon {
+    @apply h-12 w-12;
+}
+
+.iwFormModalBodyIconWrapper {
+    @apply flex justify-center;
+}
+
+.iwFormModalBodyTitle {
+    @apply text-center text-2xl font-semibold text-gray-900 dark:text-white;
+}
+
+.iwFormModalCloseBtn {
+    @apply text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-full text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white;
+}
+
+.iwFormModalCloseBtn > span {
+    @apply sr-only;
+}
+
+.iwFormModalCloseBtnIcon {
+    @apply w-6 h-6;
+}
+
+.iwFormModalFooter {
+    @apply grid grid-cols-2 gap-6 pt-10 px-10 pb-10 space-x-2 rounded-b flex-[1_0_0];
+}
+
+.iwFormModalFooterBtn.primaryBtn {
+    @apply !text-white !bg-primary-700 hover:!bg-primary-800 dark:!bg-primary-600 dark:hover:!bg-primary-700 border-none dark:focus:!ring-primary-800;
+}
+
+.iwFormModalFooterBtn {
+    @apply text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 rounded-lg text-center border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600;
+}
+
+.iwFormModalScreen {
+    @apply w-screen max-w-screen-2xl relative m-auto;
+}
+
+.iwFormModalTitle {
+    @apply flex items-start justify-between pt-4 p-r4 rounded-t dark:border-gray-600;
+}
