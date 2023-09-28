@@ -102,11 +102,11 @@
 }
 
 .iwFormEditorMenuDropdown {
-    @apply absolute bg-slate-100/95 color-black cursor-default mt-8 p-2 rounded-sm shadow translate-x-1/2 translate-y-1/2 min-w-40
+    @apply absolute bg-slate-100/95 color-black cursor-default mt-8 p-2 rounded-sm shadow translate-x-1/2 translate-y-1/2 min-w-40;
 }
 
 .iwFormEditorMenuDropdownColorList {
-    @apply grid grid-cols-6 place-content-center gap-2
+    @apply grid grid-cols-6 place-content-center gap-2;
 }
 
 .iwFormEditorMenuDropdownColorList > li {
@@ -141,7 +141,7 @@
 }
 
 .iwFormEditorMenuDropdownEmbedAspectRatioLock {
-    @apply color-slate-500 hover:color-slate-800 cursor-pointer transition-colors outline-none
+    @apply color-slate-500 hover:color-slate-800 cursor-pointer transition-colors outline-none;
 }
 
 .iwFormEditorMenuDropdownEmbedAspectRatioLock.active {
@@ -153,11 +153,11 @@
 }
 
 .iwFormEditorMenuDropdownEmbedInsertBtn:disabled {
-    @apply color-gray-900 cursor-default opacity-50
+    @apply color-gray-900 cursor-default opacity-50;
 }
 
 .iwFormEditorMenuDropdownEmbedInsertBtn:hover:not(:disabled) {
-    @apply bg-slate-400/90 !color-white
+    @apply bg-slate-400/90 !color-white;
 }
 
 .iwFormEditorMenuDropdownEmbedIframe {
@@ -169,15 +169,15 @@
 }
 
 .iwFormEditorMenuDropdownEmbedConfigSection {
-    @apply grid grid-cols-2 justify-items-center mb-2 mx-auto
+    @apply grid grid-cols-2 justify-items-center mb-2 mx-auto;
 }
 
 .iwFormEditorMenuDropdownEmbedInputUrl {
-    @apply mb-2 rounded-sm text-blue-900 text-center text-xs underline w-full
+    @apply mb-2 rounded-sm text-blue-900 text-center text-xs underline w-full;
 }
 
 .iwFormEditorMenuDropdownEmbedConfigInput {
-    @apply mx-1 px-1 rounded-sm text-center text-xs w-12
+    @apply mx-1 px-1 rounded-sm text-center text-xs w-12;
 }
 
 .iwFormEditorMenuDropdownEmbedConfigLabel {
