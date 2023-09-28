@@ -63,12 +63,15 @@ const contentRemaining = computed(() =>
 const contentInfoTooltip = computed(() => {
     if (contentRemaining.value < Infinity) {
         const absNum = Math.abs(contentRemaining.value)
-        const nounSuffix = absNum == 1 ? '' : 's'
+        const nounSuffix = absNum <= 1 ? '' : 's'
         const status = contentRemaining.value < 0 ? 'over limit' : 'remaining'
 
         return `${absNum} byte${nounSuffix} ${status}. (${contentLength.value} / ${contentLimit.value})`
+    } else {
+        const nounSuffix = contentLength.value <= 1 ? '' : 's'
+
+        return `${contentLength.value} byte${nounSuffix} used.`
     }
-    return ''
 })
 
 let fontColor = ref<string>('#000000')
