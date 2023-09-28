@@ -189,7 +189,7 @@ function switchColor(value: string) {
 <template>
     <Transition name="fade">
         <div v-show="props.hidden"
-             class="iwFormEditorMenuDropdown translate-x-1/2"
+             class="iwFormEditorMenuDropdown"
              title=""> <!-- Stop title inheritance -->
             <ul class="iwFormEditorMenuDropdownColorList">
                 <li v-for="(color, key) in colorListInUse"
@@ -208,12 +208,12 @@ function switchColor(value: string) {
                 <li v-if="props.showClearColor"
                     v-tippy="'Clear'"
                     @click="(ev: Event) => switchColor(IwFormColor.transparent.toHex())">
-                    <Icon class="!block hover:!color-slate-500 !color-slate-700 h-full w-full transition-all"
+                    <Icon class="iwFormEditorMenuDropdownColorListClearColor"
                           icon="bx:block"
                           ref="clearColorRef" />
                 </li>
             </ul>
-            <input class="iwFormEditorMenuDropdownCustomColor cursor-pointer h-full w-full"
+            <input class="iwFormEditorMenuDropdownCustomColor"
                    name="Custom color"
                    type="color"
                    value="#ffffff"

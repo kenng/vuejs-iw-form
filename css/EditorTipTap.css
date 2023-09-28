@@ -102,7 +102,7 @@
 }
 
 .iwFormEditorMenuDropdown {
-    @apply absolute bg-slate-100/95 color-black cursor-default mt-8 p-2 rounded-sm shadow translate-y-1/2 min-w-40
+    @apply absolute bg-slate-100/95 color-black cursor-default mt-8 p-2 rounded-sm shadow translate-x-1/2 translate-y-1/2 min-w-40
 }
 
 .iwFormEditorMenuDropdownAspectRatioLock {
@@ -147,7 +147,12 @@
     border-radius: 1rem;
 }
 
+.iwFormEditorMenuDropdownColorListClearColor {
+    @apply !block hover:!color-slate-500 !color-slate-700 h-full transition-all w-full;
+}
+
 .iwFormEditorMenuDropdownCustomColor {
+    cursor: pointer;
     display: block;
     height: 1.25rem;
     margin: auto;
