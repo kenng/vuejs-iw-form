@@ -105,26 +105,6 @@
     @apply absolute bg-slate-100/95 color-black cursor-default mt-8 p-2 rounded-sm shadow translate-x-1/2 translate-y-1/2 min-w-40
 }
 
-.iwFormEditorMenuDropdownAspectRatioLock {
-    @apply color-slate-500 hover:color-slate-800 cursor-pointer transition-colors outline-none
-}
-
-.iwFormEditorMenuDropdownAspectRatioLock.active {
-    color: #000;
-}
-
-.iwFormEditorMenuDropdownBtn {
-    @apply block bg-slate-300/90 !color-slate-600 cursor-pointer p-1 rounded-md select-none w-fit transition-colors
-}
-
-.iwFormEditorMenuDropdownBtn:disabled {
-    @apply color-gray-900 cursor-default opacity-50
-}
-
-.iwFormEditorMenuDropdownBtn:hover:not(:disabled) {
-    @apply bg-slate-400/90 !color-white
-}
-
 .iwFormEditorMenuDropdownColorList {
     @apply grid grid-cols-6 place-content-center gap-2
 }
@@ -160,12 +140,48 @@
     width: 2rem;
 }
 
-.iwFormEditorMenuDropdownInputUrl {
-    @apply mb-2 rounded-sm text-blue-900 text-center underline w-full
+.iwFormEditorMenuDropdownEmbedAspectRatioLock {
+    @apply color-slate-500 hover:color-slate-800 cursor-pointer transition-colors outline-none
 }
 
-.iwFormEditorMenuDropdownInput {
-    @apply mx-1 px-1 rounded-sm text-center w-12
+.iwFormEditorMenuDropdownEmbedAspectRatioLock.active {
+    color: #000;
+}
+
+.iwFormEditorMenuDropdownEmbedInsertBtn {
+    @apply block bg-slate-300/90 !color-slate-600 cursor-pointer mx-auto p-1 rounded-md select-none text-xs transition-colors w-fit;
+}
+
+.iwFormEditorMenuDropdownEmbedInsertBtn:disabled {
+    @apply color-gray-900 cursor-default opacity-50
+}
+
+.iwFormEditorMenuDropdownEmbedInsertBtn:hover:not(:disabled) {
+    @apply bg-slate-400/90 !color-white
+}
+
+.iwFormEditorMenuDropdownEmbedIframe {
+    @apply mx-auto my-1;
+}
+
+.iwFormEditorMenuDropdownEmbedInputLabel {
+    @apply block my-1 text-xs;
+}
+
+.iwFormEditorMenuDropdownEmbedConfigSection {
+    @apply grid grid-cols-2 justify-items-center mb-2 mx-auto
+}
+
+.iwFormEditorMenuDropdownEmbedInputUrl {
+    @apply mb-2 rounded-sm text-blue-900 text-center text-xs underline w-full
+}
+
+.iwFormEditorMenuDropdownEmbedConfigInput {
+    @apply mx-1 px-1 rounded-sm text-center text-xs w-12
+}
+
+.iwFormEditorMenuDropdownEmbedConfigLabel {
+    @apply text-xs;
 }
 
 .iwFormEditorMenuHighlightIndicator {
