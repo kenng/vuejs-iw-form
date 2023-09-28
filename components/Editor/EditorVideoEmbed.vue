@@ -116,22 +116,22 @@ defineExpose({
 <template>
     <Transition name="fade">
         <div v-show="!props.hidden"
-             class="iwFormEditorMenuDropdown text-xs"
+             class="iwFormEditorMenuDropdown"
              title=""> <!-- Stop title inheritance -->
-            <label class="block my-1"
+            <label class="iwFormEditorMenuDropdownEmbedInputLabel"
                    for="youtubeLink">
                 YouTube Embed:
             </label>
             <input type="text"
                    autocomplete="off"
-                   class="iwFormEditorMenuDropdownInputUrl"
+                   class="iwFormEditorMenuDropdownEmbedInputUrl"
                    name="youtubeLink"
                    placeholder="www.youtube.com  |  <iframe>...</iframe>"
                    size="43"
                    @input="(ev) => onInputUrl((ev.target as HTMLInputElement).value)" />
 
             <iframe v-show="preview?.src"
-                    class="mx-auto my-1"
+                    class="iwFormEditorMenuDropdownEmbedIframe"
                     height="144"
                     ref="preview"
                     width="256">
@@ -139,27 +139,28 @@ defineExpose({
 
             <br />
 
-            <!-- <section class="mx-auto grid grid-cols-[3fr_1fr_3fr] justify-items-center"> -->
-            <section class="mx-auto grid grid-cols-2 justify-items-center">
+            <section class="iwFormEditorMenuDropdownEmbedConfigSection">
                 <span class="inline-block">
-                    <label for="width">Width:</label>
+                    <label class="iwFormEditorMenuDropdownEmbedConfigLabel"
+                           for="width">Width:</label>
                     <input type="number"
-                           class="iwFormEditorMenuDropdownInput"
+                           class="iwFormEditorMenuDropdownEmbedConfigInput"
                            min="0"
                            name="width"
                            v-model="width" />
                 </span>
                 <Icon v-if="false"
-                      class="iwFormEditorMenuDropdownAspectRatioLock"
+                      class="iwFormEditorMenuDropdownEmbedAspectRatioLock"
                       height="1rem"
                       :class="{ 'active': aspectRatioLocked }"
                       icon="ic:twotone-link"
                       v-tippy="aspectRatioLocked ? 'Locked 🔒' : 'Unlocked 🔓'"
                       @click="() => aspectRatioLocked = !aspectRatioLocked" />
                 <span>
-                    <label for="height">Height:</label>
+                    <label class="iwFormEditorMenuDropdownEmbedConfigLabel"
+                           for="height">Height:</label>
                     <input type="number"
-                           class="iwFormEditorMenuDropdownInput"
+                           class="iwFormEditorMenuDropdownEmbedConfigInput"
                            min="0"
                            name="height"
                            v-model="height" />
@@ -167,7 +168,7 @@ defineExpose({
             </section>
 
             <input type="button"
-                   class="iwFormEditorMenuDropdownBtn mx-auto mt-2"
+                   class="iwFormEditorMenuDropdownEmbedInsertBtn"
                    :disabled="insertButtonDisabled"
                    value="Insert"
                    @mousedown.prevent="emit('insert')">
