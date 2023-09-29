@@ -52,11 +52,8 @@ const props = defineProps({
     },
 })
 
-const closed = ref(false)
-
 function onModalClose() {
     emit('close')
-    closed.value = true
 }
 
 function onLeftBtnClick() {
@@ -69,7 +66,7 @@ function onRightBtnClick() {
 </script>
 
 <template>
-    <div v-if="isVisible && !closed"
+    <div v-if="isVisible"
          tabindex="-1"
          class="iwFormModalBackdrop">
         <div :class="`iwFormModalScreen ${width} ${height}`">

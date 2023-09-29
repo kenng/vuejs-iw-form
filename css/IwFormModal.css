@@ -51,5 +51,5 @@
 }
 
 .iwFormModalTitle {
-    @apply flex items-start justify-between pt-4 p-r4 rounded-t dark:border-gray-600;
+    @apply flex items-start justify-between p-4 rounded-t dark:border-gray-600;
 }
