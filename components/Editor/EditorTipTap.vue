@@ -132,43 +132,65 @@ function calculateTextUtf8Length(content: string): number {
  * convertHTMLEntities('&lt;p&gt; Foo &lt;/p&gt;', 'decode')
  * // returns '<p> Foo </p>'
  * ```
- * @param data
+ * @param data The editor content
  * @param type The type of conversion, 'encode' or 'decode'
  */
-function convertHTMLEntitites(data: string, type: 'encode' | 'decode'): string {
-    type MatchPattern = string
-        | {
-            /** The RegExp pattern to be used when matching */
-            pat: RegExp,
-            /** The string value to be used when replacing */
-            str: string,
-        }
+function convertHTMLEntitites(data: string | null, type: 'encode' | 'decode' = 'encode'): string {
+    type MatchPattern = {
+        /** The string value to be used when replacing */
+        str: string
+        /** The RegExp pattern to be used when matching */
+        pat: RegExp
+    } | string
 
     /**
      * The list of conversion that will be done in sequence
      *
-     * Encode from HTML will be done scendingly
+     * Encode from HTML will be done ascendingly
      * Decode to HTML will be done descendingly
      */
-    const encodeList: Array<[MatchPattern, MatchPattern]> = [
-        ['<', '&lt;'],
-        ['>', '&gt;'],
-        [{ pat: /\r?\n/g, str: '\r\n' }, { pat: /<br ?\/?>/g, str: '<br />' }],
+    const encodeList: Array<{ encoded: MatchPattern, decoded: MatchPattern }> = [
+        {
+            decoded: '<',
+            encoded: '&lt;',
+        },
+        {
+            decoded: '>',
+            encoded: '&gt;',
+        },
+        {
+            decoded: {
+                str: '\r\n',
+                pat: /\r?\n/g,
+            },
+            encoded: {
+                str: '<br />',
+                pat: /<br ?\/?>/g
+            }
+        }
     ]
 
-    if (type == 'encode') {
-        for (const [from, to] of encodeList) {
-            const pat = typeof from == 'string' ? from : from.pat
-            const rep = typeof to == 'string' ? to : to.str
+    if (!data) return ''
 
-            data = data.replaceAll(pat, rep)
+    if (type == 'encode') {
+        // Replace from decoded char to encoded char
+        for (const { encoded, decoded } of encodeList) {
+            /** The pattern to match for the decoded string in the content */
+            const pat = typeof decoded == 'string' ? decoded : decoded.pat
+            /** The value to replace the decoded string to encoded string */
+            const replaceStr = typeof encoded == 'string' ? encoded : encoded.str
+
+            data = data.replaceAll(pat, replaceStr)
         }
     } else {
-        for (const [to, from] of encodeList.toReversed()) {
-            const pat = typeof from == 'string' ? from : from.pat
-            const rep = typeof to == 'string' ? to : to.str
+        // Replace from encoded char to decoded char
+        for (const { encoded, decoded } of encodeList) {
+            /** The pattern to match for the encoded string in the content */
+            const pat = typeof encoded == 'string' ? encoded : encoded.pat
+            /** The value to replace the encoded string to decoded string */
+            const replaceStr = typeof decoded == 'string' ? decoded : decoded.str
 
-            data = data.replaceAll(pat, rep)
+            data = data.replaceAll(pat, replaceStr)
         }
     }
     return data
