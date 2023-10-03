@@ -260,6 +260,8 @@ interface IwFormEditorMenu {
 
 interface IwFormEditorConfig {
     content?: string
+    /** Edit content as plain text (HTML will not be parsed) */
+    editAsPlainText?: boolean,
     maxContentSizeInBytes?: number
     maxImageUploadPixel?: number
     maxImageSizeInMb?: number
