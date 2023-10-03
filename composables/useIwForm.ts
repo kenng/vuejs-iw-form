@@ -266,6 +266,32 @@ export const useIwForm = (config: IwFormUseConfig) => {
         clearErrorsIfValidated(item, val)
     }
 
+
+    /**
+     * Event handler for dropdown search
+     *
+     * @param item The IwFormInput object
+     * @param val  The search query
+     */
+    async function onSelectSearch(item: IwFormInputSelectCore, val: any) {
+        if (item.onSearch) {
+            item.onSearch.call(myForm, item, val)
+        } else if (item.onSearchUpdateInput) {
+
+            const theInput = myForm.locateSelectInput(item.name)
+            if (theInput) {
+                theInput.selectConfig.setShowLoading();
+                const res = await item.onSearchUpdateInput.call(myForm, item, val)
+
+                if (res.usePatch) {
+                    myForm.patchSelectInput(res.linkedInputName, res.newSelectConfig)
+                } else {
+                    myForm.updateSelectInput(res.linkedInputName, res.newSelectConfig)
+                }
+            }
+        }
+    }
+
     function removeDisabledInputValue(): Object {
         const formData = {}
         for (const group of (config.myForm.formGroups)) {
@@ -354,6 +380,7 @@ export const useIwForm = (config: IwFormUseConfig) => {
         onChange,
         onFocus,
         onInput,
+        onSelectSearch,
         removeDisabledInputValue,
         validate,
         validateAll,

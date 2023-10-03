@@ -170,6 +170,7 @@ const {
   onChange: useOnChange,
   onFocus,
   onInput: useOnInput,
+  onSelectSearch,
   submitIsLoading,
   validate,
   validateAll: useValidateAll,
@@ -262,12 +263,6 @@ function onFormModified() {
 async function onChange(item: IwFormInputCore, val: any, ...extra: any[]) {
   useOnChange(item, val)
 
-  if (item.onChange) item.onChange(item, val, ...extra)
-  if (item.onChangeUpdateInput) {
-    const res = await item.onChangeUpdateInput(item, val, ...extra)
-    props.myForm.updateSelectInput(res.linkedInputName, res.newSelectConfig)
-  }
-
   emit('change', { item, val, ...extra })
   onFormModified()
 }
@@ -277,7 +272,7 @@ function onInput(item: IwFormInputCore, val: any) {
   onFormModified()
 }
 
-function selectInputOnChange(item: IwFormInputSelect,
+function selectInputOnChange(item: IwFormInputSelectCore,
   selectedKeys: IwFormInputSelectedKeys,
   selectedRaw: IwFormInputSelectedOption | IwFormInputSelectedOption[],
   justSelected: IwFormInputSelectedOption,
@@ -356,7 +351,7 @@ initRenderCallback();
                         :class="getInputCss((item as IwFormInputCore))"
                         :disabled="isDisabled((item as IwFormInputTextArea).disabled, isReadOnly)"
                         :id="getId((item as IwFormInputCore))"
-                        :key="identifier + idx"
+                        :key="keys[(item as IwFormInputCore).name]"
                         :name="(item as IwFormInputTextArea).name"
                         :placeholder="(item as IwFormInputTextArea).placeholder"
                         :ref="getRef(item)"
@@ -397,7 +392,7 @@ initRenderCallback();
                          :class="getInputCss((item as IwFormInputCore))"
                          :disabled="isDisabled((item as IwFormInputText).disabled, isReadOnly)"
                          :id="getId((item as IwFormInputCore))"
-                         :key="identifier + idx"
+                         :key="keys[(item as IwFormInputCore).name]"
                          :name="(item as IwFormInputText).name"
                          :placeholder="(item as IwFormInputText).placeholder"
                          :ref="getRef(item)"
@@ -436,6 +431,7 @@ initRenderCallback();
                   <VueMultiSelect :config="item.selectConfig"
                                   :disabled="item.disabled"
                                   :id="getId((item as IwFormInputCore))"
+                                  :key="keys[(item as IwFormInputCore).name]"
                                   ref="inputRefs"
                                   @changed="(selectedKeys, selectedRaw, justSelected) =>
                                     selectInputOnChange(item, selectedKeys, selectedRaw, justSelected, myForm)"
@@ -459,12 +455,48 @@ initRenderCallback();
               </template>
             </template>
 
+            <template name="autocomplete"
+                      v-else-if="'autocomplete' === (item.type)">
+              <template v-if="isVisible(item)">
+                <template v-if='!isReadOnly'>
+                  <IwFormLabel :id="getId((item as IwFormInputCore))"
+                               :item="(item as IwFormInputCore)" />
+                  <VueMultiSelect :config="item.selectConfig"
+                                  :attributes="{ preventAutofocus: true }"
+                                  :key="keys[(item as IwFormInputCore).name]"
+                                  @changed="(selectedKeys, selectedRaw, justSelected) =>
+                                    selectInputOnChange(item, selectedKeys, selectedRaw, justSelected, myForm)"
+                                  @searchChanged="async (query) => {
+                                    await onSelectSearch(item, query)
+                                    $refs[`${item.type}-${key}`][0]?.activate?.()
+                                  }"
+                                  @removed="(selectedKeys, selectedRaw, justRemoved) =>
+                                    selectInputOnChange(item, selectedKeys, selectedRaw, justRemoved, myForm)"
+                                  :disabled="item.disabled">
+                  </VueMultiSelect>
+                  <p v-if="showHelperText"
+                     class="iwFormInputHelperText">
+                    <template v-if="errors[item.name]"><span class="iwFormInputErrorText">{{ errors[item.name]
+                    }}</span></template>
+                    <template v-else> {{ item.helperText }} </template>
+                  </p>
+                </template>
+                <template v-else>
+                  <input type="text"
+                         v-model='myFormData[item.name]'
+                         :label='item.label'
+                         disable />
+                </template>
+              </template>
+            </template>
+
             <template name="checkbox"
                       v-else-if='IwFormTypeEnum.CHECKBOX === (item.type)'>
               <template v-if="isVisible(item)">
                 <input :id="getId((item as IwFormInputCore))"
                        class="iwFormCheckbox"
                        type="checkbox"
+                       :key="keys[(item as IwFormInputCore).name]"
                        v-model="myFormData[item.name]"
                        :disable="item.disabled"
                        :name="item.name"
@@ -482,11 +514,12 @@ initRenderCallback();
                 <IwFormLabel :id="getId((item as IwFormInputCore))"
                              :item="(item as IwFormInputCore)" />
                 <EasepickCalendar :id="getId((item as IwFormInputCore))"
-                                  ref="inputRefs"
                                   :disabled="item.disabled"
+                                  :key="keys[(item as IwFormInputCore).name]"
+                                  :options="item.dateOptions!"
+                                  ref="inputRefs"
                                   @change="(val) => dateOnChange(item, val)"
-                                  @reset="inputOnReset(item)"
-                                  :options="item.dateOptions!"></EasepickCalendar>
+                                  @reset="inputOnReset(item)" />
                 <p v-if="showHelperText"
                    class="iwFormInputHelperText">
                   <template v-if="errors[item.name]">
@@ -503,6 +536,8 @@ initRenderCallback();
                            :item="(item as IwFormInputCore)" />
               <IwFormUploader :id="getId((item as IwFormInputCore))"
                               :config="item.config"
+                              :disabled="item.disabled"
+                              :key="keys[(item as IwFormInputCore).name]"
                               @change="(ev: Event | DragEvent) => onChange(item, ev)" />
             </template>
 
@@ -512,6 +547,7 @@ initRenderCallback();
                            :item="(item as IwFormInputCore)" />
               <Editor :config="item.config"
                       :formInput="item"
+                      :key="keys[(item as IwFormInputCore).name]"
                       @change="(htmlData) => onChange(item, htmlData)" />
             </template>
 
@@ -519,7 +555,8 @@ initRenderCallback();
                       v-else-if="IwFormTypeEnum.COMPONENT === (item.type)">
               <component :is="item.component"
                          :formInput="item"
-                         :formData="myFormData"></component>
+                         :formData="myFormData"
+                         :key="keys[(item as IwFormInputCore).name]" />
             </template>
 
 

@@ -84,9 +84,16 @@ interface IwFormGroup {
     }
 }
 
-interface IwFormOnChangeUpdateInput {
-    linkedInputName: string,
+interface IwFormOnEventUpdateInput {
+    linkedInputName: string
     newSelectConfig: IwFormInputSelectConfig
+    /**
+     * Indicate whether to use a replacement method that only applies new config
+     * that differs from the old config.
+     *
+     * This is used to avoid replacing the entire original config.
+     */
+    usePatch?: boolean
 }
 
 /**
@@ -120,7 +127,8 @@ interface IwFormInputCore {
     name: string;
 
     // optional
-    autocomplete?: string;
+    // for browser form autocomplete
+    autocomplete?: string
     cssInput?: string;
     cssTextColor?: string;
     cssWrapper?: string;
@@ -149,6 +157,10 @@ interface IwFormInputCore {
     tooltip?: string | Object
     value?: any
     visibleOnData?: string[] // visible only if the form data is set
+}
+
+interface IwFormInputAutocomplete extends IwFormInputSelectCore {
+    type: 'autocomplete'
 }
 
 interface IwFormInputCheckbox extends IwFormInputCore {
@@ -183,10 +195,16 @@ interface IwFormInputLabel {
     cssWrapper?: string
 }
 
-interface IwFormInputSelect extends IwFormInputCore {
-    type: 'select'
+interface IwFormInputSelectCore extends IwFormInputCore {
     selectConfig: IwFormInputSelectConfig
+    onSearch?: Function;
+    onSearchUpdateInput?: (this: IwFormConfig, item: IwFormInputSelectCore, query: string) => Promise<IwFormOnEventUpdateInput>;
 }
+
+interface IwFormInputSelect extends IwFormInputSelectCore {
+    type: 'select'
+}
+
 
 interface IwFormInputSeparator {
     type: 'separator'
@@ -211,6 +229,7 @@ interface IwFormInputUploader extends IwFormInputCore {
 }
 
 type IwFormInput = IwFormInputComponent
+    | IwFormInputAutocomplete
     | IwFormInputCheckbox
     | IwFormInputDate
     | IwFormInputEditor
