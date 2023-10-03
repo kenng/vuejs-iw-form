@@ -4,6 +4,8 @@
 import { Editor, EditorContent } from '@tiptap/vue-3'
 import { Color as ExtColor } from '@tiptap/extension-color'
 import ExtFontSize from './extensions/EditorTipTapFontSize'
+import ExtHardBreak from '@tiptap/extension-hard-break'
+import HardBreakOnEnter from './extensions/HardBreakOnEnter'
 import { highlightList as extractedHighlightList, default as ExtHighlight } from './extensions/TextStyleHighlight'
 import ExtImage from '@tiptap/extension-image'
 import ExtPlaceholder from '@tiptap/extension-placeholder'
@@ -37,6 +39,7 @@ const props = defineProps({
 })
 
 const defaultConfig: IwFormEditorConfig = {
+    editAsPlainText: false,
     maxImageUploadPixel: 3000,
     maxImageSizeInMb: 2,
     placeholder: 'Write something ...',
@@ -118,6 +121,59 @@ function calculateTextUtf8Length(content: string): number {
     return new TextEncoder().encode(content).length
 }
 
+/**
+ * Convert HTML string to be used for loading to the Editor or exporting from it
+ *
+ * ### Example
+ * ```ts
+ * convertHTMLEntities('<p> Hello\n </p>', 'encode')
+ * // returns '&lt;p&gt; Hello <br /> &lt;/p&gt;'
+ *
+ * convertHTMLEntities('&lt;p&gt; Foo &lt;/p&gt;', 'decode')
+ * // returns '<p> Foo </p>'
+ * ```
+ * @param data
+ * @param type The type of conversion, 'encode' or 'decode'
+ */
+function convertHTMLEntitites(data: string, type: 'encode' | 'decode'): string {
+    type MatchPattern = string
+        | {
+            /** The RegExp pattern to be used when matching */
+            pat: RegExp,
+            /** The string value to be used when replacing */
+            str: string,
+        }
+
+    /**
+     * The list of conversion that will be done in sequence
+     *
+     * Encode from HTML will be done scendingly
+     * Decode to HTML will be done descendingly
+     */
+    const encodeList: Array<[MatchPattern, MatchPattern]> = [
+        ['<', '&lt;'],
+        ['>', '&gt;'],
+        [{ pat: /\r?\n/g, str: '\r\n' }, { pat: /<br ?\/?>/g, str: '<br />' }],
+    ]
+
+    if (type == 'encode') {
+        for (const [from, to] of encodeList) {
+            const pat = typeof from == 'string' ? from : from.pat
+            const rep = typeof to == 'string' ? to : to.str
+
+            data = data.replaceAll(pat, rep)
+        }
+    } else {
+        for (const [to, from] of encodeList.toReversed()) {
+            const pat = typeof from == 'string' ? from : from.pat
+            const rep = typeof to == 'string' ? to : to.str
+
+            data = data.replaceAll(pat, rep)
+        }
+    }
+    return data
+}
+
 function handleDropOntoEditor(view: EditorView, event: DragEvent, slice: Slice, moved: boolean) {
     if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
         let droppedFile = event.dataTransfer.files[0]; // the dropped file
@@ -177,9 +233,13 @@ function initEditor(): Editor {
         editorProps: {
             handleDrop: handleDropOntoEditor
         },
+        parseOptions: {
+            preserveWhitespace: 'full',
+        },
         extensions: [
             ExtColor,
             ExtFontSize,
+            (config.editAsPlainText ? HardBreakOnEnter : ExtHardBreak),
             ExtHighlight.configure({
                 multicolor: true,
                 HTMLAttributes: {
@@ -234,7 +294,9 @@ function initEditor(): Editor {
                 enableIFrameApi: true,
             }),
         ],
-        content: toRaw(config.content),
+        content: config.editAsPlainText
+            ? convertHTMLEntitites(toRaw(config.content)!, 'encode')
+            : toRaw(config.content),
         onSelectionUpdate: ({ editor }) => {
             fontColor.value = rgbToHex(editor.getAttributes('textStyle').color)
             highlightColorObj.value = IwFormColor.initFromString(
@@ -245,10 +307,13 @@ function initEditor(): Editor {
             onSelectUpdateFontSize(editor as Editor)
         },
         onUpdate: ({ editor }) => {
-            const content = editor.getHTML()
+            let content = editor.getHTML()
 
             if (config.maxContentSizeInBytes) {
                 contentLength.value = calculateTextUtf8Length(content)
+            }
+            if (config.editAsPlainText) {
+                content = convertHTMLEntitites(content, 'decode')
             }
 
             emit('change', content)
